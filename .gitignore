@@ -310,3 +310,5 @@ output_buffer/
 llm-processor/output_buffer/
 tmp/
 temp/
+
+llm-processor/.venv
