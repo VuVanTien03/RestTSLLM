@@ -1,0 +1,311 @@
+```yaml
+test_cases:
+  # Create Dish Cases
+  - id: TC101
+    group: Dishes
+    name: Create Dish With Valid Data Returns Created
+    description: Criar prato com dados válidos.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sample Dish"
+      description: "Sample description"
+      price: 19.95
+      kiloCalories: 1200
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "Sample Dish"
+        description: "Sample description"
+        price: 19.95
+        kiloCalories: 1200
+
+  - id: TC102
+    group: Dishes
+    name: Create Dish With Missing Name Returns BadRequest
+    description: Criar prato sem nome.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      description: "Sample description"
+      price: 19.95
+      kiloCalories: 1200
+    expected_response:
+      status_code: 400
+
+  - id: TC103
+    group: Dishes
+    name: Create Dish With Name Too Short Returns BadRequest
+    description: Criar prato com nome muito curto (2 caracteres).
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "D"
+      description: "Sample description"
+      price: 19.95
+      kiloCalories: 1200
+    expected_response:
+      status_code: 400
+
+  - id: TC104
+    group: Dishes
+    name: Create Dish With Name Too Long Returns BadRequest
+    description: Criar prato com nome muito longo (17 caracteres).
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "ThisNameIsTooLong"
+      description: "Sample description"
+      price: 19.95
+      kiloCalories: 1200
+    expected_response:
+      status_code: 400
+
+  - id: TC105
+    group: Dishes
+    name: Create Dish With Empty Description Returns BadRequest
+    description: Criar prato com descrição vazia.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sample Dish"
+      description: ""
+      price: 19.95
+      kiloCalories: 1200
+    expected_response:
+      status_code: 400
+
+  - id: TC106
+    group: Dishes
+    name: Create Dish With Description Too Long Returns BadRequest
+    description: Criar prato com descrição muito longa (33 caracteres).
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sample Dish"
+      description: "ThisIsADescriptionThatIsWayTooLongForTheConstraints"
+      price: 19.95
+      kiloCalories: 1200
+    expected_response:
+      status_code: 400
+
+  # Get Dish Cases
+  - id: TC107
+    group: Dishes
+    name: Get Dishes By Restaurant When Valid Data Returns OK
+    description: Obter pratos de um restaurante existente.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC108
+    group: Dishes
+    name: Get Dishes By Restaurant When Restaurant Not Found Returns NotFound
+    description: Obter pratos de um restaurante inexistente.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: GET
+    expected_response:
+      status_code: 404
+
+  # Delete Dish Cases
+  - id: TC109
+    group: Dishes
+    name: Delete Dishes By Restaurant When Valid Data Returns NoContent
+    description: Excluir pratos de um restaurante existente.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: DELETE
+    expected_response:
+      status_code: 204
+
+  - id: TC110
+    group: Dishes
+    name: Delete Dishes By Restaurant When Restaurant Not Found Returns NotFound
+    description: Excluir pratos de um restaurante inexistente.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  # Get Specific Dish Cases
+  - id: TC111
+    group: Dishes
+    name: Get Dish By Id When Valid Data Returns OK
+    description: Obter um prato específico pelo ID.
+    endpoint: /api/restaurants/{restaurantId}/dishes/{dishId}
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC112
+    group: Dishes
+    name: Get Dish By Id When Dish Not Found Returns NotFound
+    description: Obter um prato específico pelo ID inexistente.
+    endpoint: /api/restaurants/{restaurantId}/dishes/{dishId}
+    method: GET
+    expected_response:
+      status_code: 404
+
+  # Restaurants CRUD Cases
+  - id: TC113
+    group: Restaurants
+    name: Create Restaurant With Valid Data Returns Created
+    description: Criar restaurante com dados válidos.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Sample Restaurant"
+      description: "Sample description"
+      category: "Sample Category"
+      hasDelivery: true
+      contactEmail: "contact@example.com"
+      contactNumber: "12345678901"
+      city: "Sample City"
+      street: "Sample Street"
+      postalCode: "12345"
+    expected_response:
+      status_code: 201
+
+  - id: TC114
+    group: Restaurants
+    name: Create Restaurant With Missing Required Field Returns BadRequest
+    description: Criar restaurante sem campos obrigatórios.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      description: "Sample description"
+      hasDelivery: true
+      contactEmail: "contact@example.com"
+      contactNumber: "12345678901"
+      city: "Sample City"
+      street: "Sample Street"
+      postalCode: "12345"
+    expected_response:
+      status_code: 400
+
+  - id: TC115
+    group: Restaurants
+    name: Get Restaurant By Id When Valid Data Returns OK
+    description: Obter restaurante pelo ID existente.
+    endpoint: /api/restaurants/{id}
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC116
+    group: Restaurants
+    name: Get Restaurant By Id When Restaurant Not Found Returns NotFound
+    description: Obter restaurante pelo ID inexistente.
+    endpoint: /api/restaurants/{id}
+    method: GET
+    expected_response:
+      status_code: 404
+
+  # Patch Restaurant Cases
+  - id: TC117
+    group: Restaurants
+    name: Patch Restaurant When Valid Data Returns OK
+    description: Atualizar parcialmente um restaurante com dados válidos.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    request_body:
+      description: "Updated description"
+      hasDelivery: false
+    expected_response:
+      status_code: 200
+
+  - id: TC118
+    group: Restaurants
+    name: Patch Restaurant When Not Found Returns NotFound
+    description: Atualizar parcialmente um restaurante inexistente.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    request_body:
+      description: "Updated description"
+      hasDelivery: false
+    expected_response:
+      status_code: 404
+
+  # Delete Restaurant Cases
+  - id: TC119
+    group: Restaurants
+    name: Delete Restaurant When Valid Data Returns NoContent
+    description: Excluir restaurante existente.
+    endpoint: /api/restaurants/{id}
+    method: DELETE
+    expected_response:
+      status_code: 204
+
+  - id: TC120
+    group: Restaurants
+    name: Delete Restaurant When Restaurant Not Found Returns NotFound
+    description: Excluir restaurante inexistente.
+    endpoint: /api/restaurants/{id}
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  # Update Restaurant Logo Cases
+  - id: TC121
+    group: Restaurants
+    name: Update Restaurant Logo With Valid Image File Returns OK
+    description: Atualizar logo do restaurante com um arquivo de imagem válido.
+    endpoint: /api/restaurants/{id}/logo
+    method: POST
+    form_data:
+      file: <valid-image.jpg>
+    expected_response:
+      status_code: 200
+
+  - id: TC122
+    group: Restaurants
+    name: Update Restaurant Logo With Unsupported MediaType Returns UnsupportedMediaType
+    description: Atualizar logo do restaurante com tipo de mídia não suportado.
+    endpoint: /api/restaurants/{id}/logo
+    method: POST
+    request_body:
+      file: somefile.txt
+    expected_response:
+      status_code: 415
+
+  # Restaurants Query Parameters Cases
+  - id: TC123
+    group: Restaurants
+    name: Get Restaurants With Valid Query Parameters Returns OK
+    description: Obter restaurantes com parâmetros de consulta válidos.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      searchPhrase: "Sample"
+      pageNumber: 1
+      pageSize: 10
+      sortBy: "Name"
+      sortDirection: "Ascending"
+    expected_response:
+      status_code: 200
+
+  - id: TC124
+    group: Restaurants
+    name: Get Restaurants With Invalid Email Format Returns BadRequest
+    description: Obter restaurantes com formato de e-mail inválido no parâmetro de consulta.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      contactEmail: "inválido"
+    expected_response:
+      status_code: 400
+
+  - id: TC125
+    group: Restaurants
+    name: Get Restaurants With Invalid Sort Direction Returns BadRequest
+    description: Obter restaurantes com direção de ordenação inválida.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      sortDirection: "InvalidDirection"
+    expected_response:
+      status_code: 400
+
+  # Note: Additional cases can be created for boundaries, invalid data types, missing parameters, etc.
+```

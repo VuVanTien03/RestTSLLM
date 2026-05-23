@@ -1,0 +1,466 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Categories
+    name: List Categories - Returns OK
+    description: Lists all categories successfully.
+    endpoint: /api/categories
+    method: GET
+    expected_response:
+      status_code: 200
+  - id: TC002
+    group: Categories
+    name: Create Category - Valid Data - Returns Created
+    description: Creates a new category with valid data.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "Category A"
+    expected_response:
+      status_code: 200
+  - id: TC003
+    group: Categories
+    name: Create Category - Name Too Short - Returns BadRequest
+    description: Attempts to create a category with a name shorter than the minimum length (1).
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+  - id: TC004
+    group: Categories
+    name: Create Category - Name Too Long - Returns BadRequest
+    description: Attempts to create a category with a name longer than the maximum length (30).
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "ThisCategoryNameIsLongerThanTheMaximumAllowedLengthOfThirtyCharacters"
+    expected_response:
+      status_code: 400
+  - id: TC005
+    group: Categories
+    name: Create Category - Name Null - Returns BadRequest
+    description: Attempts to create a category with a null name.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+  - id: TC006
+    group: Categories
+    name: Update Category - Valid Data - Returns OK
+    description: Updates an existing category with valid data.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/categories/1
+    method: PUT
+    request_body:
+      name: "Updated Category A"
+    expected_response:
+      status_code: 200
+  - id: TC007
+    group: Categories
+    name: Update Category - Invalid ID - Returns NotFound
+    description: Attempts to update a category with an invalid ID.
+    endpoint: /api/categories/99999
+    method: PUT
+    request_body:
+      name: "Updated Category B"
+    expected_response:
+      status_code: 404
+  - id: TC008
+    group: Categories
+    name: Update Category - Name Too Short - Returns BadRequest
+    description: Attempts to update a category with a name shorter than the minimum length.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/categories/1
+    method: PUT
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+  - id: TC009
+    group: Categories
+    name: Update Category - Name Too Long - Returns BadRequest
+    description: Attempts to update a category with a name longer than the maximum length.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/categories/1
+    method: PUT
+    request_body:
+      name: "ThisCategoryNameIsLongerThanTheMaximumAllowedLengthOfThirtyCharacters"
+    expected_response:
+      status_code: 400
+  - id: TC010
+    group: Categories
+    name: Update Category - Name Null - Returns BadRequest
+    description: Attempts to update a category with a null name.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/categories/1
+    method: PUT
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+  - id: TC011
+    group: Categories
+    name: Delete Category - Valid ID - Returns OK
+    description: Deletes an existing category.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/categories/1
+    method: DELETE
+    expected_response:
+      status_code: 200
+  - id: TC012
+    group: Categories
+    name: Delete Category - Invalid ID - Returns NotFound
+    description: Attempts to delete a category with an invalid ID.
+    endpoint: /api/categories/99999
+    method: DELETE
+    expected_response:
+      status_code: 404
+  - id: TC013
+    group: Products
+    name: List Products - Valid Parameters - Returns OK
+    description: Lists all products with valid parameters.
+    endpoint: /api/products
+    method: GET
+    query_params:
+      page: 1
+      itemsPerPage: 10
+    expected_response:
+      status_code: 200
+  - id: TC014
+    group: Products
+    name: List Products - Invalid Page - Returns BadRequest
+    description: Attempts to list products with an invalid page number (less than 1).
+    endpoint: /api/products
+    method: GET
+    query_params:
+      page: 0
+      itemsPerPage: 10
+    expected_response:
+      status_code: 400
+  - id: TC015
+    group: Products
+    name: List Products - Invalid ItemsPerPage - Returns BadRequest
+    description: Attempts to list products with an invalid itemsPerPage number (less than 1).
+    endpoint: /api/products
+    method: GET
+    query_params:
+      page: 1
+      itemsPerPage: 0
+    expected_response:
+      status_code: 400
+  - id: TC016
+    group: Products
+    name: List Products - Valid CategoryId - Returns OK
+    description: Lists products for a specific category.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/products
+    method: GET
+    query_params:
+      categoryId: 1
+      page: 1
+      itemsPerPage: 10
+    expected_response:
+      status_code: 200
+  - id: TC017
+    group: Products
+    name: List Products - Invalid CategoryId - Returns OK (empty result)
+    description: Lists products for a non-existent category.  Should return an empty list.
+    endpoint: /api/products
+    method: GET
+    query_params:
+      categoryId: 99999
+      page: 1
+      itemsPerPage: 10
+    expected_response:
+      status_code: 200
+      body:
+        totalItems: 0
+        items: []
+  - id: TC018
+    group: Products
+    name: Create Product - Valid Data - Returns Created
+    description: Creates a new product with valid data.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/products
+    method: POST
+    request_body:
+      categoryId: 1
+      name: "Product A"
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 200
+  - id: TC019
+    group: Products
+    name: Create Product - Name Too Short - Returns BadRequest
+    description: Attempts to create a product with a name shorter than the minimum length.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/products
+    method: POST
+    request_body:
+      categoryId: 1
+      name: ""
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC020
+    group: Products
+    name: Create Product - Name Too Long - Returns BadRequest
+    description: Attempts to create a product with a name longer than the maximum length.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/products
+    method: POST
+    request_body:
+      categoryId: 1
+      name: "ThisProductNameIsLongerThanTheMaximumAllowedLengthOfFiftyCharacters"
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC021
+    group: Products
+    name: Create Product - Name Null - Returns BadRequest
+    description: Attempts to create a product with a null name.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/products
+    method: POST
+    request_body:
+      categoryId: 1
+      name: null
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC022
+    group: Products
+    name: Create Product - QuantityInPackage Below Minimum - Returns BadRequest
+    description: Attempts to create a product with a quantityInPackage below the minimum (0).
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/products
+    method: POST
+    request_body:
+      categoryId: 1
+      name: "Product B"
+      quantityInPackage: -1
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC023
+    group: Products
+    name: Create Product - QuantityInPackage Above Maximum - Returns BadRequest
+    description: Attempts to create a product with a quantityInPackage above the maximum (100).
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/products
+    method: POST
+    request_body:
+      categoryId: 1
+      name: "Product C"
+      quantityInPackage: 101
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC024
+    group: Products
+    name: Create Product - Invalid CategoryId - Returns BadRequest
+    description: Attempts to create a product with an invalid category ID.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      categoryId: 99999
+      name: "Product D"
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC025
+    group: Products
+    name: Create Product - Invalid UnitOfMeasurement - Returns BadRequest
+    description: Attempts to create a product with an invalid unitOfMeasurement.
+    preconditions:
+      - "Category with id 1 exists."
+    endpoint: /api/products
+    method: POST
+    request_body:
+      categoryId: 1
+      name: "Product E"
+      quantityInPackage: 10
+      unitOfMeasurement: "InvalidUnit"
+    expected_response:
+      status_code: 400
+  - id: TC026
+    group: Products
+    name: Update Product - Valid Data - Returns OK
+    description: Updates an existing product with valid data.
+    preconditions:
+      - "Product with id 1 exists."
+      - "Category with id 1 exists."
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      categoryId: 1
+      name: "Updated Product A"
+      quantityInPackage: 20
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 200
+  - id: TC027
+    group: Products
+    name: Update Product - Invalid ID - Returns NotFound
+    description: Attempts to update a product with an invalid ID.
+    endpoint: /api/products/99999
+    method: PUT
+    request_body:
+      categoryId: 1
+      name: "Updated Product B"
+      quantityInPackage: 20
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 404
+  - id: TC028
+    group: Products
+    name: Update Product - Name Too Short - Returns BadRequest
+    description: Attempts to update a product with a name shorter than the minimum length.
+    preconditions:
+      - "Product with id 1 exists."
+      - "Category with id 1 exists."
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      categoryId: 1
+      name: ""
+      quantityInPackage: 20
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC029
+    group: Products
+    name: Update Product - Name Too Long - Returns BadRequest
+    description: Attempts to update a product with a name longer than the maximum length.
+    preconditions:
+      - "Product with id 1 exists."
+      - "Category with id 1 exists."
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      categoryId: 1
+      name: "ThisProductNameIsLongerThanTheMaximumAllowedLengthOfFiftyCharacters"
+      quantityInPackage: 20
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC030
+    group: Products
+    name: Update Product - Name Null - Returns BadRequest
+    description: Attempts to update a product with a null name.
+    preconditions:
+      - "Product with id 1 exists."
+      - "Category with id 1 exists."
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      categoryId: 1
+      name: null
+      quantityInPackage: 20
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC031
+    group: Products
+    name: Update Product - QuantityInPackage Below Minimum - Returns BadRequest
+    description: Attempts to update a product with a quantityInPackage below the minimum.
+    preconditions:
+      - "Product with id 1 exists."
+      - "Category with id 1 exists."
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      categoryId: 1
+      name: "Updated Product C"
+      quantityInPackage: -1
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC032
+    group: Products
+    name: Update Product - QuantityInPackage Above Maximum - Returns BadRequest
+    description: Attempts to update a product with a quantityInPackage above the maximum.
+    preconditions:
+      - "Product with id 1 exists."
+      - "Category with id 1 exists."
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      categoryId: 1
+      name: "Updated Product D"
+      quantityInPackage: 101
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC033
+    group: Products
+    name: Update Product - Invalid CategoryId - Returns BadRequest
+    description: Attempts to update a product with an invalid category ID.
+    preconditions:
+      - "Product with id 1 exists."
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      categoryId: 99999
+      name: "Updated Product E"
+      quantityInPackage: 20
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+  - id: TC034
+    group: Products
+    name: Update Product - Invalid UnitOfMeasurement - Returns BadRequest
+    description: Attempts to update a product with an invalid unitOfMeasurement.
+    preconditions:
+      - "Product with id 1 exists."
+      - "Category with id 1 exists."
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      categoryId: 1
+      name: "Updated Product F"
+      quantityInPackage: 20
+      unitOfMeasurement: "InvalidUnit"
+    expected_response:
+      status_code: 400
+  - id: TC035
+    group: Products
+    name: Delete Product - Valid ID - Returns OK
+    description: Deletes an existing product.
+    preconditions:
+      - "Product with id 1 exists."
+    endpoint: /api/products/1
+    method: DELETE
+    expected_response:
+      status_code: 200
+  - id: TC036
+    group: Products
+    name: Delete Product - Invalid ID - Returns NotFound
+    description: Attempts to delete a product with an invalid ID.
+    endpoint: /api/products/99999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+```

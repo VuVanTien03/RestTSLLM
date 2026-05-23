@@ -1,0 +1,192 @@
+Dado o exemplo que lhe passei de como converter uma especificação OpenApi para TSL, preciso que você me forneça o TSL em yml da seguinte especificação OpenApi:
+Importante ressaltar a importância e necessidade de gerar o maior número de cenários de teste possível visando o aumento máximo de cobertura. 
+Você deve gerar todos os casos, sem retornar uma resposta me solicitando para complementar algo.
+
+```json
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Shortener API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/{token}": {
+      "get": {
+        "tags": [
+          "Url Shorten Endpoint"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UrlResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/url-shorts": {
+      "post": {
+        "tags": [
+          "Url Shorten Endpoint"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShortUrlRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShortUrlResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test": {
+      "get": {
+        "tags": [
+          "Web"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlyToken"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BaseResult": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OnlyToken": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShortUrlRequest": {
+        "required": [
+          "hasQrCode",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "url": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Must be a valid URL."
+          },
+          "expireMinutes": {
+            "type": "integer",
+            "description": "'null' for infinty or a number greater than or equal 1.",
+            "format": "int32",
+            "nullable": true
+          },
+          "hasQrCode": {
+            "type": "boolean",
+            "description": "Enable or disabled qr code generation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShortUrlResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortenedUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "qrCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UrlResult": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
+```

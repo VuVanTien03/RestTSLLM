@@ -1,0 +1,776 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Categories
+    name: Get Categories When No Categories Returns OK
+    description: Retorna vazio quando não existe categoria cadastrada
+    endpoint: /api/categories
+    method: GET
+    expected_response:
+      status_code: 200
+      body: []
+
+  - id: TC002
+    group: Categories
+    name: Get Categories When Categories Exist Returns OK
+    description: Retorna lista de categorias cadastradas
+    endpoint: /api/categories
+    method: GET
+    preconditions:
+      - "Categorias cadastradas no sistema"
+    expected_response:
+      status_code: 200
+      body: 
+        - id: is integer greater than 0
+          name: is string not empty
+
+  - id: TC003
+    group: Categories
+    name: Create Category When Valid Data Returns OK
+    description: Cria uma nova categoria com dados válidos
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "TestCategory"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "TestCategory"
+
+  - id: TC004
+    group: Categories
+    name: Create Category When Name Is Null Returns BadRequest
+    description: Cria uma nova categoria com nome nulo
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Categories
+    name: Create Category When Name Is Empty String Returns BadRequest
+    description: Cria uma nova categoria com nome vazio
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Categories
+    name: Create Category When Name Too Short Returns BadRequest
+    description: Cria uma nova categoria com nome curto - 0 caracteres
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: Categories
+    name: Create Category When Name Too Long Returns BadRequest
+    description: Cria uma nova categoria com nome longo - 31 caracteres
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "TestCategory123456789012345678901"
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: Categories
+    name: Create Category When Name Has Minimum Size Returns OK
+    description: Cria uma nova categoria com nome com menor tamanho possível - 1 caracteres
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "T"
+    expected_response:
+      status_code: 200
+
+  - id: TC009
+    group: Categories
+    name: Create Category When Name Has Maximum Size Returns OK
+    description: Cria uma nova categoria com nome com maior tamanho possível - 30 caracteres
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "TestCategory12345678901234567890"
+    expected_response:
+      status_code: 200
+
+  - id: TC010
+    group: Categories
+    name: Update Category When Valid Data Returns OK
+    description: Atualiza uma categoria existente com dados válidos
+    endpoint: /api/categories/{id}
+    method: PUT
+    preconditions:
+      - "Existe uma categoria com id {id}"
+    path_parameters: 
+      id: "{id}"
+    request_body:
+      name: "UpdatedTestCategory"
+    expected_response:
+      status_code: 200
+      body:
+        id: "{id}"
+        name: "UpdatedTestCategory"
+
+  - id: TC011
+    group: Categories
+    name: Update Category When ID Does Not Exist Returns NotFound
+    description: Tenta atualizar uma categoria com id inexistente
+    endpoint: /api/categories/9999999
+    method: PUT
+    request_body:
+      name: "UpdatedTestCategory"
+    expected_response:
+      status_code: 404
+
+  - id: TC012
+    group: Categories
+    name: Update Category When Name Is Null Returns BadRequest
+    description: Atualiza uma categoria com nome nulo
+    endpoint: /api/categories/{id}
+    method: PUT
+    preconditions:
+      - "Existe uma categoria com id {id}"
+    path_parameters: 
+      id: "{id}"
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+
+  - id: TC013
+    group: Categories
+    name: Update Category When Name Is Empty String Returns BadRequest
+    description: Atualiza uma categoria com nome vazio
+    endpoint: /api/categories/{id}
+    method: PUT
+    preconditions:
+      - "Existe uma categoria com id {id}"
+    path_parameters: 
+      id: "{id}"
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC014
+    group: Categories
+    name: Update Category When Name Too Short Returns BadRequest
+    description: Atualiza uma categoria com nome curto - 0 caracteres
+    endpoint: /api/categories/{id}
+    method: PUT
+    preconditions:
+      - "Existe uma categoria com id {id}"
+    path_parameters: 
+      id: "{id}"
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: Categories
+    name: Update Category When Name Too Long Returns BadRequest
+    description: Atualiza uma categoria com nome longo - 31 caracteres
+    endpoint: /api/categories/{id}
+    method: PUT
+    preconditions:
+      - "Existe uma categoria com id {id}"
+    path_parameters: 
+      id: "{id}"
+    request_body:
+      name: "TestCategory123456789012345678901"
+    expected_response:
+      status_code: 400
+
+  - id: TC016
+    group: Categories
+    name: Update Category When Name Has Minimum Size Returns OK
+    description: Atualiza uma categoria com nome com menor tamanho possível - 1 caracteres
+    endpoint: /api/categories/{id}
+    method: PUT
+    preconditions:
+      - "Existe uma categoria com id {id}"
+    path_parameters: 
+      id: "{id}"
+    request_body:
+      name: "T"
+    expected_response:
+      status_code: 200
+      body:
+        id: "{id}"
+        name: "T"
+
+  - id: TC017
+    group: Categories
+    name: Update Category When Name Has Maximum Size Returns OK
+    description: Atualiza uma categoria com nome com maior tamanho possível - 30 caracteres
+    endpoint: /api/categories/{id}
+    method: PUT
+    preconditions:
+      - "Existe uma categoria com id {id}"
+    path_parameters: 
+      id: "{id}"
+    request_body:
+      name: "TestCategory12345678901234567890"
+    expected_response:
+      status_code: 200
+      body:
+        id: "{id}"
+        name: "TestCategory12345678901234567890"
+
+  - id: TC018
+    group: Categories
+    name: Delete Category When Exists Returns OK
+    description: Exclui uma categoria existente
+    endpoint: /api/categories/{id}
+    method: DELETE
+    preconditions:
+      - "Existe uma categoria com id {id}"
+    path_parameters:
+      id: "{id}"
+    expected_response:
+      status_code: 200
+      body:
+        id: "{id}"
+        name: is string not empty
+
+  - id: TC019
+    group: Categories
+    name: Delete Category When ID Does Not Exist Returns NotFound
+    description: Tenta excluir uma categoria com id inexistente
+    endpoint: /api/categories/9999999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  - id: TC020
+    group: Products
+    name: Get Products When No Products Returns OK
+    description: Retorna vazio quando não existe produtos cadastrados
+    endpoint: /api/products
+    method: GET
+    query_parameters:
+      page: 1
+      itemsPerPage: 10
+    expected_response:
+      status_code: 200
+      body:
+        totalItems: 0
+        items: []
+
+  - id: TC021
+    group: Products
+    name: Get Products When Products Exist Returns OK
+    description: Retorna lista de produtos cadastrados
+    endpoint: /api/products
+    method: GET
+    query_parameters:
+      page: 1
+      itemsPerPage: 10
+    preconditions:
+      - "Produtos cadastrados no sistema"
+    expected_response:
+      status_code: 200
+      body:
+        totalItems: is integer greater than 0
+        items: 
+          - id: is integer greater than 0
+            name: is string not empty
+            quantityInPackage: is integer greater or equal than 0
+            unitOfMeasurement: is one of the ["Unity", "Milligram", "Gram", "Kilogram", "Liter"]
+            category:
+              id: is integer greater than 0
+              name: is string not empty
+
+  - id: TC022
+    group: Products
+    name: Get Products When Valid Query Filter Returns OK
+    description: Retorna lista de produtos filtrados pelo categoryId
+    endpoint: /api/products
+    method: GET
+    query_parameters:
+      categoryId: 1
+      page: 1
+      itemsPerPage: 10
+    preconditions:
+      - "Produtos com categoryId 1 cadastrados no sistema"
+    expected_response:
+      status_code: 200
+      body:
+        totalItems: is integer greater or equal than 0
+        items: 
+          - id: is integer greater than 0
+            name: is string not empty
+            quantityInPackage: is integer greater or equal than 0
+            unitOfMeasurement: is one of the ["Unity", "Milligram", "Gram", "Kilogram", "Liter"]
+            category:
+              id: 1
+              name: is string not empty
+
+  - id: TC023
+    group: Products
+    name: Get Products When Invalid categoryId Returns BadRequest
+    description: Retorna lista de produtos com categoryId inexistente
+    endpoint: /api/products
+    method: GET
+    query_parameters:
+      categoryId: 9999999
+      page: 1
+      itemsPerPage: 10
+    expected_response:
+      status_code: 400
+
+  - id: TC024
+    group: Products
+    name: Get Products When Page Out Of Bounds Returns BadRequest
+    description: Retorna paginação inválida com page menor que 1
+    endpoint: /api/products
+    method: GET
+    query_parameters:
+      categoryId: null
+      page: 0
+      itemsPerPage: 10
+    expected_response:
+      status_code: 400
+
+  - id: TC025
+    group: Products
+    name: Get Products When ItemsPerPage Out Of Bounds Returns BadRequest
+    description: Retorna paginação inválida com itemsPerPage menor que 1
+    endpoint: /api/products
+    method: GET
+    query_parameters:
+      categoryId: null
+      page: 1
+      itemsPerPage: 0
+    expected_response:
+      status_code: 400
+
+  - id: TC026
+    group: Products
+    name: Create Product When Valid Data Returns OK
+    description: Cria um novo produto com dados válidos
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct"
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "TestProduct"
+        categoryId: 1
+        quantityInPackage: 10
+        unitOfMeasurement: "Unity"
+        category:
+          id: 1
+          name: is string not empty
+
+  - id: TC027
+    group: Products
+    name: Create Product When Name Is Null Returns BadRequest
+    description: Cria um novo produto com nome nulo
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: null
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 400
+
+  - id: TC028
+    group: Products
+    name: Create Product When Name Is Empty String Returns BadRequest
+    description: Cria um novo produto com nome vazio
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: ""
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 400
+
+  - id: TC029
+    group: Products
+    name: Create Product When Name Too Short Returns BadRequest
+    description: Cria um novo produto com nome curto - 0 caracteres
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: ""
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 400
+
+  - id: TC030
+    group: Products
+    name: Create Product When Name Too Long Returns BadRequest
+    description: Cria um novo produto com nome longo - 51 caracteres
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct1234567890123456789012345678901"
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 400
+
+  - id: TC031
+    group: Products
+    name: Create Product When Name Has Minimum Size Returns OK
+    description: Cria um novo produto com nome com menor tamanho possível - 1 caracteres
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "T"
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "T"
+        categoryId: 1
+        quantityInPackage: 10
+        unitOfMeasurement: "Unity"
+        category:
+          id: 1
+          name: is string not empty
+
+  - id: TC032
+    group: Products
+    name: Create Product When Name Has Maximum Size Returns OK
+    description: Cria um novo produto com nome com maior tamanho possível - 50 caracteres
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct123456789012345678901234567890"
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "TestProduct123456789012345678901234567890"
+        categoryId: 1
+        quantityInPackage: 10
+        unitOfMeasurement: "Unity"
+        category:
+          id: 1
+          name: is string not empty
+
+  - id: TC033
+    group: Products
+    name: Create Product When QuantityInPackage Below Minimum Returns BadRequest
+    description: Cria um novo produto com quantityInPackage menor que 0
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct"
+      categoryId: 1
+      quantityInPackage: -1
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 400
+
+  - id: TC034
+    group: Products
+    name: Create Product When QuantityInPackage Above Maximum Returns BadRequest
+    description: Cria um novo produto com quantityInPackage maior que 100
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct"
+      categoryId: 1
+      quantityInPackage: 101
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 400
+
+  - id: TC035
+    group: Products
+    name: Create Product When QuantityInPackage Has Minimum Value Returns OK
+    description: Cria um novo produto com quantityInPackage com menor valor possível - 0
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct"
+      categoryId: 1
+      quantityInPackage: 0
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "TestProduct"
+        categoryId: 1
+        quantityInPackage: 0
+        unitOfMeasurement: "Unity"
+        category:
+          id: 1
+          name: is string not empty
+
+  - id: TC036
+    group: Products
+    name: Create Product When QuantityInPackage Has Maximum Value Returns OK
+    description: Cria um novo produto com quantityInPackage com maior valor possível - 100
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct"
+      categoryId: 1
+      quantityInPackage: 100
+      unitOfMeasurement: "Unity"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "TestProduct"
+        categoryId: 1
+        quantityInPackage: 100
+        unitOfMeasurement: "Unity"
+        category:
+          id: 1
+          name: is string not empty
+
+  - id: TC037
+    group: Products
+    name: Create Product When UnitOfMeasurement Is Invalid Returns BadRequest
+    description: Cria um novo produto com unitOfMeasurement inválida
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct"
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "InvalidUnit"
+    preconditions:
+      - "Existe uma categoria com id 1"
+    expected_response:
+      status_code: 400
+
+  - id: TC038
+    group: Products
+    name: Create Product When CategoryId Is Invalid Returns BadRequest
+    description: Cria um novo produto com categoryId inválido
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "TestProduct"
+      categoryId: 9999999
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+
+  - id: TC039
+    group: Products
+    name: Update Product When Valid Data Returns OK
+    description: Atualiza um produto existente com dados válidos
+    endpoint: /api/products/{id}
+    method: PUT
+    preconditions:
+      - "Existe um produto com id {id}"
+    path_parameters:
+      id: "{id}"
+    request_body:
+      name: "UpdatedTestProduct"
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 200
+      body:
+        id: "{id}"
+        name: "UpdatedTestProduct"
+        categoryId: 1
+        quantityInPackage: 10
+        unitOfMeasurement: "Unity"
+        category:
+          id: 1
+          name: is string not empty
+
+  - id: TC040
+    group: Products
+    name: Update Product When ID Does Not Exist Returns NotFound
+    description: Tenta atualizar um produto com id inexistente
+    endpoint: /api/products/9999999
+    method: PUT
+    request_body:
+      name: "UpdatedTestProduct"
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 404
+
+  - id: TC041
+    group: Products
+    name: Update Product When QuantityInPackage Below Minimum Returns BadRequest
+    description: Atualiza um produto com quantityInPackage menor que 0
+    endpoint: /api/products/{id}
+    method: PUT
+    preconditions:
+      - "Existe um produto com id {id}"
+    path_parameters:
+      id: "{id}"
+    request_body:
+      name: "UpdatedTestProduct"
+      categoryId: 1
+      quantityInPackage: -1
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+
+  - id: TC042
+    group: Products
+    name: Update Product When QuantityInPackage Above Maximum Returns BadRequest
+    description: Atualiza um produto com quantityInPackage maior que 100
+    endpoint: /api/products/{id}
+    method: PUT
+    preconditions:
+      - "Existe um produto com id {id}"
+    path_parameters:
+      id: "{id}"
+    request_body:
+      name: "UpdatedTestProduct"
+      categoryId: 1
+      quantityInPackage: 101
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+
+  - id: TC043
+    group: Products
+    name: Update Product When UnitOfMeasurement Is Invalid Returns BadRequest
+    description: Atualiza um produto com unitOfMeasurement inválida
+    endpoint: /api/products/{id}
+    method: PUT
+    preconditions:
+      - "Existe um produto com id {id}"
+    path_parameters:
+      id: "{id}"
+    request_body:
+      name: "UpdatedTestProduct"
+      categoryId: 1
+      quantityInPackage: 10
+      unitOfMeasurement: "InvalidUnit"
+    expected_response:
+      status_code: 400
+
+  - id: TC044
+    group: Products
+    name: Update Product When CategoryId Is Invalid Returns BadRequest
+    description: Atualiza um produto com categoryId inválido
+    endpoint: /api/products/{id}
+    method: PUT
+    preconditions:
+      - "Existe um produto com id {id}"
+    path_parameters:
+      id: "{id}"
+    request_body:
+      name: "UpdatedTestProduct"
+      categoryId: 9999999
+      quantityInPackage: 10
+      unitOfMeasurement: "Unity"
+    expected_response:
+      status_code: 400
+
+  - id: TC045
+    group: Products
+    name: Delete Product When Exists Returns OK
+    description: Exclui um produto existente
+    endpoint: /api/products/{id}
+    method: DELETE
+    preconditions:
+      - "Existe um produto com id {id}"
+    path_parameters:
+      id: "{id}"
+    expected_response:
+      status_code: 200
+      body:
+        id: "{id}"
+        name: is string not empty
+        categoryId: is integer greater than 0
+        quantityInPackage: is integer greater or equal than 0
+        unitOfMeasurement: is one of the ["Unity", "Milligram", "Gram", "Kilogram", "Liter"]
+        category:
+          id: is integer greater than 0
+          name: is string not empty
+
+  - id: TC046
+    group: Products
+    name: Delete Product When ID Does Not Exist Returns NotFound
+    description: Tenta excluir um produto com id inexistente
+    endpoint: /api/products/9999999
+    method: DELETE
+    expected_response:
+      status_code: 400
+
+  - id: TC047
+    group: Products
+    name: Delete Product When Valid Data Returns OK
+    description: Exclui um produto existente com sucesso
+    endpoint: /api/products/{id}
+    method: DELETE
+    preconditions:
+      - "Existe um produto com id {id}"
+    path_parameters:
+      id: "{id}"
+    expected_response:
+      status_code: 200
+      body:
+        id: "{id}"
+        name: is string not empty
+        categoryId: is integer greater than 0
+        quantityInPackage: is integer greater or equal than 0
+        unitOfMeasurement: is one of the ["Unity", "Milligram", "Gram", "Kilogram", "Liter"]
+        category:
+          id: is integer greater than 0
+          name: is string not empty
+```

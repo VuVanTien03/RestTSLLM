@@ -1,0 +1,898 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Account
+    name: Create Account with Valid Data Returns OK
+    description: Create a new account with valid data.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      password: Password123!
+      isAdmin: false
+    expected_response:
+      status_code: 200
+  - id: TC002
+    group: Account
+    name: Create Account with Missing FirstName Returns BadRequest
+    description: Attempt to create an account with a missing firstName.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      lastName: Doe
+      email: john.doe@example.com
+      password: Password123!
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC003
+    group: Account
+    name: Create Account with Missing LastName Returns BadRequest
+    description: Attempt to create an account with a missing lastName.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      email: john.doe@example.com
+      password: Password123!
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC004
+    group: Account
+    name: Create Account with Missing Email Returns BadRequest
+    description: Attempt to create an account with a missing email.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      password: Password123!
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC005
+    group: Account
+    name: Create Account with Missing Password Returns BadRequest
+    description: Attempt to create an account with a missing password.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC006
+    group: Account
+    name: Create Account with Invalid Email Format Returns BadRequest
+    description: Attempt to create an account with an invalid email format.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: invalid-email
+      password: Password123!
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC007
+    group: Account
+    name: Create Account with Password Less Than Minimum Length Returns BadRequest
+    description: Attempt to create an account with a password less than the minimum length.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      password: Pass
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC008
+    group: Account
+    name: Create Account with Password Greater Than Maximum Length Returns BadRequest
+    description: Attempt to create an account with a password greater than the maximum length.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      password: ThisIsAVeryLongPasswordThatExceedsTheMaximumLengthOfFifteenCharacters
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC009
+    group: Account
+    name: Create Account with Password Without Number Returns BadRequest
+    description: Attempt to create an account with a password without a number.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      password: Password
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC010
+    group: Account
+    name: Create Account with Password Without Lowercase Letter Returns BadRequest
+    description: Attempt to create an account with a password without a lowercase letter.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      password: PASSWORD123!
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC011
+    group: Account
+    name: Create Account with Password Without Uppercase Letter Returns BadRequest
+    description: Attempt to create an account with a password without an uppercase letter.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      password: password123!
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC012
+    group: Account
+    name: Create Account with Password Without Non-alphanumeric Character Returns BadRequest
+    description: Attempt to create an account with a password without a non-alphanumeric character.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      password: Password123
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC013
+    group: Account
+    name: Create Account with Duplicate Email Returns BadRequest
+    description: Attempt to create an account with a duplicate email.
+    preconditions:
+      - An account with email 'john.doe@example.com' already exists.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: John
+      lastName: Doe
+      email: john.doe@example.com
+      password: Password123!
+      isAdmin: false
+    expected_response:
+      status_code: 400
+  - id: TC014
+    group: Account
+    name: Login with Valid Credentials Returns OK
+    description: Login with valid email and password.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: john.doe@example.com
+      password: Password123!
+    expected_response:
+      status_code: 200
+      body:
+        userId: is string not empty
+        token: is string not empty
+        refreshToken: is string not empty
+  - id: TC015
+    group: Account
+    name: Login with Invalid Credentials Returns Unauthorized
+    description: Login with invalid email or password.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: wrong.email@example.com
+      password: WrongPassword
+    expected_response:
+      status_code: 401
+  - id: TC016
+    group: Account
+    name: Login with Missing Email Returns BadRequest
+    description: Login with missing email.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      password: Password123!
+    expected_response:
+      status_code: 400
+  - id: TC017
+    group: Account
+    name: Login with Missing Password Returns BadRequest
+    description: Login with missing password.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: john.doe@example.com
+    expected_response:
+      status_code: 400
+  - id: TC018
+    group: Account
+    name: Refresh Token with Valid Token Returns OK
+    description: Refresh token with valid refresh token.
+    preconditions:
+      - A valid refresh token is obtained from a successful login.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: {userId}
+      token: {token}
+      refreshToken: {refreshToken}
+    expected_response:
+      status_code: 200
+      body:
+        userId: is string not empty
+        token: is string not empty
+        refreshToken: is string not empty
+  - id: TC019
+    group: Account
+    name: Refresh Token with Invalid Token Returns Unauthorized
+    description: Refresh token with invalid refresh token.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: invalidUserId
+      token: invalidToken
+      refreshToken: invalidRefreshToken
+    expected_response:
+      status_code: 401
+  - id: TC020
+    group: Account
+    name: Refresh Token with Missing Token Returns BadRequest
+    description: Refresh token with missing refresh token.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body: {}
+    expected_response:
+      status_code: 400
+  - id: TC021
+    group: Countries
+    name: Get All Countries Returns OK
+    description: Get a list of all countries.
+    endpoint: /api/countries
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        is array not empty
+  - id: TC022
+    group: Countries
+    name: Create Country with Valid Data Returns Created
+    description: Create a new country with valid data.  Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Test Country
+      shortName: TC
+    expected_response:
+      status_code: 201
+      body:
+        name: Test Country
+        shortName: TC
+        id: is integer greater than 0
+  - id: TC023
+    group: Countries
+    name: Create Country with Missing Name Returns BadRequest
+    description: Attempt to create a country with a missing name. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      shortName: TC
+    expected_response:
+      status_code: 400
+  - id: TC024
+    group: Countries
+    name: Create Country with Duplicate Name Returns BadRequest
+    description: Attempt to create a country with a duplicate name. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+      - A country with name 'Test Country' already exists.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Test Country
+      shortName: TC
+    expected_response:
+      status_code: 400
+  - id: TC025
+    group: Countries
+    name: Create Country Without Authentication Returns Unauthorized
+    description: Attempt to create a country without authentication.
+    endpoint: /api/countries
+    method: POST
+    request_body:
+      name: Test Country
+      shortName: TC
+    expected_response:
+      status_code: 401
+  - id: TC026
+    group: Countries
+    name: Get Country by ID Returns OK
+    description: Get a country by its ID.
+    endpoint: /api/countries/{id}
+    method: GET
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: is string not empty
+  - id: TC027
+    group: Countries
+    name: Get Country by Invalid ID Returns NotFound
+    description: Get a country by an invalid ID.
+    endpoint: /api/countries/{id}
+    method: GET
+    parameters:
+      id: 999999
+    expected_response:
+      status_code: 404
+  - id: TC028
+    group: Countries
+    name: Update Country with Valid Data Returns NoContent
+    description: Update an existing country with valid data. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/countries/{id}
+    method: PUT
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Updated Country Name
+      shortName: UCN
+    expected_response:
+      status_code: 204
+  - id: TC029
+    group: Countries
+    name: Update Country with Missing Name Returns BadRequest
+    description: Attempt to update a country with a missing name. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/countries/{id}
+    method: PUT
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      shortName: UCN
+    expected_response:
+      status_code: 400
+  - id: TC030
+    group: Countries
+    name: Update Country with Duplicate Name Returns BadRequest
+    description: Attempt to update a country with a duplicate name. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+      - A country with name 'Updated Country Name' already exists.
+    endpoint: /api/countries/{id}
+    method: PUT
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Updated Country Name
+      shortName: UCN
+    expected_response:
+      status_code: 400
+  - id: TC031
+    group: Countries
+    name: Update Country with Invalid ID Returns NotFound
+    description: Attempt to update a country with an invalid ID. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/countries/{id}
+    method: PUT
+    parameters:
+      id: 999999
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Updated Country Name
+      shortName: UCN
+    expected_response:
+      status_code: 404
+  - id: TC032
+    group: Countries
+    name: Update Country Without Authentication Returns Unauthorized
+    description: Attempt to update a country without authentication.
+    endpoint: /api/countries/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      name: Updated Country Name
+      shortName: UCN
+    expected_response:
+      status_code: 401
+  - id: TC033
+    group: Countries
+    name: Delete Country by ID Returns NoContent
+    description: Delete a country by its ID. Requires Authentication and Admin User.
+    preconditions:
+      - User is authenticated and is an admin.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_admin_token}
+    expected_response:
+      status_code: 204
+  - id: TC034
+    group: Countries
+    name: Delete Country by Invalid ID Returns NotFound
+    description: Attempt to delete a country by an invalid ID. Requires Authentication and Admin User.
+    preconditions:
+      - User is authenticated and is an admin.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    parameters:
+      id: 999999
+    headers:
+      Authorization: Bearer {valid_admin_token}
+    expected_response:
+      status_code: 404
+  - id: TC035
+    group: Countries
+    name: Delete Country Without Authentication Returns Unauthorized
+    description: Attempt to delete a country without authentication.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 401
+  - id: TC036
+    group: Countries
+    name: Delete Country Without Admin Rights Returns Forbidden
+    description: Attempt to delete a country without admin rights. Requires Authentication.
+    preconditions:
+      - User is authenticated but is not an admin.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    expected_response:
+      status_code: 403
+  - id: TC037
+    group: Hotels
+    name: Get All Hotels Returns OK
+    description: Get a list of all hotels. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/all
+    method: GET
+    headers:
+      Authorization: Bearer {valid_token}
+    expected_response:
+      status_code: 200
+      body:
+        is array not empty
+  - id: TC038
+    group: Hotels
+    name: Get All Hotels Without Authentication Returns Unauthorized
+    description: Attempt to get all hotels without authentication.
+    endpoint: /api/hotels/all
+    method: GET
+    expected_response:
+      status_code: 401
+  - id: TC039
+    group: Hotels
+    name: Get Hotels by Page Returns OK
+    description: Get hotels by page and page size. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels
+    method: GET
+    parameters:
+      pageNumber: 1
+      pageSize: 10
+    headers:
+      Authorization: Bearer {valid_token}
+    expected_response:
+      status_code: 200
+      body:
+        totalCount: is integer greater than or equal to 0
+        pageNumber: 1
+        recordNumber: is integer greater than or equal to 0
+        items: is array
+  - id: TC040
+    group: Hotels
+    name: Get Hotels by Invalid Page Number Returns BadRequest
+    description: Attempt to get hotels with an invalid page number. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels
+    method: GET
+    parameters:
+      pageNumber: 0
+      pageSize: 10
+    headers:
+      Authorization: Bearer {valid_token}
+    expected_response:
+      status_code: 400
+  - id: TC041
+    group: Hotels
+    name: Get Hotels by Invalid Page Size Returns BadRequest
+    description: Attempt to get hotels with an invalid page size. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels
+    method: GET
+    parameters:
+      pageNumber: 1
+      pageSize: 0
+    headers:
+      Authorization: Bearer {valid_token}
+    expected_response:
+      status_code: 400
+  - id: TC042
+    group: Hotels
+    name: Get Hotels Without Authentication Returns Unauthorized
+    description: Attempt to get hotels without authentication.
+    endpoint: /api/hotels
+    method: GET
+    parameters:
+      pageNumber: 1
+      pageSize: 10
+    expected_response:
+      status_code: 401
+  - id: TC043
+    group: Hotels
+    name: Create Hotel with Valid Data Returns Created
+    description: Create a new hotel with valid data. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Test Hotel
+      address: Test Address
+      rating: 4.5
+      countryId: 1
+    expected_response:
+      status_code: 201
+      body:
+        name: Test Hotel
+        address: Test Address
+        rating: 4.5
+        countryId: 1
+        id: is integer greater than 0
+  - id: TC044
+    group: Hotels
+    name: Create Hotel with Missing Name Returns BadRequest
+    description: Attempt to create a hotel with a missing name. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      address: Test Address
+      rating: 4.5
+      countryId: 1
+    expected_response:
+      status_code: 400
+  - id: TC045
+    group: Hotels
+    name: Create Hotel with Missing Address Returns BadRequest
+    description: Attempt to create a hotel with a missing address. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Test Hotel
+      rating: 4.5
+      countryId: 1
+    expected_response:
+      status_code: 400
+  - id: TC046
+    group: Hotels
+    name: Create Hotel with Missing CountryId Returns BadRequest
+    description: Attempt to create a hotel with a missing countryId. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Test Hotel
+      address: Test Address
+      rating: 4.5
+    expected_response:
+      status_code: 400
+  - id: TC047
+    group: Hotels
+    name: Create Hotel with Invalid CountryId Returns BadRequest
+    description: Attempt to create a hotel with an invalid countryId. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Test Hotel
+      address: Test Address
+      rating: 4.5
+      countryId: 0
+    expected_response:
+      status_code: 400
+  - id: TC048
+    group: Hotels
+    name: Create Hotel Without Authentication Returns Unauthorized
+    description: Attempt to create a hotel without authentication.
+    endpoint: /api/hotels
+    method: POST
+    request_body:
+      name: Test Hotel
+      address: Test Address
+      rating: 4.5
+      countryId: 1
+    expected_response:
+      status_code: 401
+  - id: TC049
+    group: Hotels
+    name: Get Hotel by ID Returns OK
+    description: Get a hotel by its ID. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/{id}
+    method: GET
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: is string not empty
+  - id: TC050
+    group: Hotels
+    name: Get Hotel by Invalid ID Returns NotFound
+    description: Get a hotel by an invalid ID. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/{id}
+    method: GET
+    parameters:
+      id: 999999
+    headers:
+      Authorization: Bearer {valid_token}
+    expected_response:
+      status_code: 404
+  - id: TC051
+    group: Hotels
+    name: Get Hotel Without Authentication Returns Unauthorized
+    description: Attempt to get a hotel without authentication.
+    endpoint: /api/hotels/{id}
+    method: GET
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 401
+  - id: TC052
+    group: Hotels
+    name: Update Hotel with Valid Data Returns NoContent
+    description: Update an existing hotel with valid data. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/{id}
+    method: PUT
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Updated Hotel Name
+      address: Updated Hotel Address
+      rating: 4.8
+      countryId: 1
+    expected_response:
+      status_code: 204
+  - id: TC053
+    group: Hotels
+    name: Update Hotel with Missing Name Returns BadRequest
+    description: Attempt to update a hotel with a missing name. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/{id}
+    method: PUT
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      address: Updated Hotel Address
+      rating: 4.8
+      countryId: 1
+    expected_response:
+      status_code: 400
+  - id: TC054
+    group: Hotels
+    name: Update Hotel with Missing Address Returns BadRequest
+    description: Attempt to update a hotel with a missing address. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/{id}
+    method: PUT
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Updated Hotel Name
+      rating: 4.8
+      countryId: 1
+    expected_response:
+      status_code: 400
+  - id: TC055
+    group: Hotels
+    name: Update Hotel with Missing CountryId Returns BadRequest
+    description: Attempt to update a hotel with a missing countryId. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/{id}
+    method: PUT
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Updated Hotel Name
+      address: Updated Hotel Address
+      rating: 4.8
+    expected_response:
+      status_code: 400
+  - id: TC056
+    group: Hotels
+    name: Update Hotel with Invalid CountryId Returns BadRequest
+    description: Attempt to update a hotel with an invalid countryId. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/{id}
+    method: PUT
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Updated Hotel Name
+      address: Updated Hotel Address
+      rating: 4.8
+      countryId: 0
+    expected_response:
+      status_code: 400
+  - id: TC057
+    group: Hotels
+    name: Update Hotel with Invalid ID Returns NotFound
+    description: Attempt to update a hotel with an invalid ID. Requires Authentication.
+    preconditions:
+      - User is authenticated.
+    endpoint: /api/hotels/{id}
+    method: PUT
+    parameters:
+      id: 999999
+    headers:
+      Authorization: Bearer {valid_token}
+    request_body:
+      name: Updated Hotel Name
+      address: Updated Hotel Address
+      rating: 4.8
+      countryId: 1
+    expected_response:
+      status_code: 404
+  - id: TC058
+    group: Hotels
+    name: Update Hotel Without Authentication Returns Unauthorized
+    description: Attempt to update a hotel without authentication.
+    endpoint: /api/hotels/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      name: Updated Hotel Name
+      address: Updated Hotel Address
+      rating: 4.8
+      countryId: 1
+    expected_response:
+      status_code: 401
+  - id: TC059
+    group: Hotels
+    name: Delete Hotel by ID Returns NoContent
+    description: Delete a hotel by its ID. Requires Authentication and Admin User.
+    preconditions:
+      - User is authenticated and is an admin.
+    endpoint: /api/hotels/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_admin_token}
+    expected_response:
+      status_code: 204
+  - id: TC060
+    group: Hotels
+    name: Delete Hotel by Invalid ID Returns NotFound
+    description: Attempt to delete a hotel by an invalid ID. Requires Authentication and Admin User.
+    preconditions:
+      - User is authenticated and is an admin.
+    endpoint: /api/hotels/{id}
+    method: DELETE
+    parameters:
+      id: 999999
+    headers:
+      Authorization: Bearer {valid_admin_token}
+    expected_response:
+      status_code: 404
+  - id: TC061
+    group: Hotels
+    name: Delete Hotel Without Authentication Returns Unauthorized
+    description: Attempt to delete a hotel without authentication.
+    endpoint: /api/hotels/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 401
+  - id: TC062
+    group: Hotels
+    name: Delete Hotel Without Admin Rights Returns Forbidden
+    description: Attempt to delete a hotel without admin rights. Requires Authentication.
+    preconditions:
+      - User is authenticated but is not an admin.
+    endpoint: /api/hotels/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    headers:
+      Authorization: Bearer {valid_token}
+    expected_response:
+      status_code: 403
+
+```

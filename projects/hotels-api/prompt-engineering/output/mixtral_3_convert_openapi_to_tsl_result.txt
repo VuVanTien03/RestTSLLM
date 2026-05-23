@@ -1,0 +1,870 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Account
+    name: Create Account When Valid Data Returns OK
+    description: Criação de conta com dados válidos.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 200
+
+  - id: TC002
+    group: Account
+    name: Create Account When First Name Is Null Returns BadRequest
+    description: Criação de conta com firstName nulo.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: null
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC003
+    group: Account
+    name: Create Account When First Name Is Empty Returns BadRequest
+    description: Criação de conta com firstName vazio.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: ""
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Account
+    name: Create Account When Last Name Is Null Returns BadRequest
+    description: Criação de conta com lastName nulo.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: null
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Account
+    name: Create Account When Last Name Is Empty Returns BadRequest
+    description: Criação de conta com lastName vazio.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: ""
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Account
+    name: Create Account When Email Is Null Returns BadRequest
+    description: Criação de conta com email nulo.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: null
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: Account
+    name: Create Account When Email Is Empty Returns BadRequest
+    description: Criação de conta com email vazio.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: ""
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: Account
+    name: Create Account When Email Is Invalid Returns BadRequest
+    description: Criação de conta com email inválido.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "invalid-email"
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: Account
+    name: Create Account When Password Is Null Returns BadRequest
+    description: Criação de conta com password nulo.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: null
+    expected_response:
+      status_code: 400
+
+  - id: TC010
+    group: Account
+    name: Create Account When Password Is Empty Returns BadRequest
+    description: Criação de conta com password vazio.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC011
+    group: Account
+    name: Create Account When Password Too Short Returns BadRequest
+    description: Criação de conta com password curto (5 caracteres).
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Pass1"
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: Account
+    name: Create Account When Password Too Long Returns BadRequest
+    description: Criação de conta com password longo (16 caracteres).
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password1!Extra"
+    expected_response:
+      status_code: 400
+
+  - id: TC013
+    group: Account
+    name: Create Account When Password Has Minimum Length Returns OK
+    description: Criação de conta com password com tamanho mínimo (6 caracteres).
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Pass1!"
+    expected_response:
+      status_code: 200
+
+  - id: TC014
+    group: Account
+    name: Create Account When Password Has Maximum Length Returns OK
+    description: Criação de conta com password com tamanho máximo (15 caracteres).
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password1!Extra!"
+    expected_response:
+      status_code: 200
+
+  - id: TC015
+    group: Account
+    name: Create Account When Password Missing Number Returns BadRequest
+    description: Criação de conta com password sem número.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password!"
+    expected_response:
+      status_code: 400
+
+  - id: TC016
+    group: Account
+    name: Create Account When Password Missing Lowercase Letter Returns BadRequest
+    description: Criação de conta com password sem letra minúscula.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "PASSWORD1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC017
+    group: Account
+    name: Create Account When Password Missing Uppercase Letter Returns BadRequest
+    description: Criação de conta com password sem letra maiúscula.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC018
+    group: Account
+    name: Create Account When Password Missing Non Alphanumeric Character Returns BadRequest
+    description: Criação de conta com password sem caractere não alfanumérico.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: true
+      email: "john.doe@example.com"
+      password: "Password1"
+    expected_response:
+      status_code: 400
+
+  - id: TC019
+    group: Account
+    name: Generate Token When Valid Data Returns OK
+    description: Geração de token com dados válidos.
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Password1!' existe."
+    request_body:
+      email: "john.doe@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 200
+      body:
+        userId: is not null
+        token: is not null
+        refreshToken: is not null
+
+  - id: TC020
+    group: Account
+    name: Generate Token When Email Is Null Returns BadRequest
+    description: Geração de token com email nulo.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: null
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC021
+    group: Account
+    name: Generate Token When Email Is Empty Returns BadRequest
+    description: Geração de token com email vazio.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: ""
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC022
+    group: Account
+    name: Generate Token When Email Is Invalid Returns BadRequest
+    description: Geração de token com email inválido.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "invalid-email"
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC023
+    group: Account
+    name: Generate Token When Password Is Null Returns BadRequest
+    description: Geração de token com password nulo.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "john.doe@example.com"
+      password: null
+    expected_response:
+      status_code: 400
+
+  - id: TC024
+    group: Account
+    name: Generate Token When Password Is Empty Returns BadRequest
+    description: Geração de token com password vazio.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "john.doe@example.com"
+      password: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC025
+    group: Account
+    name: Generate Token When User Does Not Exist Returns Unauthorized
+    description: Geração de token com usuário inexistente.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "nonexistent.user@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 401
+
+  - id: TC026
+    group: Account
+    name: Generate Token When Password Is Incorrect Returns Unauthorized
+    description: Geração de token com senha incorreta.
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Password1!' existe."
+    request_body:
+      email: "john.doe@example.com"
+      password: "WrongPassword1!"
+    expected_response:
+      status_code: 401
+
+  - id: TC027
+    group: Account
+    name: Refresh Token When Valid Data Returns OK
+    description: Atualização de token com dados válidos.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    preconditions:
+      - "Usuário com token válido existe."
+    request_body:
+      userId: "valid-user-id"
+      token: "valid-token"
+      refreshToken: "valid-refresh-token"
+    expected_response:
+      status_code: 200
+      body:
+        userId: is not null
+        token: is not null
+        refreshToken: is not null
+
+  - id: TC028
+    group: Account
+    name: Refresh Token When User Id Is Null Returns BadRequest
+    description: Atualização de token com userId nulo.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: null
+      token: "valid-token"
+      refreshToken: "valid-refresh-token"
+    expected_response:
+      status_code: 400
+
+  - id: TC029
+    group: Account
+    name: Refresh Token When Token Is Null Returns BadRequest
+    description: Atualização de token com token nulo.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: "valid-user-id"
+      token: null
+      refreshToken: "valid-refresh-token"
+    expected_response:
+      status_code: 400
+
+  - id: TC030
+    group: Account
+    name: Refresh Token When Refresh Token Is Null Returns BadRequest
+    description: Atualização de token com refreshToken nulo.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: "valid-user-id"
+      token: "valid-token"
+      refreshToken: null
+    expected_response:
+      status_code: 400
+
+  - id: TC031
+    group: Account
+    name: Refresh Token When Token Is Invalid Returns Unauthorized
+    description: Atualização de token com token inválido.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: "valid-user-id"
+      token: "invalid-token"
+      refreshToken: "valid-refresh-token"
+    expected_response:
+      status_code: 401
+
+  - id: TC032
+    group: Account
+    name: Refresh Token When Refresh Token Is Invalid Returns Unauthorized
+    description: Atualização de token com refreshToken inválido.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: "valid-user-id"
+      token: "valid-token"
+      refreshToken: "invalid-refresh-token"
+    expected_response:
+      status_code: 401
+
+  - id: TC033
+    group: Countries
+    name: Get Countries Returns OK
+    description: Obter lista de países.
+    endpoint: /api/countries
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        - name: is string not empty
+          shortName: is string or null
+          id: is integer greater than 0
+
+  - id: TC034
+    group: Countries
+    name: Create Country When Valid Data Returns Created
+    description: Criação de país com dados válidos.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer valid-token"
+    request_body:
+      name: "Brazil"
+      shortName: "BR"
+    expected_response:
+      status_code: 201
+      body:
+        name: "Brazil"
+        shortName: "BR"
+        id: is integer greater than 0
+
+  - id: TC035
+    group: Countries
+    name: Create Country When Name Is Null Returns BadRequest
+    description: Criação de país com nome nulo.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer valid-token"
+    request_body:
+      name: null
+      shortName: "BR"
+    expected_response:
+      status_code: 400
+
+  - id: TC036
+    group: Countries
+    name: Create Country When Name Is Empty Returns BadRequest
+    description: Criação de país com nome vazio.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer valid-token"
+    request_body:
+      name: ""
+      shortName: "BR"
+    expected_response:
+      status_code: 400
+
+  - id: TC037
+    group: Countries
+    name: Create Country When Token Is Invalid Returns Unauthorized
+    description: Criação de país com token inválido.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer invalid-token"
+    request_body:
+      name: "Brazil"
+      shortName: "BR"
+    expected_response:
+      status_code: 401
+
+  - id: TC038
+    group: Countries
+    name: Create Country When Without Token Returns Unauthorized
+    description: Criação de país sem token.
+    endpoint: /api/countries
+    method: POST
+    request_body:
+      name: "Brazil"
+      shortName: "BR"
+    expected_response:
+      status_code: 401
+
+  - id: TC039
+    group: Countries
+    name: Get Country By Id When Valid Id Returns OK
+    description: Obter país existente pelo ID.
+    endpoint: /api/countries/{id}
+    method: GET
+    preconditions:
+      - "Existe um país com ID 1"
+    request_parameters:
+      id: 1
+    expected_response:
+      status_code: 200
+      body:
+        name: is string not empty
+        shortName: is string or null
+        id: 1
+
+  - id: TC040
+    group: Countries
+    name: Get Country By Id When Id Not Exists Returns NotFound
+    description: Tentativa de obter país com ID que não existe.
+    endpoint: /api/countries/9999999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC041
+    group: Countries
+    name: Update Country When Valid Data Returns NoContent
+    description: Atualização de país com dados válidos.
+    endpoint: /api/countries/{id}
+    method: PUT
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      id: 1
+    request_body:
+      name: "Updated Brazil"
+      shortName: "BR"
+    expected_response:
+      status_code: 204
+
+  - id: TC042
+    group: Countries
+    name: Update Country When Name Is Null Returns BadRequest
+    description: Atualização de país com nome nulo.
+    endpoint: /api/countries/{id}
+    method: PUT
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      id: 1
+    request_body:
+      name: null
+      shortName: "BR"
+    expected_response:
+      status_code: 400
+
+  - id: TC043
+    group: Countries
+    name: Update Country When Name Is Empty Returns BadRequest
+    description: Atualização de país com nome vazio.
+    endpoint: /api/countries/{id}
+    method: PUT
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      id: 1
+    request_body:
+      name: ""
+      shortName: "BR"
+    expected_response:
+      status_code: 400
+
+  - id: TC044
+    group: Countries
+    name: Update Country When Id Not Exists Returns NotFound
+    description: Tentativa de atualizar país com ID que não existe.
+    endpoint: /api/countries/9999999
+    method: PUT
+    headers:
+      Authorization: "Bearer valid-token"
+    request_body:
+      name: "Updated Brazil"
+      shortName: "BR"
+    expected_response:
+      status_code: 404
+
+  - id: TC045
+    group: Countries
+    name: Update Country When Token Is Invalid Returns Unauthorized
+    description: Atualização de país com token inválido.
+    endpoint: /api/countries/{id}
+    method: PUT
+    headers:
+      Authorization: "Bearer invalid-token"
+    request_parameters:
+      id: 1
+    request_body:
+      name: "Updated Brazil"
+      shortName: "BR"
+    expected_response:
+      status_code: 401
+
+  - id: TC046
+    group: Countries
+    name: Update Country When Without Token Returns Unauthorized
+    description: Atualização de país sem token.
+    endpoint: /api/countries/{id}
+    method: PUT
+    request_parameters:
+      id: 1
+    request_body:
+      name: "Updated Brazil"
+      shortName: "BR"
+    expected_response:
+      status_code: 401
+
+  - id: TC047
+    group: Countries
+    name: Delete Country When Valid Data Returns NoContent
+    description: Exclusão de país com dados válidos.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    headers:
+      Authorization: "Bearer valid-token"
+    preconditions:
+      - "Usuário é admin"
+    request_parameters:
+      id: 1
+    expected_response:
+      status_code: 204
+
+  - id: TC048
+    group: Countries
+    name: Delete Country When User Is Not Admin Returns Forbidden
+    description: Exclusão de país por usuário não admin.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    headers:
+      Authorization: "Bearer valid-token"
+    preconditions:
+      - "Usuário não é admin"
+    request_parameters:
+      id: 1
+    expected_response:
+      status_code: 403
+
+  - id: TC049
+    group: Countries
+    name: Delete Country When Id Not Exists Returns NotFound
+    description: Tentativa de excluir país com ID que não existe.
+    endpoint: /api/countries/9999999
+    method: DELETE
+    headers:
+      Authorization: "Bearer valid-token"
+    preconditions:
+      - "Usuário é admin"
+    expected_response:
+      status_code: 404
+
+  - id: TC050
+    group: Countries
+    name: Delete Country When Token Is Invalid Returns Unauthorized
+    description: Exclusão de país com token inválido.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    headers:
+      Authorization: "Bearer invalid-token"
+    preconditions:
+      - "Usuário é admin"
+    request_parameters:
+      id: 1
+    expected_response:
+      status_code: 401
+
+  - id: TC051
+    group: Countries
+    name: Delete Country When Without Token Returns Unauthorized
+    description: Exclusão de país sem token.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    preconditions:
+      - "Usuário é admin"
+    request_parameters:
+      id: 1
+    expected_response:
+      status_code: 401
+
+  - id: TC052
+    group: Hotels
+    name: Get All Hotels When Valid Data Returns OK
+    description: Obter lista de hotéis.
+    endpoint: /api/hotels/all
+    method: GET
+    headers:
+      Authorization: "Bearer valid-token"
+    expected_response:
+      status_code: 200
+      body:
+        - name: is string not empty
+          address: is string not empty
+          rating: is number or null
+          countryId: is integer greater than 0
+          id: is integer greater than 0
+
+  - id: TC053
+    group: Hotels
+    name: Get All Hotels When Token Is Invalid Returns Unauthorized
+    description: Obter lista de hotéis com token inválido.
+    endpoint: /api/hotels/all
+    method: GET
+    headers:
+      Authorization: "Bearer invalid-token"
+    expected_response:
+      status_code: 401
+
+  - id: TC054
+    group: Hotels
+    name: Get All Hotels When Without Token Returns Unauthorized
+    description: Obter lista de hotéis sem token.
+    endpoint: /api/hotels/all
+    method: GET
+    expected_response:
+      status_code: 401
+
+  - id: TC055
+    group: Hotels
+    name: Get Hotels When Valid Data Returns OK
+    description: Obter lista de hotéis paginada.
+    endpoint: /api/hotels
+    method: GET
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      pageNumber: 1
+      pageSize: 10
+    expected_response:
+      status_code: 200
+      body:
+        totalCount: is integer greater than 0
+        pageNumber: 1
+        recordNumber: is integer greater than 0
+        items:
+          - name: is string not empty
+            address: is string not empty
+            rating: is number or null
+            countryId: is integer greater than 0
+            id: is integer greater than 0
+
+  - id: TC056
+    group: Hotels
+    name: Get Hotels When Page Number Is Null Returns BadRequest
+    description: Obter lista de hotéis com pageNumber nulo.
+    endpoint: /api/hotels
+    method: GET
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      pageNumber: null
+      pageSize: 10
+    expected_response:
+      status_code: 400
+
+  - id: TC057
+    group: Hotels
+    name: Get Hotels When Page Number Is Zero Returns BadRequest
+    description: Obter lista de hotéis com pageNumber zero.
+    endpoint: /api/hotels
+    method: GET
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      pageNumber: 0
+      pageSize: 10
+    expected_response:
+      status_code: 400
+
+  - id: TC058
+    group: Hotels
+    name: Get Hotels When Page Number Is Negative Returns BadRequest
+    description: Obter lista de hotéis com pageNumber negativo.
+    endpoint: /api/hotels
+    method: GET
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      pageNumber: -1
+      pageSize: 10
+    expected_response:
+      status_code: 400
+
+  - id: TC059
+    group: Hotels
+    name: Get Hotels When Page Size Is Null Returns BadRequest
+    description: Obter lista de hotéis com pageSize nulo.
+    endpoint: /api/hotels
+    method: GET
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      pageNumber: 1
+      pageSize: null
+    expected_response:
+      status_code: 400
+
+  - id: TC060
+    group: Hotels
+    name: Get Hotels When Page Size Is Zero Returns BadRequest
+    description: Obter lista de hotéis com pageSize zero.
+    endpoint: /api/hotels
+    method: GET
+    headers:
+      Authorization: "Bearer valid-token"
+    request_parameters:
+      pageNumber: 1
+      pageSize: 0
+    expected_response:
+      status_code: 400
+
+  - id: TC061
+    group: Hotels
+    name: Get Hotels When Page Size Is Negative Returns BadRequest
+    description: Obter lista de hotéis com pageSize negativo.
+    endpoint: /api/

@@ -1,0 +1,74 @@
+<think>
+OK
+</think>
+
+```yaml
+test_cases:
+  - id: TC001
+    group: People
+    name: Create Person When Valid Data Returns Created
+    description: Criação de pessoa com dados válidos.
+    preconditions:
+      - "Usuário válido com token gerado {valid_token}"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Valid Name"
+      age: 25
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "Valid Name"
+        age: 25
+
+  - id: TC002
+    group: Users
+    name: Create User When Valid Data Returns OK
+    description: Criação de usuário com dados válidos.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validUser1"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 200
+
+  - id: TC003
+    group: Users
+    name: Authenticate User Valid Credentials Returns Token
+    description: Autenticação com credenciais válidas
+    endpoint: /users/token
+    method: POST
+    request_body:
+      nickname: "validUser2"
+      password: "ValidPass2"
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+
+  - id: TC004
+    group: App
+    name: Update Logo Valid File Returns OK
+    description: Upload de arquivo válido
+    endpoint: /app/logo
+    method: PUT
+    form_data:
+      file: <valid_image.jpg>
+    expected_response:
+      status_code: 200
+
+  - id: TC005
+    group: App
+    name: Update Logo Invalid File Type Returns 415
+    description: Upload de arquivo inválido
+    endpoint: /app/logo
+    method: PUT
+    body:
+      file: <invalid.json>
+    expected_response:
+      status_code: 415
+```

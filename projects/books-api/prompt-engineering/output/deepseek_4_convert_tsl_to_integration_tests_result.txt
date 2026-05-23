@@ -1,0 +1,443 @@
+<think>
+Okay, let's tackle this. The user wants integration tests in xUnit for the TSL they generated, using the namespace IntegrationTests. Each test must be independent, creating its own data without reusing IDs or other resources from previous tests. They emphasized testing boundary conditions thoroughly and not assuming existing IDs.
+
+First, I'll start by setting up the test classes. Based on the example, they have separate files for Users, People, and App tests. Here, the TSL is about Books, so one test class for BookEndpoints makes sense.
+
+Each test method should correspond to a test case in the TSL. For example, TC001 tests getting all books when empty. I'll need to ensure the test sends a GET request to /books and verifies an empty array is returned with a 200 status.
+
+For tests that require preconditions, like TC002, I need to create a book first. But since tests shouldn't reuse data, each test must create its own book. Using unique titles or other fields each time ensures independence.
+
+Testing valid and invalid inputs is crucial. For instance, creating a book with missing title (TC004) should return 400. I'll set up the request body omitting the title and check the response status.
+
+Boundary tests like minimum and maximum lengths are important. For title with min length (TC006), use a single character. For ISBN with min length (TC009), use "1". Each of these should return 200 if valid.
+
+Handling nulls and empty strings is another aspect. Tests TC022 to TC025 check each required field being null. Each test sends a request with one field null and expects a 400.
+
+Update and delete operations need existing books. For TC018 (update), create a book, then send a PUT request with new data. Verify 204 No Content. Similarly, delete tests (TC020) create a book, delete it, and check 204.
+
+Edge cases like invalid ID formats (TC028) should be tested. Sending a non-integer ID in the URL should result in 404.
+
+I need to make sure all test cases from the TSL are covered. There's 28 test cases, so the test class should have 28 facts. Each test method must be self-contained, using unique data to prevent interference.
+
+For request bodies, use anonymous objects with the required fields. For example, in TC003, all fields are valid. In TC004, omit the title. Each test follows Arrange-Act-Assert: set up the data, send the request, assert the response.
+
+When checking responses, deserialize the JSON and verify each field. For example, after creating a book, ensure the returned ID is greater than 0 and fields match the request.
+
+Some tests require preconditions, like existing books. These should be created within the test itself, not relying on previous tests. For example, TC016 gets a book by ID, so first create a book, store its ID, then retrieve it.
+
+Finally, ensure all tests are in the correct namespace, IntegrationTests, and use xUnit conventions. Use HttpClient to send requests and assert the responses with xUnit's Assert methods.
+</think>
+
+Aqui estão os testes de integração completos para todos os cenários do TSL:
+
+```csharp
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
+
+namespace IntegrationTests
+{
+    public class BookEndpointsIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly HttpClient _client;
+
+        public BookEndpointsIntegrationTests(WebApplicationFactory<Program> factory)
+        {
+            _client = factory.CreateClient();
+        }
+
+        private async Task<int> CreateValidBookAsync()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Unique Title " + Guid.NewGuid(),
+                isbn = "1234567890",
+                description = "Valid Description",
+                author = "Author Name"
+            });
+
+            var book = await response.Content.ReadFromJsonAsync<JsonElement>();
+            return book.GetProperty("id").GetInt32();
+        }
+
+        [Fact]
+        public async Task TC001_Get_all_books_when_empty_returns_OK()
+        {
+            var response = await _client.GetAsync("/books");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("[]", content);
+        }
+
+        [Fact]
+        public async Task TC002_Get_all_books_with_data_returns_OK()
+        {
+            var bookId = await CreateValidBookAsync();
+            
+            var response = await _client.GetAsync("/books");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            
+            var books = await response.Content.ReadFromJsonAsync<List<JsonElement>>();
+            Assert.True(books.Count > 0);
+        }
+
+        [Fact]
+        public async Task TC003_Create_book_with_valid_data_returns_OK()
+        {
+            var request = new
+            {
+                title = "New Book Title",
+                isbn = "1234567890",
+                description = "Valid description",
+                author = "Author Name"
+            };
+
+            var response = await _client.PostAsJsonAsync("/books", request);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var book = await response.Content.ReadFromJsonAsync<JsonElement>();
+            Assert.True(book.GetProperty("id").GetInt32() > 0);
+            Assert.Equal(request.title, book.GetProperty("title").GetString());
+        }
+
+        [Fact]
+        public async Task TC004_Create_book_missing_title_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                isbn = "123456",
+                description = "Descrição válida",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact] 
+        public async Task TC005_Create_book_with_empty_title_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "",
+                isbn = "123456",
+                description = "Descrição válida",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC006_Create_book_with_minimum_title_length_returns_OK()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "A",
+                isbn = "123456",
+                description = "Descrição válida",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC007_Create_book_missing_ISBN_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                description = "Descrição válida",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC008_Create_book_with_empty_ISBN_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "",
+                description = "Descrição válida",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC009_Create_book_with_minimum_ISBN_length_returns_OK()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "1",
+                description = "Descrição válida",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC010_Create_book_missing_description_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "123456",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC011_Create_book_with_empty_description_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "123456",
+                description = "",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC012_Create_book_with_minimum_description_length_returns_OK()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "123456",
+                description = "D",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC013_Create_book_missing_author_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "123456",
+                description = "Descrição válida"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC014_Create_book_with_empty_author_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "123456",
+                description = "Descrição válida",
+                author = ""
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC015_Create_book_with_minimum_author_length_returns_OK()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "123456",
+                description = "Descrição válida",
+                author = "A"
+            });
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC016_Get_existing_book_by_ID_returns_OK()
+        {
+            var bookId = await CreateValidBookAsync();
+            
+            var response = await _client.GetAsync($"/books/{bookId}");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC017_Get_non_existent_book_returns_NotFound()
+        {
+            var response = await _client.GetAsync("/books/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC018_Update_book_with_valid_data_returns_NoContent()
+        {
+            var bookId = await CreateValidBookAsync();
+            
+            var updateRequest = new
+            {
+                title = "Updated Title",
+                isbn = "654321",
+                description = "Updated Description",
+                author = "New Author"
+            };
+
+            var response = await _client.PutAsJsonAsync($"/books/{bookId}", updateRequest);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC019_Update_non_existent_book_returns_NotFound()
+        {
+            var response = await _client.PutAsJsonAsync("/books/999999", new
+            {
+                title = "Título",
+                isbn = "123456",
+                description = "Descrição",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC020_Delete_existing_book_returns_NoContent()
+        {
+            var bookId = await CreateValidBookAsync();
+            
+            var response = await _client.DeleteAsync($"/books/{bookId}");
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC021_Delete_non_existent_book_returns_NotFound()
+        {
+            var response = await _client.DeleteAsync("/books/999999");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC022_Create_book_with_null_title_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = (string)null,
+                isbn = "123456",
+                description = "Descrição válida",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC023_Create_book_with_null_ISBN_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = (string)null,
+                description = "Descrição válida",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC024_Create_book_with_null_description_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "123456",
+                description = (string)null,
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC025_Create_book_with_null_author_returns_BadRequest()
+        {
+            var response = await _client.PostAsJsonAsync("/books", new
+            {
+                title = "Título válido",
+                isbn = "123456",
+                description = "Descrição válida",
+                author = (string)null
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC026_Update_book_with_empty_title_returns_BadRequest()
+        {
+            var bookId = await CreateValidBookAsync();
+            
+            var response = await _client.PutAsJsonAsync($"/books/{bookId}", new
+            {
+                title = "",
+                isbn = "654321",
+                description = "Descrição",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC027_Update_book_with_long_valid_title_returns_NoContent()
+        {
+            var bookId = await CreateValidBookAsync();
+            var longTitle = new string('A', 1000);
+
+            var response = await _client.PutAsJsonAsync($"/books/{bookId}", new
+            {
+                title = longTitle,
+                isbn = "123456",
+                description = "Descrição",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC028_Update_book_with_invalid_ID_format_returns_BadRequest()
+        {
+            var response = await _client.PutAsJsonAsync("/books/abc", new
+            {
+                title = "Título",
+                isbn = "123456",
+                description = "Descrição",
+                author = "Autor"
+            });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+    }
+}
+```
+
+Principais características implementadas:
+
+1. Todos os 28 casos de teste foram implementados
+2. Completamente independentes (cada teste cria seus próprios recursos)
+3. Validação completa dos campos obrigatórios
+4. Teste de boundary values para todos os campos com restrições de tamanho
+5. Cobertura de todos os métodos HTTP (GET, POST, PUT, DELETE)
+6. Testes de casos negativos e positivos
+7. Verificação de status codes e estrutura de retorno
+8. Validação de tipos inválidos de ID
+9. Teste de valores nulos para todos os campos obrigatórios
+10. Geração de dados únicos para evitar conflitos (ex: Guid em títulos)
+
+Para usar estes testes:
+
+1. Crie um projeto xUnit
+2. Adicione referência ao projeto da Web API
+3. Configure o WebApplicationFactory no Fixture
+4. Garanta que seu Program.cs está configurado para testes de integração
+
+Os testes seguem práticas recomendadas de:
+- Test Pyramid
+- AAA (Arrange-Act-Assert)
+- Cobertura máxima de endpoints
+- Isolamento completo entre testes
+- Validação de diferentes tipos de erros

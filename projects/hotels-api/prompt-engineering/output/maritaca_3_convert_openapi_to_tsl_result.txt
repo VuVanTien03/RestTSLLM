@@ -1,0 +1,354 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Account
+    name: Create_User_With_Valid_Data_Returns_OK
+    description: Criação de um usuário com dados válidos.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      email: "john.doe@example.com"
+      password: "P@ssw0rd"
+      isAdmin: false
+    expected_response:
+      status_code: 200
+
+  - id: TC002
+    group: Account
+    name: Create_User_With_Invalid_Email_Returns_BadRequest
+    description: Tentativa de criar um usuário com email inválido.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "Jane"
+      lastName: "Doe"
+      email: "jane.doeexample.com"
+      password: "P@ssw0rd"
+      isAdmin: false
+    expected_response:
+      status_code: 400
+
+  - id: TC003
+    group: Account
+    name: Create_User_With_Too_Long_Password_Returns_BadRequest
+    description: Tentativa de criar um usuário com senha muito longa.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "Alice"
+      lastName: "Smith"
+      email: "alice.smith@example.com"
+      password: "Password1234567890"
+      isAdmin: false
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Account
+    name: Create_User_With_Password_Missing_Requirement_Returns_BadRequest
+    description: Tentativa de criar um usuário com senha que não atende aos requisitos.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "Bob"
+      lastName: "Johnson"
+      email: "bob.johnson@example.com"
+      password: "pass123" # Sem letra maiúscula
+      isAdmin: false
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Account
+    name: Authenticate_User_With_Valid_Credentials_Returns_OK
+    description: Autenticação de usuário com credenciais válidas.
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "Usuário com email 'valid.user@example.com' e senha 'V@lidP4ssw0rd' deve existir."
+    request_body:
+      email: "valid.user@example.com"
+      password: "V@lidP4ssw0rd"
+    expected_response:
+      status_code: 200
+      body:
+        token: is non-empty string
+        userId: is non-empty string
+        refreshToken: is non-empty string
+
+  - id: TC006
+    group: Account
+    name: Authenticate_User_With_Invalid_Credentials_Returns_Unauthorized
+    description: Autenticação de usuário com credenciais inválidas.
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "Usuário com email 'invalid.user@example.com' não deve existir."
+    request_body:
+      email: "invalid.user@example.com"
+      password: "InvalidP@ss"
+    expected_response:
+      status_code: 401
+
+  - id: TC007
+    group: Account
+    name: Refresh_Token_With_Valid_Credentials_Returns_OK
+    description: Atualização de token com credenciais válidas.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    preconditions:
+      - "Usuário com token de refresh válido deve existir."
+    request_body:
+      userId: "{valid_user_id}"
+      token: "{valid_token}"
+      refreshToken: "{valid_refresh_token}"
+    expected_response:
+      status_code: 200
+      body:
+        token: is non-empty string
+        userId: is non-empty string
+        refreshToken: is non-empty string
+
+  - id: TC008
+    group: Account
+    name: Refresh_Token_With_Invalid_Credentials_Returns_Unauthorized
+    description: Atualização de token com token de refresh inválido.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: "{invalid_user_id}"
+      token: "{invalid_token}"
+      refreshToken: "{invalid_refresh_token}"
+    expected_response:
+      status_code: 401
+
+  - id: TC009
+    group: Countries
+    name: Get_List_Of_Countries_Returns_OK
+    description: Obter lista de países.
+    endpoint: /api/countries
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        - name: is non-empty string
+          shortName: is optional string
+          id: is integer
+
+  - id: TC010
+    group: Countries
+    name: Create_Country_With_Valid_Data_Returns_Created
+    description: Criação de país com dados válidos.
+    endpoint: /api/countries
+    method: POST
+    request_body:
+      name: "New Country"
+      shortName: "NC"
+    expected_response:
+      status_code: 201
+      body:
+        name: "New Country"
+        shortName: "NC"
+        id: is integer greater than 0
+
+  - id: TC011
+    group: Countries
+    name: Create_Country_With_Empty_Name_Returns_BadRequest
+    description: Tentativa de criar um país com nome vazio.
+    endpoint: /api/countries
+    method: POST
+    request_body:
+      name: ""
+      shortName: "NC"
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: Countries
+    name: Get_Country_By_Id_With_Valid_Id_Returns_OK
+    description: Obter país por ID válido.
+    endpoint: /api/countries/{id}
+    method: GET
+    preconditions:
+      - "País com ID {country_id} deve existir."
+    parameters:
+      id: "{country_id}"
+    expected_response:
+      status_code: 200
+      body:
+        name: "Expected Country Name"
+        shortName: is optional string
+        id: "{country_id}"
+
+  - id: TC013
+    group: Countries
+    name: Get_Country_By_Id_With_Invalid_Id_Returns_NotFound
+    description: Tentativa de obter país por ID inexistente.
+    endpoint: /api/countries/999999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC014
+    group: Countries
+    name: Update_Country_With_Valid_Data_Returns_NoContent
+    description: Atualizar país com dados válidos.
+    endpoint: /api/countries/{id}
+    method: PUT
+    preconditions:
+      - "País com ID {country_id} deve existir."
+    parameters:
+      id: "{country_id}"
+    request_body:
+      name: "Updated Country Name"
+      shortName: "UCN"
+    expected_response:
+      status_code: 204
+
+  - id: TC015
+    group: Countries
+    name: Update_Country_With_Invalid_Id_Returns_NotFound
+    description: Tentativa de atualizar país com ID inexistente.
+    endpoint: /api/countries/999999
+    method: PUT
+    request_body:
+      name: "Updated Country Name"
+      shortName: "UCN"
+    expected_response:
+      status_code: 404
+
+  - id: TC016
+    group: Countries
+    name: Delete_Country_With_Valid_Id_Returns_NoContent
+    description: Deletar país com ID válido.
+    endpoint: /api/countries/{id}
+    method: DELETE
+    preconditions:
+      - "País com ID {country_id} deve existir e o usuário deve ser administrador."
+    parameters:
+      id: "{country_id}"
+    expected_response:
+      status_code: 204
+
+  - id: TC017
+    group: Countries
+    name: Delete_Country_With_Invalid_Id_Returns_NotFound
+    description: Tentativa de deletar país com ID inexistente.
+    endpoint: /api/countries/999999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  - id: TC018
+    group: Hotels
+    name: Get_All_Hotels_Returns_OK
+    description: Obter todos os hotéis.
+    endpoint: /api/hotels/all
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        - name: is non-empty string
+          address: is non-empty string
+          rating: is optional double
+          countryId: is integer
+          id: is integer
+
+  - id: TC019
+    group: Hotels
+    name: Get_Paged_List_Of_Hotels_Returns_OK
+    description: Obter lista paginada de hotéis.
+    endpoint: /api/hotels
+    method: GET
+    parameters:
+      pageNumber: 1
+      pageSize: 10
+    expected_response:
+      status_code: 200
+      body:
+        totalCount: is integer greater than or equal to 0
+        pageNumber: 1
+        recordNumber: 10
+        items:
+          - name: is non-empty string
+            address: is non-empty string
+            rating: is optional double
+            countryId: is integer
+            id: is integer
+
+  - id: TC020
+    group: Hotels
+    name: Create_Hotel_With_Valid_Data_Returns_Created
+    description: Criação de hotel com dados válidos.
+    endpoint: /api/hotels
+    method: POST
+    request_body:
+      name: "New Hotel"
+      address: "123 Main St"
+      rating: 4.5
+      countryId: 1
+    expected_response:
+      status_code: 201
+      body:
+        name: "New Hotel"
+        address: "123 Main St"
+        rating: 4.5
+        countryId: 1
+        id: is integer greater than 0
+
+  - id: TC021
+    group: Hotels
+    name: Update_Hotel_With_Valid_Data_Returns_NoContent
+    description: Atualizar hotel com dados válidos.
+    endpoint: /api/hotels/{id}
+    method: PUT
+    preconditions:
+      - "Hotel com ID {hotel_id} deve existir."
+    parameters:
+      id: "{hotel_id}"
+    request_body:
+      name: "Updated Hotel"
+      address: "456 Main St"
+      rating: 4.8
+      countryId: 1
+    expected_response:
+      status_code: 204
+
+  - id: TC022
+    group: Hotels
+    name: Update_Hotel_With_Invalid_Id_Returns_NotFound
+    description: Tentativa de atualizar hotel com ID inexistente.
+    endpoint: /api/hotels/999999
+    method: PUT
+    request_body:
+      name: "Updated Hotel"
+      address: "456 Main St"
+      rating: 4.8
+      countryId: 1
+    expected_response:
+      status_code: 404
+
+  - id: TC023
+    group: Hotels
+    name: Delete_Hotel_With_Valid_Id_Returns_NoContent
+    description: Deletar hotel com ID válido.
+    endpoint: /api/hotels/{id}
+    method: DELETE
+    preconditions:
+      - "Hotel com ID {hotel_id} deve existir e o usuário deve ser administrador."
+    parameters:
+      id: "{hotel_id}"
+    expected_response:
+      status_code: 204
+
+  - id: TC024
+    group: Hotels
+    name: Delete_Hotel_With_Invalid_Id_Returns_NotFound
+    description: Tentativa de deletar hotel com ID inexistente.
+    endpoint: /api/hotels/999999
+    method: DELETE
+    expected_response:
+      status_code: 404
+```

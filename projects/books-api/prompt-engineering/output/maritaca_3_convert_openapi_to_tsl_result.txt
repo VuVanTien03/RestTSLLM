@@ -1,0 +1,159 @@
+```yaml
+test_cases:
+  # Get All Books
+  - id: TC001
+    group: BookEndpoints
+    name: GetAllBooks_WhenNoFilter_ReturnsOK
+    description: Recuperar todos os livros sem filtros.
+    endpoint: /books
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        - is array not empty
+
+  # Create Book
+  - id: TC002
+    group: BookEndpoints
+    name: CreateBook_WithValidData_ReturnsOK
+    description: Criar um livro com dados válidos.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Sample Title"
+      isbn: "123-456789-1230"
+      description: "Sample Description"
+      author: "Sample Author"
+    expected_response:
+      status_code: 200
+      body:
+        title: "Sample Title"
+        isbn: "123-456789-1230"
+        description: "Sample Description"
+        author: "Sample Author"
+
+  - id: TC003
+    group: BookEndpoints
+    name: CreateBook_WithMissingRequiredField_ReturnsBadRequest
+    description: Tentativa de criar um livro sem um campo requerido (title).
+    endpoint: /books
+    method: POST
+    request_body:
+      isbn: "123-456789-1230"
+      description: "Sample Description"
+      author: "Sample Author"
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: BookEndpoints
+    name: CreateBook_WithEmptyStringForTitle_ReturnsBadRequest
+    description: Tentativa de criar um livro com título vazio.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: ""
+      isbn: "123-456789-1230"
+      description: "Sample Description"
+      author: "Sample Author"
+    expected_response:
+      status_code: 400
+
+  # Get Book By Id
+  - id: TC005
+    group: BookEndpoints
+    name: GetBookById_WithValidId_ReturnsOK
+    description: Recuperar um livro por ID válido.
+    endpoint: /books/{id}
+    method: GET
+    parameters:
+      - name: id
+        value: 1
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        title: is string not empty
+        isbn: is string not empty
+        description: is string not empty
+        author: is string not empty
+
+  - id: TC006
+    group: BookEndpoints
+    name: GetBookById_WithInvalidId_ReturnsNotFound
+    description: Tentativa de recuperar um livro por ID inexistente.
+    endpoint: /books/999999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  # Update Book
+  - id: TC007
+    group: BookEndpoints
+    name: UpdateBook_WithValidData_ReturnsNoContent
+    description: Atualizar um livro com dados válidos.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      - name: id
+        value: 1
+    request_body:
+      title: "Updated Title"
+      isbn: "123-456789-1231"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 204
+
+  - id: TC008
+    group: BookEndpoints
+    name: UpdateBook_WithMissingRequiredField_ReturnsBadRequest
+    description: Tentativa de atualizar um livro sem um campo requerido (title).
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      - name: id
+        value: 1
+    request_body:
+      isbn: "123-456789-1231"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: BookEndpoints
+    name: UpdateBook_WithNonexistentId_ReturnsNotFound
+    description: Tentativa de atualizar um livro com ID inexistente.
+    endpoint: /books/999999
+    method: PUT
+    request_body:
+      title: "Updated Title"
+      isbn: "123-456789-1231"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 404
+
+  # Delete Book
+  - id: TC010
+    group: BookEndpoints
+    name: DeleteBookById_WithValidId_ReturnsNoContent
+    description: Deletar um livro por ID válido.
+    endpoint: /books/{id}
+    method: DELETE
+    parameters:
+      - name: id
+        value: 1
+    expected_response:
+      status_code: 204
+
+  - id: TC011
+    group: BookEndpoints
+    name: DeleteBookById_WithInvalidId_ReturnsNotFound
+    description: Tentativa de deletar um livro por ID inexistente.
+    endpoint: /books/999999
+    method: DELETE
+    expected_response:
+      status_code: 404
+```

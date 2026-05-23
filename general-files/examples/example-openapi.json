@@ -1,0 +1,338 @@
+{
+	"openapi": "3.0.1",
+	"info": {
+		"title": "People Management API",
+		"description": "API to manage people.",
+		"contact": {
+			"name": "Foo Bar",
+			"url": "https://github.com/foobar"
+		},
+		"license": {
+			"name": "MIT",
+			"url": "http://opensource.org/licenses/MIT"
+		},
+		"version": "v1"
+	},
+	"paths": {
+		"/people": {
+			"post": {
+				"tags": [
+					"People"
+				],
+				"summary": "Create person",
+				"description": "Create person.",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreatePersonRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"201": {
+						"description": "Person created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PersonResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Token invalid or missing"
+					},
+					"400": {
+						"description": "Invalid properties",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"Bearer": []
+					}
+				]
+			}
+		},
+		"/people/{id}": {
+			"get": {
+				"tags": [
+					"People"
+				],
+				"summary": "Get person",
+				"description": "Get an existing person created by user.",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Id of person",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Person exists and was returned",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PersonResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Token invalid or missing"
+					},
+					"404": {
+						"description": "Person does not exists"
+					}
+				},
+				"security": [
+					{
+						"Bearer": []
+					}
+				]
+			}
+		},
+		"/users": {
+			"post": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Create user",
+				"description": "Creates new user.",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUser"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "User created"
+					},
+					"400": {
+						"description": "Invalid fields or user exists",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/token": {
+			"post": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Authenticate user",
+				"description": "Generate token to authenticate People endpoints by nickname and password.",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUser"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Token generated successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Token"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid credentials",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/app/logo": {
+			"put": {
+				"tags": [
+					"App"
+				],
+				"summary": "Update App Logo",
+				"description": "Update App logo with a file",
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"description": "Form with 'fileContent' with a file",
+										"format": "binary"
+									}
+								}
+							},
+							"encoding": {
+								"fileContent": {
+									"style": "form"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"415": {
+						"description": "Unsupported Media Type"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ErrorResponse": {
+				"type": "object",
+				"properties": {
+					"error": {
+						"type": "string",
+						"default": "The field <property> is an invalid field (...)"
+					}
+				},
+				"additionalProperties": false
+			},
+			"CreatePersonRequest": {
+				"required": [
+					"name",
+					"age"
+				],
+				"type": "object",
+				"properties": {
+					"name": {
+						"maxLength": 128,
+						"minLength": 1,
+						"type": "string",
+						"description": "Name of person",
+						"default": "John Smith"
+					},
+					"age": {
+						"type": "integer",
+						"format": "int32",
+						"minimum": 0,
+						"maximum": 150,
+						"default": 18
+					}
+				},
+				"additionalProperties": false
+			},
+			"CreateUser": {
+				"required": [
+					"password",
+					"nickname"
+				],
+				"type": "object",
+				"properties": {
+					"nickname": {
+						"maxLength": 32,
+						"minLength": 10,
+						"type": "string",
+						"description": "Nickname can only have letters and digits and must not exist in the database.",
+						"default": "something12"
+					},
+					"password": {
+						"maxLength": 20,
+						"minLength": 6,
+						"type": "string",
+						"description": "Password must contain at least one uppercase letter, one lowercase letter and one digit.",
+						"default": "Something12"
+					}
+				},
+				"additionalProperties": false
+			},
+			"PersonResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"format": "int32",
+						"default": 1
+					},
+					"name": {
+						"type": "string",
+						"default": "John Smith"
+					},
+					"age": {
+						"type": "integer",
+						"format": "int32",
+						"default": 18
+					}
+				},
+				"additionalProperties": false
+			},
+			"Token": {
+				"type": "object",
+				"properties": {
+					"token": {
+						"type": "string",
+						"description": "Token to authenticate in header `Authorization: Bearer <token>`",
+						"default": "abcdefg"
+					}
+				},
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"Bearer": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "Json Web Token"
+			}
+		}
+	},
+	"tags": [
+		{
+			"name": "Users",
+			"description": "Users actions"
+		},
+		{
+			"name": "People",
+			"description": "People actions"
+		},
+		{
+			"name": "App",
+			"description": "App actions"
+		}
+	]
+}

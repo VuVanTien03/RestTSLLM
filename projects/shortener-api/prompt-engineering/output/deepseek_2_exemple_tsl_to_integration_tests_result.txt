@@ -1,0 +1,110 @@
+<think>
+OK. Agora preciso converter o TSL fornecido para os testes de integração em C# usando xUnit, seguindo o exemplo dado. Vamos ver as etapas:
+
+1. **Entender o TSL fornecido**: Os casos de teste estão para o endpoint /quizzes/{quizId}/questions, que lista perguntas de um quiz. Testes incluem casos de sucesso, quiz não encontrado, ID inválido, formatos incorretos etc.
+
+2. **Analisar a estrutura dos testes anteriores**: Os testes anteriores usam uma classe por grupo (como Users, People) com métodos para cada TC. Cada teste tem Arrange, Act, Assert, e métodos auxiliares para requests.
+
+3. **Criar a classe de testes**: O namespace deve ser `QuizAPI.IntegrationTests` e a classe deve herdar de IClassFixture<WebApplicationFactory<Program>>. Preciso criar métodos para cada TC no TSL.
+
+4. **Métodos auxiliares**: Talvez criar um método para fazer a requisição GET para /quizzes/{quizId}/questions, tratando diferentes quizIds.
+
+5. **Implementar cada teste**:
+   - **TC101**: Quiz existente com perguntas, verifica status 200 e quantidade de perguntas.
+   - **TC102**: Quiz inexistente, status 404.
+   - **TC103**: ID inválido (não numérico), status 400.
+   - **TC104**: ID negativo, status 400.
+   - **TC105**: ID zero, status 400.
+   - **TC106**: ID vazio na URL, status 400.
+
+6. **Verificar pré-condições**: Por exemplo, para TC101, garantir que o quiz com ID 1 existe e tem 3 perguntas. Talvez precisar de métodos para criar quiz e perguntas no banco de dados antes do teste.
+
+7. **Usar Asserts corretos**: Checar status code, conteúdo da resposta (como length da array de perguntas).
+
+8. **Tratar diferentes tipos de parâmetros**: Como passar quizId como string "abc" para testar formato inválido.
+
+9. **Organização do código**: Garantir que cada teste siga o padrão AAA e esteja correto conforme o TSL.
+
+Possíveis desafios: Como simular a existência de um quiz com perguntas (setup do banco), lidar com diferentes tipos de IDs (inteiros, strings), e verificar o conteúdo da resposta.
+
+Preciso garantir que cada método de teste corresponda exatamente ao TSL, com os parâmetros corretos e asserções adequadas. Também devo criar métodos auxiliares se necessário, como um para criar quizzes no banco de dados antes de certos testes.
+</think>
+
+```csharp
+// File: QuestionsIntegrationTests.cs
+
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json.Nodes;
+
+namespace QuizAPI.IntegrationTests
+{
+    public class QuestionsIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly WebApplicationFactory<Program> _factory;
+        private readonly HttpClient _client;
+
+        public QuestionsIntegrationTests(WebApplicationFactory<Program> factory)
+        {
+            _factory = factory;
+            _client = _factory.CreateClient();
+        }
+
+        private async Task<HttpResponseMessage> GetQuestionsAsync(string quizId)
+        {
+            return await _client.GetAsync($"/quizzes/{quizId}/questions");
+        }
+
+        [Fact]
+        public async Task TC101_List_Questions_When_Valid_QuizId_Returns_OK()
+        {
+            var response = await GetQuestionsAsync("1");
+            var content = await response.Content.ReadFromJsonAsync<JsonArray>();
+            
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(3, content.Count);
+        }
+
+        [Fact]
+        public async Task TC102_List_Questions_When_Non_Existent_QuizId_Returns_NotFound()
+        {
+            var response = await GetQuestionsAsync("999999");
+            
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC103_List_Questions_When_Invalid_QuizId_Format_Returns_BadRequest()
+        {
+            var response = await GetQuestionsAsync("abc");
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC104_List_Questions_When_Negative_QuizId_Returns_BadRequest()
+        {
+            var response = await GetQuestionsAsync("-1");
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC105_List_Questions_When_Zero_QuizId_Returns_BadRequest()
+        {
+            var response = await GetQuestionsAsync("0");
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC106_List_Questions_When_Empty_QuizId_Returns_BadRequest()
+        {
+            var response = await _client.GetAsync("/quizzes//questions");
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+    }
+}
+```

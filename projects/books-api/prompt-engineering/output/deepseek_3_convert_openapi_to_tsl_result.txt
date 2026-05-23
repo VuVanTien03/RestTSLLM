@@ -1,0 +1,537 @@
+<think>
+Okay, let's start by understanding the user's request. They need me to generate a TSL (Test Specification Language) in YAML format based on the provided OpenAPI specification for a Books API. The user emphasized the importance of maximum test coverage, including boundary values and equivalence classes, and wants all possible test cases without any omissions.
+
+First, I'll review the OpenAPI spec to identify all endpoints, their methods, parameters, request bodies, and possible responses. The API has endpoints for GET /books, POST /books, GET /books/{id}, PUT /books/{id}, and DELETE /books/{id}. Each of these has different response statuses, like 200, 400, 404, etc.
+
+For each endpoint, I'll need to create test cases covering all possible scenarios. Let's break it down by endpoint:
+
+1. **GET /books**
+   - Success: Returns 200 with an array of books. Need a test where books exist and one where the list is empty.
+
+2. **POST /books**
+   - Request body validation: All required fields (title, isbn, description, author) must be present and meet minLength constraints.
+   - Test cases for each field being null, empty, too short, and valid boundaries.
+   - Successful creation (200) and invalid data (400).
+
+3. **GET /books/{id}**
+   - Valid ID (200), invalid ID (404), and perhaps an ID that doesn't exist.
+
+4. **PUT /books/{id}**
+   - Similar to POST: test each field's validity, check for 204 on success, 400 on bad request, 404 if ID not found.
+   - Also, test updating with valid and invalid ID.
+
+5. **DELETE /books/{id}**
+   - Successful deletion (204), deleting a non-existent ID (404).
+
+Now, considering each operation's parameters and request bodies. For POST and PUT, the required fields have minLength of 1, so I'll need tests for empty strings, strings with min length, and maybe longer valid strings. Also, check if omitting any required field causes a 400.
+
+For path parameters like {id}, test valid integer, non-existing ID, and maybe invalid formats (though OpenAPI specifies int32, so maybe non-integer values would be handled by the framework, but might still include a test for that if possible).
+
+Error responses should be checked for the ErrorResponse schema where applicable.
+
+I'll structure each test case with id, group (based on tags or endpoints), name, description, endpoint, method, request data (if any), and expected response.
+
+Need to ensure coverage for all status codes documented. For example, GET /books/{id} has 200 and 404, so two test cases at least.
+
+Wait, looking at the CreateBookRequest and UpdateBookRequest, all fields are required and have minLength 1. So each field needs tests for null, empty string, one character (min), and maybe a case where a field is missing. However, since the OpenAPI marks them as required, the API might automatically return 400 if any are missing, so test cases for missing fields are necessary.
+
+Also, considering that all fields in the requests are strings with minLength 1, each field should have boundary tests: min-1 (empty), min (1 character), and perhaps a longer valid string. For example, title with 1 char, 0 char (empty), and a normal title.
+
+For the PUT endpoint, similar to POST but with an ID parameter. Need to test updating an existing book and a non-existent one.
+
+For DELETE, test deleting an existing book (204) and a non-existent one (404).
+
+Additional test cases for GET /books when there are no books to ensure it returns an empty array.
+
+Also, check if the responses match the schemas. For example, when creating a book, the response should have the Book schema with all fields.
+
+I need to make sure to cover all these scenarios without missing any. Let me list them out systematically.
+
+For POST /books:
+- All fields valid (200)
+- Missing title (400)
+- Title empty string (400)
+- Title null (400) – but since it's required, sending null might not be allowed, but the OpenAPI has nullable: true for the Book schema, but the CreateBookRequest requires title. Wait, looking back, the CreateBookRequest's title is required and has minLength 1. So sending null for title in the request would be invalid because it's required. But OpenAPI's required means the field must be present, but if it's sent as null, does that count? The schema for CreateBookRequest has title as type string, which is not nullable (since it's required and no nullable: true). Therefore, sending null for a required string field would result in a 400. So test cases for each required field being null, empty, or too short.
+
+Similarly, for each field in Create and Update requests, test null, empty, minLength (1), and valid longer value.
+
+Possible test cases:
+
+For POST /books:
+- TC001: All fields valid (200)
+- TC002: Missing title (400)
+- TC003: Title empty string (400)
+- TC004: Title length 1 (valid)
+- TC005: Missing isbn (400)
+- TC006: ISBN empty (400)
+- TC007: ISBN length 1 (valid)
+- TC008: Missing description (400)
+- TC009: Description empty (400)
+- TC010: Description length 1 (valid)
+- TC011: Missing author (400)
+- TC012: Author empty (400)
+- TC013: Author length 1 (valid)
+- TC014: Multiple fields invalid (400) – maybe optional but could be included
+
+For GET /books:
+- TC015: Get all books when empty (200, empty array)
+- TC016: Get all books with existing books (200, non-empty array)
+
+For GET /books/{id}:
+- TC017: Valid existing ID (200)
+- TC018: Invalid ID format (404 or 400?) – but OpenAPI specifies integer, so the framework would handle non-integer as 400 perhaps, but since the path expects int32, maybe the test should use a non-existing integer ID (404)
+- TC019: Non-existent ID (404)
+
+For PUT /books/{id}:
+- TC020: Update with valid data and existing ID (204)
+- TC021: Update with invalid ID (404)
+- TC022: Missing title (400)
+- etc., similar to POST's test cases for each field
+
+For DELETE /books/{id}:
+- TC030: Delete existing ID (204)
+- TC031: Delete non-existent ID (404)
+
+Each operation needs to cover all possible response statuses and edge cases.
+
+Also, ensure that for PUT and DELETE, the ID parameter is tested for existence.
+
+Now, translating these into TSL test cases in YAML format, following the structure provided in the previous example. Each test case should have an id, group, name, description, endpoint, method, request body (if applicable), and expected response.
+
+Need to make sure that all required fields are tested for their constraints, both in POST and PUT requests. Since the OpenAPI spec doesn't mention maximum lengths, maybe that's not needed, but since the user wants maximum coverage, perhaps include a test with a long valid string, assuming the API accepts it.
+
+Also, in the OpenAPI, the Book schema has nullable: true for title, isbn, description, author. However, in Create and Update requests, those fields are required and minLength 1, so they cannot be null or empty. Therefore, in POST and PUT, sending null for those fields should result in 400, but in the response (Book schema), those fields can be null. But in the request schemas, since they're required and minLength 1, null is invalid.
+
+Wait, the CreateBookRequest and UpdateBookRequest have required fields with minLength 1. So any missing field, or present but null/empty/too short should trigger a 400.
+
+But the OpenAPI spec's CreateBookRequest does not have nullable: true for the properties, so sending null for a required field would fail validation because the field must be a non-null string with minLength 1. So test cases where title is null would be invalid, leading to 400.
+
+So for each required field in POST and PUT:
+
+- Field present and valid (min length or more)
+- Field missing (400)
+- Field present but null (400) – but maybe the request body would fail schema validation if the field is null, as the schema expects a string.
+- Field present but empty string (minLength 1 not met) (400)
+
+Hence, test cases for each field being missing, null, empty, and valid.
+
+However, in JSON, sending a null value for a field that's required but not nullable would be invalid. For example, if the request includes "title": null, the schema validation would fail because the type is string and it's not nullable in the request schema. Therefore, such cases should return 400.
+
+But looking at the CreateBookRequest schema, the properties don't have 'nullable: true', so null is invalid. Hence, test cases for each field with null value should be included.
+
+Now, structuring all of this into TSL test cases.
+
+Also, the GET /books should check if the returned array has elements matching the Book schema.
+
+Consider preconditions where necessary, like creating a book before trying to update, delete, or retrieve it.
+
+For example, for TC020 (Update existing book), preconditions would include creating a book and getting its ID.
+
+Similarly, for GET /books/{id}, the existing book must be created first.
+
+Also, considering that some test cases may depend on previous state (e.g., GET all books when there are none vs. some), these need separate tests.
+
+For example, TC015: Get all books when empty (200 with empty array)
+TC016: Get all books with existing entries (200 with non-empty array)
+
+Now, putting all these together in YAML format, ensuring that each test case covers a unique scenario with proper descriptions and expected outcomes.
+
+I need to make sure that every endpoint and method is covered, all response statuses are tested, and all possible input validations are included.
+</think>
+
+```yaml
+test_cases:
+  - id: TC001
+    group: BookEndpoints
+    name: Get all books when empty returns OK
+    description: Deve retornar array vazio quando não há livros cadastrados
+    endpoint: /books
+    method: GET
+    expected_response:
+      status_code: 200
+      body: []
+
+  - id: TC002
+    group: BookEndpoints
+    name: Get all books with data returns OK
+    description: Deve retornar array de livros quando existem registros
+    preconditions:
+      - "Livro com title='Livro 1', isbn='123456', description='Desc 1', author='Autor 1' cadastrado"
+    endpoint: /books
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        - id: is integer greater than 0
+          title: "Livro 1"
+          isbn: "123456"
+          description: "Desc 1"
+          author: "Autor 1"
+
+  - id: TC003
+    group: BookEndpoints
+    name: Create book with valid data returns OK
+    description: Criação de livro com todos os campos válidos
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Clean Code"
+      isbn: "9780132350884"
+      description: "Software engineering handbook"
+      author: "Robert C. Martin"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        title: "Clean Code"
+        isbn: "9780132350884"
+        description: "Software engineering handbook"
+        author: "Robert C. Martin"
+
+  - id: TC004
+    group: BookEndpoints
+    name: Create book missing title returns BadRequest
+    description: Tentativa de criar livro sem título
+    endpoint: /books
+    method: POST
+    request_body:
+      isbn: "123456"
+      description: "Descrição válida"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: BookEndpoints
+    name: Create book with empty title returns BadRequest
+    description: Título com string vazia
+    endpoint: /books
+    method: POST
+    request_body:
+      title: ""
+      isbn: "123456"
+      description: "Descrição válida"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: BookEndpoints
+    name: Create book with minimum title length returns OK
+    description: Título com tamanho mínimo (1 caractere)
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "A"
+      isbn: "123456"
+      description: "Descrição válida"
+      author: "Autor"
+    expected_response:
+      status_code: 200
+      body:
+        title: "A"
+        isbn: "123456"
+
+  - id: TC007
+    group: BookEndpoints
+    name: Create book missing ISBN returns BadRequest
+    description: Tentativa de criar livro sem ISBN
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      description: "Descrição válida"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: BookEndpoints
+    name: Create book with empty ISBN returns BadRequest
+    description: ISBN com string vazia
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: ""
+      description: "Descrição válida"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: BookEndpoints
+    name: Create book with minimum ISBN length returns OK
+    description: ISBN com tamanho mínimo (1 caractere)
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "1"
+      description: "Descrição válida"
+      author: "Autor"
+    expected_response:
+      status_code: 200
+      body:
+        isbn: "1"
+
+  - id: TC010
+    group: BookEndpoints
+    name: Create book missing description returns BadRequest
+    description: Tentativa de criar livro sem descrição
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "123456"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC011
+    group: BookEndpoints
+    name: Create book with empty description returns BadRequest
+    description: Descrição com string vazia
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "123456"
+      description: ""
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: BookEndpoints
+    name: Create book with minimum description length returns OK
+    description: Descrição com tamanho mínimo (1 caractere)
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "123456"
+      description: "D"
+      author: "Autor"
+    expected_response:
+      status_code: 200
+      body:
+        description: "D"
+
+  - id: TC013
+    group: BookEndpoints
+    name: Create book missing author returns BadRequest
+    description: Tentativa de criar livro sem autor
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "123456"
+      description: "Descrição válida"
+    expected_response:
+      status_code: 400
+
+  - id: TC014
+    group: BookEndpoints
+    name: Create book with empty author returns BadRequest
+    description: Autor com string vazia
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "123456"
+      description: "Descrição válida"
+      author: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: BookEndpoints
+    name: Create book with minimum author length returns OK
+    description: Autor com tamanho mínimo (1 caractere)
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "123456"
+      description: "Descrição válida"
+      author: "A"
+    expected_response:
+      status_code: 200
+      body:
+        author: "A"
+
+  - id: TC016
+    group: BookEndpoints
+    name: Get existing book by ID returns OK
+    description: Busca de livro existente pelo ID
+    preconditions:
+      - "Livro com id={book_id} cadastrado"
+    endpoint: /books/{book_id}
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        id: {book_id}
+
+  - id: TC017
+    group: BookEndpoints
+    name: Get non-existent book returns NotFound
+    description: Busca de livro com ID inexistente
+    endpoint: /books/999999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC018
+    group: BookEndpoints
+    name: Update book with valid data returns NoContent
+    description: Atualização de livro existente
+    preconditions:
+      - "Livro com id={book_id} cadastrado"
+    endpoint: /books/{book_id}
+    method: PUT
+    request_body:
+      title: "Novo título"
+      isbn: "654321"
+      description: "Nova descrição"
+      author: "Novo autor"
+    expected_response:
+      status_code: 204
+
+  - id: TC019
+    group: BookEndpoints
+    name: Update non-existent book returns NotFound
+    description: Tentativa de atualizar livro inexistente
+    endpoint: /books/999999
+    method: PUT
+    request_body:
+      title: "Título"
+      isbn: "123456"
+      description: "Descrição"
+      author: "Autor"
+    expected_response:
+      status_code: 404
+
+  - id: TC020
+    group: BookEndpoints
+    name: Delete existing book returns NoContent
+    description: Exclusão de livro existente
+    preconditions:
+      - "Livro com id={book_id} cadastrado"
+    endpoint: /books/{book_id}
+    method: DELETE
+    expected_response:
+      status_code: 204
+
+  - id: TC021
+    group: BookEndpoints
+    name: Delete non-existent book returns NotFound
+    description: Tentativa de excluir livro inexistente
+    endpoint: /books/999999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  - id: TC022
+    group: BookEndpoints
+    name: Create book with null title returns BadRequest
+    description: Campo título com valor nulo
+    endpoint: /books
+    method: POST
+    request_body:
+      title: null
+      isbn: "123456"
+      description: "Descrição válida"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC023
+    group: BookEndpoints
+    name: Create book with null ISBN returns BadRequest
+    description: Campo ISBN com valor nulo
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: null
+      description: "Descrição válida"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC024
+    group: BookEndpoints
+    name: Create book with null description returns BadRequest
+    description: Campo descrição com valor nulo
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "123456"
+      description: null
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC025
+    group: BookEndpoints
+    name: Create book with null author returns BadRequest
+    description: Campo autor com valor nulo
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Título válido"
+      isbn: "123456"
+      description: "Descrição válida"
+      author: null
+    expected_response:
+      status_code: 400
+
+  - id: TC026
+    group: BookEndpoints
+    name: Update book with empty title returns BadRequest
+    description: Atualização com título vazio
+    preconditions:
+      - "Livro com id={book_id} cadastrado"
+    endpoint: /books/{book_id}
+    method: PUT
+    request_body:
+      title: ""
+      isbn: "654321"
+      description: "Descrição"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+
+  - id: TC027
+    group: BookEndpoints
+    name: Update book with long valid title returns NoContent
+    description: Atualização com título de 1000 caracteres
+    preconditions:
+      - "Livro com id={book_id} cadastrado"
+    endpoint: /books/{book_id}
+    method: PUT
+    request_body:
+      title: "A".PadLeft(1000, 'A')
+      isbn: "123456"
+      description: "Descrição"
+      author: "Autor"
+    expected_response:
+      status_code: 204
+
+  - id: TC028
+    group: BookEndpoints
+    name: Update book with invalid ID format returns BadRequest
+    description: Tentativa de atualizar com ID inválido
+    endpoint: /books/abc
+    method: PUT
+    request_body:
+      title: "Título"
+      isbn: "123456"
+      description: "Descrição"
+      author: "Autor"
+    expected_response:
+      status_code: 400
+```

@@ -1,0 +1,7 @@
+Obrigado! 
+
+Importante ressaltar novamente que você não deve reaproveitar elementos criados em um teste em outro, por exemplo, deve sempre criar um novo usuário com um username diferente, para cada teste.
+
+Você deve gerar todos os testes para todos cenários gerados no TSL, sem omitir nenhum, sem retornar uma resposta me solicitando para complementar algo.
+
+Agora gere os testes de integração para todos os cenários do `group: Todos` sobre Delete_Todo, Get_Todo e List_Todos.

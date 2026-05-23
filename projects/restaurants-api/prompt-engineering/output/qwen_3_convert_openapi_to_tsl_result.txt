@@ -1,0 +1,541 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Dishes
+    name: Post Dish When Valid Data Returns Created
+    description: Adicionar um prato com dados válidos para um restaurante existente.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: "Delicious spaghetti carbonara"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "Spaghetti"
+        description: "Delicious spaghetti carbonara"
+        price: 15.99
+        kiloCalories: 500
+
+  - id: TC002
+    group: Dishes
+    name: Post Dish When Invalid Restaurant ID Returns NotFound
+    description: Tentar adicionar um prato a um restaurante inexistente.
+    endpoint: /api/restaurants/9999999/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: "Delicious spaghetti carbonara"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 404
+
+  - id: TC003
+    group: Dishes
+    name: Post Dish When Name Is Null Returns BadRequest
+    description: Tentar adicionar um prato com nome nulo.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: null
+      description: "Delicious spaghetti carbonara"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Dishes
+    name: Post Dish When Name Is Empty String Returns BadRequest
+    description: Tentar adicionar um prato com nome vazio.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: ""
+      description: "Delicious spaghetti carbonara"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Dishes
+    name: Post Dish When Name Too Short Returns BadRequest
+    description: Tentar adicionar um prato com nome muito curto.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Sp"
+      description: "Delicious spaghetti carbonara"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Dishes
+    name: Post Dish When Name Too Long Returns BadRequest
+    description: Tentar adicionar um prato com nome muito longo.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti carbonara with too many characters in the name"
+      description: "Delicious spaghetti carbonara"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: Dishes
+    name: Post Dish When Description Is Null Returns BadRequest
+    description: Tentar adicionar um prato com descrição nula.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: null
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: Dishes
+    name: Post Dish When Description Is Empty String Returns BadRequest
+    description: Tentar adicionar um prato com descrição vazia.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: ""
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: Dishes
+    name: Post Dish When Description Too Short Returns BadRequest
+    description: Tentar adicionar um prato com descrição muito curta.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: "Sp"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC010
+    group: Dishes
+    name: Post Dish When Description Too Long Returns BadRequest
+    description: Tentar adicionar um prato com descrição muito longa.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: "Spaghetti carbonara with too many characters in the description"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC011
+    group: Dishes
+    name: Post Dish When Price Is Negative Returns BadRequest
+    description: Tentar adicionar um prato com preço negativo.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: "Delicious spaghetti carbonara"
+      price: -15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: Dishes
+    name: Post Dish When Price Is Null Returns BadRequest
+    description: Tentar adicionar um prato com preço nulo.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: "Delicious spaghetti carbonara"
+      price: null
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC013
+    group: Dishes
+    name: Post Dish When KiloCalories Is Negative Returns BadRequest
+    description: Tentar adicionar um prato com calorias negativas.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: "Delicious spaghetti carbonara"
+      price: 15.99
+      kiloCalories: -500
+    expected_response:
+      status_code: 400
+
+  - id: TC014
+    group: Dishes
+    name: Post Dish When KiloCalories Is Null Returns BadRequest
+    description: Tentar adicionar um prato com calorias nulas.
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Spaghetti"
+      description: "Delicious spaghetti carbonara"
+      price: 15.99
+      kiloCalories: null
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: Dishes
+    name: Get Dishes When Valid Restaurant ID Returns OK
+    description: Obter pratos de um restaurante existente.
+    endpoint: /api/restaurants/1/dishes
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC016
+    group: Dishes
+    name: Get Dishes When Invalid Restaurant ID Returns NotFound
+    description: Tentar obter pratos de um restaurante inexistente.
+    endpoint: /api/restaurants/9999999/dishes
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC017
+    group: Dishes
+    name: Delete Dishes When Valid Restaurant ID Returns NoContent
+    description: Deletar pratos de um restaurante existente.
+    endpoint: /api/restaurants/1/dishes
+    method: DELETE
+    expected_response:
+      status_code: 204
+
+  - id: TC018
+    group: Dishes
+    name: Delete Dishes When Invalid Restaurant ID Returns NotFound
+    description: Tentar deletar pratos de um restaurante inexistente.
+    endpoint: /api/restaurants/9999999/dishes
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  - id: TC019
+    group: Dishes
+    name: Get Dish By ID When Valid Restaurant ID And Dish ID Returns OK
+    description: Obter um prato específico existente por ID, de um restaurante existente.
+    endpoint: /api/restaurants/1/dishes/1
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC020
+    group: Dishes
+    name: Get Dish By ID When Invalid Restaurant ID Returns NotFound
+    description: Tentar obter um prato específico existente mas de um restaurante inexistente.
+    endpoint: /api/restaurants/9999999/dishes/1
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC021
+    group: Dishes
+    name: Get Dish By ID When Invalid Dish ID Returns NotFound
+    description: Tentar obter um prato que não existe de um restaurante existente.
+    endpoint: /api/restaurants/1/dishes/9999999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC022
+    group: Restaurants
+    name: Get Restaurants When No Query Parameters Returns OK
+    description: Obter lista de restaurantes sem aplicar filtros ou paginação.
+    endpoint: /api/restaurants
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC023
+    group: Restaurants
+    name: Get Restaurants When Valid SearchPhrase Returns OK
+    description: Obter lista de restaurantes com filtro de pesquisa.
+    endpoint: /api/restaurants?searchPhrase=Italian
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC024
+    group: Restaurants
+    name: Get Restaurants When Invalid PageNumber Returns BadRequest
+    description: Tentar obter lista de restaurantes com número de página inválido.
+    endpoint: /api/restaurants?pageNumber=0
+    method: GET
+    expected_response:
+      status_code: 400
+
+  - id: TC025
+    group: Restaurants
+    name: Get Restaurants When Valid PageNumber Returns OK
+    description: Obter lista de restaurantes com número de página válido.
+    endpoint: /api/restaurants?pageNumber=1
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC026
+    group: Restaurants
+    name: Get Restaurants When Invalid PageSize Returns BadRequest
+    description: Tentar obter lista de restaurantes com tamanho de página inválido.
+    endpoint: /api/restaurants?pageSize=0
+    method: GET
+    expected_response:
+      status_code: 400
+
+  - id: TC027
+    group: Restaurants
+    name: Get Restaurants When Valid PageSize Returns OK
+    description: Obter lista de restaurantes com tamanho de página válido.
+    endpoint: /api/restaurants?pageSize=10
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC028
+    group: Restaurants
+    name: Get Restaurants When Invalid SortBy Returns BadRequest
+    description: Tentar obter lista de restaurantes com valor inválido para sortBy.
+    endpoint: /api/restaurants?sortBy=Address
+    method: GET
+    expected_response:
+      status_code: 400
+
+  - id: TC029
+    group: Restaurants
+    name: Get Restaurants When Valid SortBy Returns OK
+    description: Obter lista de restaurantes com sortBy válido.
+    endpoint: /api/restaurants?sortBy=Name
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC030
+    group: Restaurants
+    name: Get Restaurants When Invalid SortDirection Returns BadRequest
+    description: Tentar obter lista de restaurantes com valor inválido para sortDirection.
+    endpoint: /api/restaurants?sortDirection=AscendingDescending
+    method: GET
+    expected_response:
+      status_code: 400
+
+  - id: TC031
+    group: Restaurants
+    name: Get Restaurants When Valid SortDirection Returns OK
+    description: Obter lista de restaurantes com sortDirection válido.
+    endpoint: /api/restaurants?sortDirection=Ascending
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC032
+    group: Restaurants
+    name: Post Restaurant When Valid Data Returns Created
+    description: Criar um novo restaurante com dados válidos.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Pizza Place"
+      description: "Delicious pizzas"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "contact@example.com"
+      contactNumber: "123456789"
+      city: "Example City"
+      street: "Example Street"
+      postalCode: "12345"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "Pizza Place"
+        description: "Delicious pizzas"
+        category: "Italian"
+        hasDelivery: true
+        city: "Example City"
+        street: "Example Street"
+        postalCode: "12345"
+
+  - id: TC033
+    group: Restaurants
+    name: Post Restaurant When Invalid ContactEmail Returns BadRequest
+    description: Tentar criar um restaurante com endereço de email inválido.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Pizza Place"
+      description: "Delicious pizzas"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "invalid-email"
+      contactNumber: "123456789"
+      city: "Example City"
+      street: "Example Street"
+      postalCode: "12345"
+    expected_response:
+      status_code: 400
+
+  - id: TC034
+    group: Restaurants
+    name: Post Restaurant When Invalid ContactNumber Returns BadRequest
+    description: Tentar criar um restaurante com número de contato inválido.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Pizza Place"
+      description: "Delicious pizzas"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "contact@example.com"
+      contactNumber: "invalid-number"
+      city: "Example City"
+      street: "Example Street"
+      postalCode: "12345"
+    expected_response:
+      status_code: 400
+
+  - id: TC035
+    group: Restaurants
+    name: Post Restaurant When Invalid PostalCode Returns BadRequest
+    description: Tentar criar um restaurante com código postal inválido.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Pizza Place"
+      description: "Delicious pizzas"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "contact@example.com"
+      contactNumber: "123456789"
+      city: "Example City"
+      street: "Example Street"
+      postalCode: "invalid-code"
+    expected_response:
+      status_code: 400
+
+  - id: TC036
+    group: Restaurants
+    name: Get Restaurant By ID When Valid ID Returns OK
+    description: Obter restaurante existente por ID.
+    endpoint: /api/restaurants/1
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC037
+    group: Restaurants
+    name: Get Restaurant By ID When Invalid ID Returns NotFound
+    description: Tentar obter restaurante inexistente por ID.
+    endpoint: /api/restaurants/9999999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC038
+    group: Restaurants
+    name: Patch Restaurant By ID When Valid Data Returns OK
+    description: Atualizar restaurante existente por ID com dados válidos.
+    endpoint: /api/restaurants/1
+    method: PATCH
+    request_body:
+      name: "Updated Pizza Place"
+      description: "Updated delicious pizzas"
+      hasDelivery: false
+    expected_response:
+      status_code: 200
+      body:
+        name: "Updated Pizza Place"
+        description: "Updated delicious pizzas"
+        hasDelivery: false
+
+  - id: TC039
+    group: Restaurants
+    name: Patch Restaurant By ID When Invalid ID Returns NotFound
+    description: Tentar atualizar restaurante inexistente por ID.
+    endpoint: /api/restaurants/9999999
+    method: PATCH
+    request_body:
+      name: "Updated Pizza Place"
+      description: "Updated delicious pizzas"
+      hasDelivery: false
+    expected_response:
+      status_code: 404
+
+  - id: TC040
+    group: Restaurants
+    name: Delete Restaurant By ID When Valid ID Returns NoContent
+    description: Deletar restaurante existente por ID.
+    endpoint: /api/restaurants/1
+    method: DELETE
+    expected_response:
+      status_code: 204
+
+  - id: TC041
+    group: Restaurants
+    name: Delete Restaurant By ID When Invalid ID Returns NotFound
+    description: Tentar deletar restaurante inexistente por ID.
+    endpoint: /api/restaurants/9999999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  - id: TC042
+    group: Restaurants
+    name: Post Restaurant Logo When Valid ID And Valid File Returns OK
+    description: Atualizar logo de restaurante existente com arquivo válido.
+    endpoint: /api/restaurants/1/logo
+    method: POST
+    form_data:
+      file: <somefile.jpg>
+    expected_response:
+      status_code: 200
+
+  - id: TC043
+    group: Restaurants
+    name: Post Restaurant Logo When Invalid ID Returns NotFound
+    description: Tentar atualizar logo de restaurante inexistente.
+    endpoint: /api/restaurants/9999999/logo
+    method: POST
+    form_data:
+      file: <somefile.jpg>
+    expected_response:
+      status_code: 404
+
+  - id: TC044
+    group: Restaurants
+    name: Post Restaurant Logo When Invalid File Type Returns UnsupportedMediaType
+    description: Tentar atualizar logo de restaurante com arquivo inválido.
+    endpoint: /api/restaurants/1/logo
+    method: POST
+    request_body:
+      file: somefile.txt
+    expected_response:
+      status_code: 415
+```

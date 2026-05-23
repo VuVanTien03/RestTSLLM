@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{29A40445-132C-4FBC-98E5-6B1FE105D2B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5172C0ED-2B91-4279-B764-EF0EF371A4FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\Web\Web.csproj", "{A27EFE01-095E-42BC-86F0-985B9ABBEFF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{E9AF23DF-3777-4EAE-8754-FE375B9325D3}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		docker-compose.yml = docker-compose.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LoadTestK6", "LoadTestK6", "{70E23C75-E5D3-4D31-A4EC-C132E905BC6D}"
+	ProjectSection(SolutionItems) = preProject
+		test\LoadTestK6\progressive_load_test.js = test\LoadTestK6\progressive_load_test.js
+		test\LoadTestK6\regular_load_test.js = test\LoadTestK6\regular_load_test.js
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{7EBB6E24-A857-436B-91E6-01C422307EFB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A27EFE01-095E-42BC-86F0-985B9ABBEFF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A27EFE01-095E-42BC-86F0-985B9ABBEFF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A27EFE01-095E-42BC-86F0-985B9ABBEFF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A27EFE01-095E-42BC-86F0-985B9ABBEFF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EBB6E24-A857-436B-91E6-01C422307EFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EBB6E24-A857-436B-91E6-01C422307EFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EBB6E24-A857-436B-91E6-01C422307EFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EBB6E24-A857-436B-91E6-01C422307EFB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A27EFE01-095E-42BC-86F0-985B9ABBEFF1} = {29A40445-132C-4FBC-98E5-6B1FE105D2B0}
+		{70E23C75-E5D3-4D31-A4EC-C132E905BC6D} = {5172C0ED-2B91-4279-B764-EF0EF371A4FD}
+	EndGlobalSection
+EndGlobal

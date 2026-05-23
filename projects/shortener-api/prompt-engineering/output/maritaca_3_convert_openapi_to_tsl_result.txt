@@ -1,0 +1,124 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Url Shorten Endpoint
+    name: Retrieve Shortened URL When Valid Token Returns OK
+    description: Recuperar URL encurtada com token válido.
+    endpoint: "/{token}"
+    method: GET
+    parameters:
+      - name: token
+        value: "validtoken123"
+    expected_response:
+      status_code: 200
+      body:
+        url: is not null
+
+  - id: TC002
+    group: Url Shorten Endpoint
+    name: Retrieve Shortened URL When Invalid Token Returns NotFound
+    description: Recuperar URL encurtada com token inválido.
+    endpoint: "/{token}"
+    method: GET
+    parameters:
+      - name: token
+        value: "invalidtoken123"
+    expected_response:
+      status_code: 404
+      body:
+        message: is not null
+        statusCode: 404
+
+  - id: TC003
+    group: Url Shorten Endpoint
+    name: Create Shortened URL When Valid Data Returns OK
+    description: Criar URL encurtada com dados válidos.
+    endpoint: "/api/url-shorts"
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: null
+      hasQrCode: true
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is string not empty
+
+  - id: TC004
+    group: Url Shorten Endpoint
+    name: Create Shortened URL When Invalid URL Returns BadRequest
+    description: Criar URL encurtada com URL inválida.
+    endpoint: "/api/url-shorts"
+    method: POST
+    request_body:
+      url: "invalidurl"
+      expireMinutes: 60
+      hasQrCode: false
+    expected_response:
+      status_code: 400
+      body:
+        message: is not null
+        statusCode: 400
+
+  - id: TC005
+    group: Url Shorten Endpoint
+    name: Create Shortened URL When Missing RequiredField Returns BadRequest
+    description: Criar URL encurtada sem campo necessário (url).
+    endpoint: "/api/url-shorts"
+    method: POST
+    request_body:
+      expireMinutes: 60
+      hasQrCode: false
+    expected_response:
+      status_code: 400
+      body:
+        message: is not null
+        statusCode: 400
+
+  - id: TC006
+    group: Url Shorten Endpoint
+    name: Create Shortened URL When ExpireMinutes IsOne Returns OK
+    description: Criar URL encurtada com expireMinutes igual a 1 (deve ser tratado como valor válido).
+    endpoint: "/api/url-shorts"
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: 1
+      hasQrCode: true
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is string not empty
+
+  - id: TC007
+    group: Url Shorten Endpoint
+    name: Create Shortened URL When ExpireMinutes Null Returns OK
+    description: Criar URL encurtada com expireMinutes nulo (deve ser tratado como infinito).
+    endpoint: "/api/url-shorts"
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: null
+      hasQrCode: false
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is null
+
+  - id: TC008
+    group: Web
+    name: Test Endpoint When Valid Returns OK
+    description: Testar endpoint que retorna apenas um token.
+    endpoint: "/test"
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+```

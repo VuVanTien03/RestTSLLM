@@ -1,0 +1,182 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: UrlShortenEndpoint
+    name: Shorten URL with valid data and QR code enabled
+    description: Shortens a valid URL with QR code generation enabled.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: null
+      hasQrCode: true
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is string not empty
+  - id: TC002
+    group: UrlShortenEndpoint
+    name: Shorten URL with valid data and QR code disabled
+    description: Shortens a valid URL with QR code generation disabled.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: null
+      hasQrCode: false
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is null
+  - id: TC003
+    group: UrlShortenEndpoint
+    name: Shorten URL with valid data and expiration time
+    description: Shortens a valid URL with a specified expiration time.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: 60
+      hasQrCode: true
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is string not empty
+  - id: TC004
+    group: UrlShortenEndpoint
+    name: Shorten URL with invalid URL
+    description: Attempts to shorten an invalid URL.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "invalid-url"
+      expireMinutes: null
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+  - id: TC005
+    group: UrlShortenEndpoint
+    name: Shorten URL with empty URL
+    description: Attempts to shorten an empty URL.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: ""
+      expireMinutes: null
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+  - id: TC006
+    group: UrlShortenEndpoint
+    name: Shorten URL with null URL
+    description: Attempts to shorten a null URL.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: null
+      expireMinutes: null
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+  - id: TC007
+    group: UrlShortenEndpoint
+    name: Shorten URL with negative expireMinutes
+    description: Attempts to shorten a URL with a negative expiration time.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: -60
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+  - id: TC008
+    group: UrlShortenEndpoint
+    name: Shorten URL with zero expireMinutes
+    description: Attempts to shorten a URL with zero expiration time.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: 0
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+  - id: TC009
+    group: UrlShortenEndpoint
+    name: Shorten URL with missing url parameter
+    description: Attempts to shorten a URL with missing url parameter
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      expireMinutes: 60
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+  - id: TC010
+    group: UrlShortenEndpoint
+    name: Shorten URL with missing hasQrCode parameter
+    description: Attempts to shorten a URL with missing hasQrCode parameter
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://www.example.com"
+      expireMinutes: 60
+    expected_response:
+      status_code: 400
+  - id: TC011
+    group: UrlShortenEndpoint
+    name: Get URL by valid token
+    description: Retrieves the original URL using a valid token.
+    endpoint: /{token}
+    method: GET
+    preconditions:
+      - "A URL has been shortened with token '{token}'."
+    parameters:
+      token: "{token}"
+    expected_response:
+      status_code: 200
+      body:
+        url: is string not empty
+  - id: TC012
+    group: UrlShortenEndpoint
+    name: Get URL by invalid token
+    description: Attempts to retrieve the original URL using an invalid token.
+    endpoint: /invalid-token
+    method: GET
+    expected_response:
+      status_code: 404
+  - id: TC013
+    group: UrlShortenEndpoint
+    name: Get URL by empty token
+    description: Attempts to retrieve the original URL using an empty token.
+    endpoint: //
+    method: GET
+    expected_response:
+      status_code: 404
+  - id: TC014
+    group: UrlShortenEndpoint
+    name: Get URL by null token
+    description: Attempts to retrieve the original URL using a null token.  
+    endpoint: /null
+    method: GET
+    expected_response:
+      status_code: 404
+  - id: TC015
+    group: Web
+    name: Get test endpoint
+    description: Access the test endpoint.
+    endpoint: /test
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+
+```

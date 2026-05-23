@@ -1,0 +1,316 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Dishes
+    name: Create Dish When Valid Data Returns Created
+    description: Creating a dish with valid data for a valid restaurant.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Pasta"
+      description: "Delicious pasta"
+      price: 12.99
+      kiloCalories: 200
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "Pasta"
+        description: "Delicious pasta"
+        price: 12.99
+        kiloCalories: 200
+  - id: TC002
+    group: Dishes
+    name: Create Dish When Name Is Null Returns BadRequest
+    description: Creating a dish with name as null.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: null
+      description: "Delicious pasta"
+      price: 12.99
+      kiloCalories: 200
+    expected_response:
+      status_code: 400
+  - id: TC003
+    group: Dishes
+    name: Create Dish When Name Is Too Short Returns BadRequest
+    description: Creating a dish with a name that is shorter than the minimum length.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "AB"
+      description: "Delicious pasta"
+      price: 12.99
+      kiloCalories: 200
+    expected_response:
+      status_code: 400
+  - id: TC004
+    group: Dishes
+    name: Create Dish When Name Is Too Long Returns BadRequest
+    description: Creating a dish with a name that exceeds the maximum length.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+    endpoint: /api/restaurants/1/dishes
+    method: POST
+    request_body:
+      name: "Pasta with Extra Ingredients Longer than 16 chars"
+      description: "Delicious pasta"
+      price: 12.99
+      kiloCalories: 200
+    expected_response:
+      status_code: 400
+  - id: TC005
+    group: Dishes
+    name: Create Dish When Restaurant Does Not Exist Returns NotFound
+    description: Attempting to create a dish for a non-existent restaurant.
+    endpoint: /api/restaurants/99999/dishes
+    method: POST
+    request_body:
+      name: "Pasta"
+      description: "Delicious pasta"
+      price: 12.99
+      kiloCalories: 200
+    expected_response:
+      status_code: 404
+  - id: TC006
+    group: Dishes
+    name: Get Dishes When Valid Restaurant Returns OK
+    description: Retrieving dishes for a valid restaurant.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+      - "Dish 'Pasta' exists for restaurant ID 1."
+    endpoint: /api/restaurants/1/dishes
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        - id: is integer greater than 0
+        - name: is string
+        - description: is string
+        - price: is number
+  - id: TC007
+    group: Dishes
+    name: Get Dishes When Restaurant Does Not Exist Returns NotFound
+    description: Attempt to get dishes for a non-existent restaurant.
+    endpoint: /api/restaurants/99999/dishes
+    method: GET
+    expected_response:
+      status_code: 404
+  - id: TC008
+    group: Dishes
+    name: Delete Dishes When Valid Restaurant Returns NoContent
+    description: Deleting all dishes for a valid restaurant.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+      - "Dishes exist for restaurant ID 1."
+    endpoint: /api/restaurants/1/dishes
+    method: DELETE
+    expected_response:
+      status_code: 204
+  - id: TC009
+    group: Dishes
+    name: Delete Dishes When Restaurant Does Not Exist Returns NotFound
+    description: Deleting dishes for a non-existent restaurant.
+    endpoint: /api/restaurants/99999/dishes
+    method: DELETE
+    expected_response:
+      status_code: 404
+  - id: TC010
+    group: Dishes
+    name: Get Dish By ID When Valid Data Returns OK
+    description: Retrieving a specific dish by dish ID for a valid restaurant.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+      - "Dish with ID 1 exists for restaurant ID 1."
+    endpoint: /api/restaurants/1/dishes/1
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: is string
+        description: is string
+        price: is number
+        kiloCalories: is integer
+  - id: TC011
+    group: Dishes
+    name: Get Dish By ID When Dish Does Not Exist Returns NotFound
+    description: Attempt to retrieve a specific dish that does not exist.
+    endpoint: /api/restaurants/1/dishes/99999
+    method: GET
+    expected_response:
+      status_code: 404
+  - id: TC012
+    group: Restaurants
+    name: Create Restaurant When Valid Data Returns Created
+    description: Creating a restaurant with valid data.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Pizza Hut"
+      description: "Famous pizza chain."
+      category: "Fast Food"
+      hasDelivery: true
+      contactEmail: "contact@pizzahut.com"
+      contactNumber: "12345678"
+      city: "New York"
+      street: "1st Avenue"
+      postalCode: "10001"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "Pizza Hut"
+        description: "Famous pizza chain."
+        category: "Fast Food"
+        hasDelivery: true
+        city: "New York"
+        street: "1st Avenue"
+        postalCode: "10001"
+  - id: TC013
+    group: Restaurants
+    name: Get Restaurants When Valid Query Returns OK
+    description: Retrieving a list of restaurants based on valid search query.
+    endpoint: /api/restaurants
+    method: GET
+    query_params:
+      searchPhrase: "Pizza"
+      pageNumber: 1
+      pageSize: 2
+      sortBy: "Name"
+      sortDirection: "Ascending"
+    expected_response:
+      status_code: 200
+      body:
+        items: is array
+        totalPages: is integer greater than 0
+        totalItemsCount: is integer greater than 0
+  - id: TC014
+    group: Restaurants
+    name: Get Restaurants When Empty Query Returns BadRequest
+    description: Attempting to retrieve a list of restaurants with invalid query parameters.
+    endpoint: /api/restaurants
+    method: GET
+    query_params:
+      pageNumber: 0
+      pageSize: -1
+      sortBy: null
+      sortDirection: null
+    expected_response:
+      status_code: 400
+  - id: TC015
+    group: Restaurants
+    name: Get Restaurant By ID When Restaurant Exists Returns OK
+    description: Retrieving a restaurant by ID that exists.
+    endpoint: /api/restaurants/1
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: is string
+        description: is string
+        category: is string
+        hasDelivery: is boolean
+  - id: TC016
+    group: Restaurants
+    name: Get Restaurant By ID When Restaurant Does Not Exist Returns NotFound
+    description: Attempting to retrieve a non-existent restaurant by ID.
+    endpoint: /api/restaurants/99999
+    method: GET
+    expected_response:
+      status_code: 404
+  - id: TC017
+    group: Restaurants
+    name: Update Restaurant When Valid Data Returns OK
+    description: Updating a restaurant with valid data.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+    endpoint: /api/restaurants/1
+    method: PATCH
+    request_body:
+      name: "Pizza Hut Updated"
+      description: "New Description"
+      hasDelivery: false
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: "Pizza Hut Updated"
+        description: "New Description"
+        hasDelivery: false
+  - id: TC018
+    group: Restaurants
+    name: Update Restaurant When Restaurant Does Not Exist Returns NotFound
+    description: Attempting to update a non-existent restaurant.
+    endpoint: /api/restaurants/99999
+    method: PATCH
+    request_body:
+      name: "Invalid Restaurant"
+      description: "Should not exist"
+      hasDelivery: true
+    expected_response:
+      status_code: 404
+  - id: TC019
+    group: Restaurants
+    name: Delete Restaurant When Restaurant Exists Returns NoContent
+    description: Deleting a restaurant by ID that exists.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+    endpoint: /api/restaurants/1
+    method: DELETE
+    expected_response:
+      status_code: 204
+  - id: TC020
+    group: Restaurants
+    name: Delete Restaurant When Restaurant Does Not Exist Returns NotFound
+    description: Attempting to delete a non-existent restaurant.
+    endpoint: /api/restaurants/99999
+    method: DELETE
+    expected_response:
+      status_code: 404
+  - id: TC021
+    group: Restaurants
+    name: Upload Restaurant Logo When Valid Returns OK
+    description: Uploading a valid logo for an existing restaurant.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+    endpoint: /api/restaurants/1/logo
+    method: POST
+    form_data:
+      file: "<some_logo.jpg>"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        logoSasUrl: is string
+  - id: TC022
+    group: Restaurants
+    name: Upload Restaurant Logo When Restaurant Does Not Exist Returns NotFound
+    description: Attempting to upload a logo for a non-existent restaurant.
+    endpoint: /api/restaurants/99999/logo
+    method: POST
+    form_data:
+      file: "<some_logo.jpg>"
+    expected_response:
+      status_code: 404
+  - id: TC023
+    group: Restaurants
+    name: Upload Restaurant Logo With Invalid Content Returns UnsupportedMediaType
+    description: Uploading a logo with an invalid content type.
+    preconditions:
+      - "Restaurant with ID 1 exists."
+    endpoint: /api/restaurants/1/logo
+    method: POST
+    form_data:
+      file: "<invalid_logo.txt>"
+    expected_response:
+      status_code: 415
+```

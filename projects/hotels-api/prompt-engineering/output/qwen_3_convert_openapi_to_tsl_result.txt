@@ -1,0 +1,488 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Account
+    name: Create Account When Valid Data Returns OK
+    description: Cria uma conta com dados válidos.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: false
+      email: "john.doe@example.com"
+      password: "Pass123!"
+    expected_response:
+      status_code: 200
+
+  - id: TC002
+    group: Account
+    name: Create Account When Invalid FirstName Returns BadRequest
+    description: Tenta criar uma conta sem o campo firstName.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      lastName: "Doe"
+      isAdmin: false
+      email: "john.doe@example.com"
+      password: "Pass123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC003
+    group: Account
+    name: Create Account When Invalid LastName Returns BadRequest
+    description: Tenta criar uma conta sem o campo lastName.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      isAdmin: false
+      email: "john.doe@example.com"
+      password: "Pass123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Account
+    name: Create Account When Invalid Email Returns BadRequest
+    description: Tenta criar uma conta com um email inválido.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: false
+      email: "invalid-email"
+      password: "Pass123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Account
+    name: Create Account When Invalid Password Returns BadRequest
+    description: Tenta criar uma conta com uma senha inválida.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      isAdmin: false
+      email: "john.doe@example.com"
+      password: "invalid"
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Account
+    name: Login When Valid Credentials Returns OK
+    description: Autentica um usuário com credenciais válidas.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "john.doe@example.com"
+      password: "Pass123!"
+    expected_response:
+      status_code: 200
+      body:
+        userId: is string not empty
+        token: is string not empty
+        refreshToken: is string not empty
+
+  - id: TC007
+    group: Account
+    name: Login When Invalid Email Returns Unauthorized
+    description: Tenta autenticar um usuário com um email inválido.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "invalid-email"
+      password: "Pass123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: Account
+    name: Login When Invalid Password Returns Unauthorized
+    description: Tenta autenticar um usuário com uma senha inválida.
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "john.doe@example.com"
+      password: "invalid"
+    expected_response:
+      status_code: 401
+
+  - id: TC009
+    group: Account
+    name: Refresh Token When Valid Token Returns OK
+    description: Atualiza o token de autenticação com um token válido.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: "user-id"
+      token: "valid-token"
+      refreshToken: "valid-refresh-token"
+    expected_response:
+      status_code: 200
+      body:
+        userId: is string not empty
+        token: is string not empty
+        refreshToken: is string not empty
+
+  - id: TC010
+    group: Account
+    name: Refresh Token When Invalid Token Returns Unauthorized
+    description: Tenta atualizar o token de autenticação com um token inválido.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      userId: "user-id"
+      token: "invalid-token"
+      refreshToken: "valid-refresh-token"
+    expected_response:
+      status_code: 401
+
+  - id: TC011
+    group: Countries
+    name: Get Countries When No Authorization Returns Unauthorized
+    description: Tenta obter a lista de países sem autenticação.
+    endpoint: /api/countries
+    method: GET
+    expected_response:
+      status_code: 401
+
+  - id: TC012
+    group: Countries
+    name: Get Countries When Valid Authorization Returns OK
+    description: Obtém a lista de países com autenticação válida.
+    endpoint: /api/countries
+    method: GET
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+
+  - id: TC013
+    group: Countries
+    name: Create Country When Valid Data Returns Created
+    description: Cria um país com dados válidos.
+    endpoint: /api/countries
+    method: POST
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Brazil"
+      shortName: "BR"
+    expected_response:
+      status_code: 201
+      body:
+        name: "Brazil"
+        shortName: "BR"
+        id: is integer greater than 0
+
+  - id: TC014
+    group: Countries
+    name: Create Country When Invalid Name Returns BadRequest
+    description: Tenta criar um país sem o campo name.
+    endpoint: /api/countries
+    method: POST
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      shortName: "BR"
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: Countries
+    name: Get Country When Valid ID Returns OK
+    description: Obtém um país com ID válido.
+    endpoint: /api/countries/1
+    method: GET
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um país com id 1."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+
+  - id: TC016
+    group: Countries
+    name: Get Country When Invalid ID Returns NotFound
+    description: Tenta obter um país com ID inválido.
+    endpoint: /api/countries/9999999
+    method: GET
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 404
+
+  - id: TC017
+    group: Countries
+    name: Update Country When Valid Data Returns NoContent
+    description: Atualiza um país com dados válidos.
+    endpoint: /api/countries/1
+    method: PUT
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um país com id 1."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Brazil (Updated)"
+      shortName: "BR"
+    expected_response:
+      status_code: 204
+
+  - id: TC018
+    group: Countries
+    name: Update Country When Invalid ID Returns NotFound
+    description: Tenta atualizar um país com ID inválido.
+    endpoint: /api/countries/9999999
+    method: PUT
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Brazil (Updated)"
+      shortName: "BR"
+    expected_response:
+      status_code: 404
+
+  - id: TC019
+    group: Countries
+    name: Delete Country When Valid ID Returns NoContent
+    description: Deleta um país com ID válido.
+    endpoint: /api/countries/1
+    method: DELETE
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um país com id 1."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 204
+
+  - id: TC020
+    group: Countries
+    name: Delete Country When Invalid ID Returns NotFound
+    description: Tenta deletar um país com ID inválido.
+    endpoint: /api/countries/9999999
+    method: DELETE
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 404
+
+  - id: TC021
+    group: Hotels
+    name: Get Hotels When No Authorization Returns Unauthorized
+    description: Tenta obter a lista de hoteis sem autenticação.
+    endpoint: /api/hotels
+    method: GET
+    expected_response:
+      status_code: 401
+
+  - id: TC022
+    group: Hotels
+    name: Get Hotels When Valid Authorization Returns OK
+    description: Obtém a lista de hoteis com autenticação válida.
+    endpoint: /api/hotels
+    method: GET
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+      - "Há pelo menos um hotel cadastrado."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_query:
+      pageNumber: 1
+      pageSize: 10
+    expected_response:
+      status_code: 200
+
+  - id: TC023
+    group: Hotels
+    name: Get Hotels When Invalid Query Parameters Returns BadRequest
+    description: Tenta obter a lista de hoteis com parâmetros de consulta inválidos.
+    endpoint: /api/hotels
+    method: GET
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_query:
+      pageNumber: 0
+      pageSize: -1
+    expected_response:
+      status_code: 400
+
+  - id: TC024
+    group: Hotels
+    name: Create Hotel When Valid Data Returns Created
+    description: Cria um hotel com dados válidos.
+    endpoint: /api/hotels
+    method: POST
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+      - "Pelo menos um país existente com ID 1."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Hotel Example"
+      address: "Rua dos Exemplos, 123"
+      countryId: 1
+      rating: 4.5
+    expected_response:
+      status_code: 201
+      body:
+        name: "Hotel Example"
+        address: "Rua dos Exemplos, 123"
+        countryId: 1
+        rating: 4.5
+        id: is integer greater than 0
+
+  - id: TC025
+    group: Hotels
+    name: Create Hotel When Invalid Name Returns BadRequest
+    description: Tenta criar um hotel sem o campo name.
+    endpoint: /api/hotels
+    method: POST
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+      - "Pelo menos um país existente com ID 1."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      address: "Rua dos Exemplos, 123"
+      countryId: 1
+      rating: 4.5
+    expected_response:
+      status_code: 400
+
+  - id: TC026
+    group: Hotels
+    name: Get Hotel When Valid ID Returns OK
+    description: Obtém um hotel com ID válido.
+    endpoint: /api/hotels/1
+    method: GET
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um hotel com id 1."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+
+  - id: TC027
+    group: Hotels
+    name: Get Hotel When Invalid ID Returns NotFound
+    description: Tenta obter um hotel com ID inválido.
+    endpoint: /api/hotels/9999999
+    method: GET
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 404
+
+  - id: TC028
+    group: Hotels
+    name: Update Hotel When Valid Data Returns NoContent
+    description: Atualiza um hotel com dados válidos.
+    endpoint: /api/hotels/1
+    method: PUT
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um hotel com id 1."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Hotel Example (Updated)"
+      address: "Rua dos Exemplos, 1234"
+      countryId: 1
+      rating: 4.7
+    expected_response:
+      status_code: 204
+
+  - id: TC029
+    group: Hotels
+    name: Update Hotel When Invalid ID Returns NotFound
+    description: Tenta atualizar um hotel com ID inválido.
+    endpoint: /api/hotels/9999999
+    method: PUT
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com'"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Hotel Example (Updated)"
+      address: "Rua dos Exemplos, 1234"
+      countryId: 1
+      rating: 4.7
+    expected_response:
+      status_code: 404
+
+  - id: TC030
+    group: Hotels
+    name: Delete Hotel When Valid ID Returns NoContent
+    description: Deleta um hotel com ID válido.
+    endpoint: /api/hotels/1
+    method: DELETE
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um hotel com id 1."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com' como admin"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 204
+
+  - id: TC031
+    group: Hotels
+    name: Delete Hotel When Invalid ID Returns NotFound
+    description: Tenta deletar um hotel com ID inválido.
+    endpoint: /api/hotels/9999999
+    method: DELETE
+    preconditions:
+      - "Usuário com email 'john.doe@example.com' e senha 'Pass123!' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com email 'john.doe@example.com' como admin"
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 404
+```

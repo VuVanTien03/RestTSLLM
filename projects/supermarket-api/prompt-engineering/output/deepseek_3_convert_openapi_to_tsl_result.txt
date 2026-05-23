@@ -1,0 +1,515 @@
+<think>
+Okay, I need to convert the provided OpenAPI specification for the Supermarket API into a Test Specification Language (TSL) YAML file. The user emphasized generating as many test cases as possible for maximum coverage, focusing on boundary values and equivalence classes.
+
+First, I'll look at the endpoints and their operations. The API has endpoints for Categories and Products, each with GET, POST, PUT, DELETE methods. 
+
+Starting with the Categories:
+- GET /api/categories: Lists all categories. A test for a successful 200 response is needed.
+- POST /api/categories: Creates a category. The SaveCategoryResource requires a name between 1-30 characters. I'll create tests for valid name, name too short, too long, null, empty, and check for duplicates.
+- PUT /api/categories/{id}: Updates a category. Need tests for valid update, invalid ID, invalid name lengths, and non-existent ID.
+- DELETE /api/categories/{id}: Deletes a category. Tests for valid deletion, invalid ID, and deleting a non-existent ID.
+
+For Products:
+- GET /api/products: Lists products with query parameters. The parameters categoryId, page, and itemsPerPage. Tests include valid queries, invalid categoryId, page and itemsPerPage values below 1, and their boundaries.
+- POST /api/products: Creates a product. The SaveProductResource has name (1-50 chars), quantityInPackage (0-100), unitOfMeasurement (enum), and categoryId. Tests for valid data, invalid name lengths, quantity out of bounds, invalid unit, and invalid category.
+- PUT /api/products/{id}: Updates a product. Similar to POST tests but checking non-existent product and category.
+- DELETE /api/products/{id}: Deletes a product. Tests for valid ID and invalid/non-existent ID.
+
+Each test case needs to cover success and error responses. For enums like unitOfMeasurement, test valid and invalid values. For numbers, test min, max, and out-of-bounds values. For strings, test min and max lengths, empty, null. Query parameters need valid and invalid values, checking required and optional parameters.
+
+I also need to ensure that preconditions are set where necessary, like existing categories for product tests. Each test should have a unique ID, group, name, endpoint, method, request details, and expected response.
+
+Now, structuring all this into YAML format with appropriate test cases for each endpoint and method, making sure to cover all possible scenarios as per the OpenAPI spec.
+</think>
+
+```yaml
+test_cases:
+  # Categories Endpoint Tests
+  - id: TC001
+    group: Categories
+    name: Get all categories - Success
+    endpoint: /api/categories
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        type: array
+
+  - id: TC002
+    group: Categories  
+    name: Create category - Valid data
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "ValidCategory"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer
+        name: "ValidCategory"
+
+  - id: TC003
+    group: Categories
+    name: Create category - Name too short
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Categories
+    name: Create category - Name too long
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "ThisIsAVeryLongCategoryNameThatExceedsThirtyCharacters"
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Categories
+    name: Create category - Duplicate name
+    endpoint: /api/categories
+    method: POST
+    preconditions:
+      - "Category with name 'ExistingCategory' exists"
+    request_body:
+      name: "ExistingCategory"
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Categories
+    name: Update category - Valid data
+    endpoint: /api/categories/1
+    method: PUT
+    preconditions:
+      - "Category with id 1 exists"
+    request_body:
+      name: "UpdatedCategory"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: "UpdatedCategory"
+
+  - id: TC007
+    group: Categories
+    name: Update category - Invalid ID
+    endpoint: /api/categories/invalid
+    method: PUT
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: Categories
+    name: Update category - Nonexistent ID
+    endpoint: /api/categories/9999
+    method: PUT
+    request_body:
+      name: "NewCategory"
+    expected_response:
+      status_code: 404
+
+  - id: TC009
+    group: Categories
+    name: Delete category - Success
+    endpoint: /api/categories/1
+    method: DELETE
+    preconditions:
+      - "Category with id 1 exists"
+    expected_response:
+      status_code: 200
+
+  - id: TC010
+    group: Categories
+    name: Delete category - Nonexistent ID
+    endpoint: /api/categories/9999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  # Products Endpoint Tests  
+  - id: TC011
+    group: Products
+    name: Get products - Valid query
+    endpoint: /api/products?categoryId=1&page=1&itemsPerPage=10
+    method: GET
+    preconditions:
+      - "Category with id 1 exists"
+      - "At least 10 products in category 1"
+    expected_response:
+      status_code: 200
+      body:
+        totalItems: is integer >=10
+        items: 
+          type: array
+          length: 10
+
+  - id: TC012
+    group: Products
+    name: Get products - Invalid category
+    endpoint: /api/products?categoryId=aaa&page=1&itemsPerPage=10
+    method: GET
+    expected_response:
+      status_code: 400
+
+  - id: TC013
+    group: Products
+    name: Get products - Page below minimum
+    endpoint: /api/products?page=0&itemsPerPage=10
+    method: GET
+    expected_response:
+      status_code: 400
+
+  - id: TC014
+    group: Products
+    name: Get products - Items per page below minimum
+    endpoint: /api/products?page=1&itemsPerPage=0
+    method: GET
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: Products  
+    name: Create product - Valid data
+    endpoint: /api/products
+    method: POST
+    preconditions:
+      - "Category with id 1 exists"
+    request_body:
+      name: "ValidProduct"
+      quantityInPackage: 50
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer
+        name: "ValidProduct"
+        quantityInPackage: 50
+        unitOfMeasurement: "Gram"
+
+  - id: TC016
+    group: Products
+    name: Create product - Name too short
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: ""
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC017
+    group: Products
+    name: Create product - Name too long
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "VeryLongProductNameExceedingFiftyCharactersAbcdefghijklmnop"
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC018
+    group: Products
+    name: Create product - Quantity below minimum
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: -1
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC019
+    group: Products
+    name: Create product - Quantity above maximum
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: 101
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC020
+    group: Products
+    name: Create product - Invalid unit
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: 10
+      unitOfMeasurement: "InvalidUnit"
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC021
+    group: Products  
+    name: Update product - Valid data
+    endpoint: /api/products/1
+    method: PUT
+    preconditions:
+      - "Product with id 1 exists"
+      - "Category with id 2 exists"
+    request_body:
+      name: "UpdatedProduct"
+      quantityInPackage: 75
+      unitOfMeasurement: "Kilogram"
+      categoryId: 2
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: "UpdatedProduct"
+        quantityInPackage: 75
+        unitOfMeasurement: "Kilogram"
+
+  - id: TC022
+    group: Products
+    name: Update product - Nonexistent product
+    endpoint: /api/products/9999
+    method: PUT
+    request_body:
+      name: "Product"
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 404
+
+  - id: TC023
+    group: Products
+    name: Update product - Invalid category
+    endpoint: /api/products/1
+    method: PUT
+    request_body:
+      name: "Product"
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      categoryId: 999
+    expected_response:
+      status_code: 400
+
+  - id: TC024
+    group: Products
+    name: Delete product - Success
+    endpoint: /api/products/1
+    method: DELETE
+    preconditions:
+      - "Product with id 1 exists"
+    expected_response:
+      status_code: 200
+
+  - id: TC025
+    group: Products
+    name: Delete product - Nonexistent product
+    endpoint: /api/products/9999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  # Pagination Boundaries
+  - id: TC026
+    group: Products
+    name: Get products - Page min value
+    endpoint: /api/products?page=1&itemsPerPage=1
+    method: GET
+    preconditions:
+      - "At least 1 product exists"
+    expected_response:
+      status_code: 200
+      body:
+        items:
+          type: array
+          length: 1
+
+  - id: TC027
+    group: Products
+    name: Get products - Items per page min value
+    endpoint: /api/products?page=1&itemsPerPage=1
+    method: GET
+    preconditions:
+      - "At least 1 product exists"
+    expected_response:
+      status_code: 200
+      body:
+        items:
+          type: array
+          length: 1
+
+  # Enum Validation
+  - id: TC028
+    group: Products
+    name: Create product - Valid units
+    endpoint: /api/products
+    method: POST
+    preconditions:
+      - "Category with id 1 exists"
+    examples:
+      - unit: "Unity"
+      - unit: "Milligram"
+      - unit: "Gram"
+      - unit: "Kilogram"
+      - unit: "Liter"
+    request_body:
+      name: "Product"
+      quantityInPackage: 10
+      unitOfMeasurement: "{unit}"
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  # Field Length Boundaries
+  - id: TC029
+    group: Categories
+    name: Create category - Name min length
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "A"
+    expected_response:
+      status_code: 200
+
+  - id: TC030
+    group: Categories
+    name: Create category - Name max length
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "ExactlyThirtyCharactersLongText"
+    expected_response:
+      status_code: 200
+
+  - id: TC031
+    group: Products
+    name: Create product - Name min length
+    endpoint: /api/products
+    method: POST
+    preconditions:
+      - "Category with id 1 exists"
+    request_body:
+      name: "A"
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC032
+    group: Products
+    name: Create product - Name max length
+    endpoint: /api/products
+    method: POST
+    preconditions:
+      - "Category with id 1 exists"
+    request_body:
+      name: "FiftyCharacterProductNameAbcdefghijklmnopqrstuvwxyz01234"
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  # Quantity Boundaries
+  - id: TC033
+    group: Products
+    name: Create product - Quantity min value
+    endpoint: /api/products
+    method: POST
+    preconditions:
+      - "Category with id 1 exists"
+    request_body:
+      name: "Product"
+      quantityInPackage: 0
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC034
+    group: Products
+    name: Create product - Quantity max value
+    endpoint: /api/products
+    method: POST
+    preconditions:
+      - "Category with id 1 exists"
+    request_body:
+      name: "Product"
+      quantityInPackage: 100
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  # Required Fields
+  - id: TC035
+    group: Categories
+    name: Create category - Missing name
+    endpoint: /api/categories
+    method: POST
+    request_body: {}
+    expected_response:
+      status_code: 400
+
+  - id: TC036
+    group: Products
+    name: Create product - Missing category
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+    expected_response:
+      status_code: 400
+
+  - id: TC037  
+    group: Products
+    name: Create product - Missing quantity
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  # Null Values
+  - id: TC038
+    group: Categories
+    name: Create category - Null name
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+
+  - id: TC039
+    group: Products
+    name: Create product - Null name
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: null
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      categoryId: 1
+    expected_response:
+      status_code: 400
+```

@@ -1,0 +1,509 @@
+```yml
+test_cases:
+  - id: TC001
+    group: Account
+    name: Create Account When Valid Data Returns OK
+    description: Criação de conta com dados válidos.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valid@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha123!"
+    expected_response:
+      status_code: 200
+
+  - id: TC002
+    group: Account
+    name: Create Account When Email Already Exists Returns BadRequest
+    description: Tentativa de criar conta com email que já existe.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "duplicado@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC003
+    group: Account
+    name: Create Account When Invalid Email Format Returns BadRequest
+    description: Criação de conta com email inválido (contém caracteres especiais).
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "invalido!@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Account
+    name: Create Account When Name Is Null Returns BadRequest
+    description: Criação de conta com nome nulo.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: null
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Account
+    name: Create Account When Name Is Empty String Returns BadRequest
+    description: Criação de conta com nome vazio.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: ""
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Account
+    name: Create Account When Name Too Short Returns BadRequest
+    description: Criação de conta com nome curto.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: ""
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: Account
+    name: Create Account When Password Is Null Returns BadRequest
+    description: Criação de conta com senha nula.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: null
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: Account
+    name: Create Account When Password Is Empty String Returns BadRequest
+    description: Criação de conta com senha vazia.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: Account
+    name: Create Account When Password Too Short Returns BadRequest
+    description: Criação de conta com senha curta (menor que 6 caracteres).
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha"
+    expected_response:
+      status_code: 400
+
+  - id: TC010
+    group: Account
+    name: Create Account When Password Too Long Returns BadRequest
+    description: Criação de conta com senha longa (maior que 15 caracteres).
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha123456789101112!"
+    expected_response:
+      status_code: 400
+
+  - id: TC011
+    group: Account
+    name: Create Account When Password Missing Uppercase Letter Returns BadRequest
+    description: Criação de conta com senha sem letra maiúscula.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "senha123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: Account
+    name: Create Account When Password Missing Lowercase Letter Returns BadRequest
+    description: Criação de conta com senha sem letra minúscula.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "SENHA123!"
+    expected_response:
+      status_code: 400
+
+  - id: TC013
+    group: Account
+    name: Create Account When Password Missing Digit Returns BadRequest
+    description: Criação de conta com senha sem dígito.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      firstName: "Nome"
+      lastName: "Sobrenome"
+      isAdmin: false
+      password: "Senha!Az"
+    expected_response:
+      status_code: 400
+
+  - id: TC014
+    group: Account
+    name: Authenticate Account When Valid Data Returns OK
+    description: Autenticação de conta com dados válidos.
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    request_body:
+      email: "valido@email.com"
+      password: "Senha123!"
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+
+  - id: TC015
+    group: Account
+    name: Authenticate Account When Invalid Password Returns Unauthorized
+    description: Autenticação de conta com senha inválida.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "valido@email.com"
+      password: "Senha123"
+    expected_response:
+      status_code: 401
+
+  - id: TC016
+    group: Account
+    name: Authenticate Account When Invalid Email Returns Unauthorized
+    description: Autenticação de conta com email inválido.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "invalido@email.com"
+      password: "Senha123!"
+    expected_response:
+      status_code: 401
+
+  - id: TC017
+    group: Account
+    name: Refresh Token When Valid Data Returns OK
+    description: Atualização de token com dados válidos.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      token: "Token123"
+      refreshToken: "RefreshToken123"
+      userId: "UserId123"
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+
+  - id: TC018
+    group: Countries
+    name: Get All Countries When Valid Data Returns OK
+    description: Listagem de países.
+    endpoint: /api/countries
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC019
+    group: Countries
+    name: Create Country When Valid Data Returns Created
+    description: Criação de país com dados válidos.
+    endpoint: /api/countries
+    method: POST
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    headers:
+      Authorization: "Bearer BearerToken123"
+    request_body:
+      name: "País"
+      shortName: "PT"
+    expected_response:
+      status_code: 201
+
+  - id: TC020
+    group: Countries
+    name: Create Country When Name Is Null Returns BadRequest
+    description: Criação de país com nome nulo.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer BearerToken123"
+    request_body:
+      name: null
+      shortName: "PT"
+    expected_response:
+      status_code: 400
+
+  - id: TC021
+    group: Countries
+    name: Create Country When Name Is Empty String Returns BadRequest
+    description: Criação de país com nome vazio.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer BearerToken123"
+    request_body:
+      name: ""
+      shortName: "PT"
+    expected_response:
+      status_code: 400
+
+  - id: TC022
+    group: Countries
+    name: Create Country When Name Too Short Returns BadRequest
+    description: Criação de país com nome curto (menor que 1 caracter).
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer BearerToken123"
+    request_body:
+      name: "A"
+      shortName: "PT"
+    expected_response:
+      status_code: 400
+
+  - id: TC023
+    group: Countries
+    name: Create Country When Short Name Is Null Returns BadRequest
+    description: Criação de país com abreviação nula.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer BearerToken123"
+    request_body:
+      name: "País"
+      shortName: null
+    expected_response:
+      status_code: 400
+
+  - id: TC024
+    group: Countries
+    name: Create Country When Short Name Is Empty String Returns BadRequest
+    description: Criação de país com abreviação vazia.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer BearerToken123"
+    request_body:
+      name: "País"
+      shortName: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC025
+    group: Countries
+    name: Create Country When Token Is Invalid Returns Unauthorized
+    description: Criação de país com token inválido.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer InvalidToken123"
+    request_body:
+      name: "País"
+      shortName: "PT"
+    expected_response:
+      status_code: 401
+
+  - id: TC026
+    group: Countries
+    name: Create Country When Without Token Returns Unauthorized
+    description: Criação de país sem token.
+    endpoint: /api/countries
+    method: POST
+    request_body:
+      name: "País"
+      shortName: "PT"
+    expected_response:
+      status_code: 401
+
+  - id: TC027
+    group: Countries
+    name: Get Country By ID When Valid Data Returns OK
+    description: Listagem de país por ID.
+    endpoint: /api/countries/1
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC028
+    group: Countries
+    name: Get Country By ID When ID Not Exists Returns NotFound
+    description: Listagem de país por ID não existente.
+    endpoint: /api/countries/999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC029
+    group: Countries
+    name: Update Country When Valid Data Returns NoContent
+    description: Atualização de país com dados válidos.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+      - "País criado com ID 1"
+    endpoint: /api/countries/1
+    method: PUT
+    headers:
+      Authorization: "Bearer BearerToken123"
+    request_body:
+      name: "País Atualizado"
+      shortName: "PT"
+    expected_response:
+      status_code: 204
+
+  - id: TC030
+    group: Countries
+    name: Update Country When ID Not Exists Returns NotFound
+    description: Atualização de país não existente.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/countries/999
+    method: PUT
+    headers:
+      Authorization: "Bearer BearerToken123"
+    request_body:
+      name: "País Atualizado"
+      shortName: "PT"
+    expected_response:
+      status_code: 404
+
+  - id: TC031
+    group: Countries
+    name: Update Country When Token Is Invalid Returns Unauthorized
+    description: Atualização de país com token inválido.
+    preconditions:
+      - "País criado com ID 1"
+    endpoint: /api/countries/1
+    method: PUT
+    headers:
+      Authorization: "Bearer InvalidToken123"
+    request_body:
+      name: "País Atualizado"
+      shortName: "PT"
+    expected_response:
+      status_code: 401
+
+  - id: TC032
+    group: Countries
+    name: Update Country When Without Token Returns Unauthorized
+    description: Atualização de país sem token.
+    preconditions:
+      - "País criado com ID 1"
+    endpoint: /api/countries/1
+    method: PUT
+    request_body:
+      name: "País Atualizado"
+      shortName: "PT"
+    expected_response:
+      status_code: 401
+
+  - id: TC033
+    group: Countries
+    name: Delete Country When Valid Data Returns NoContent
+    description: Exclusão de país com dados válidos.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+      - "País criado com ID 1"
+    endpoint: /api/countries/1
+    method: DELETE
+    headers:
+      Authorization: "Bearer BearerToken123"
+    expected_response:
+      status_code: 204
+
+  - id: TC034
+    group: Countries
+    name: Delete Country When ID Not Exists Returns NotFound
+    description: Exclusão de país não existente.
+    preconditions:
+      - "Conta criada com email 'valido@email.com' e senha 'Senha123!'"
+    endpoint: /api/countries/999
+    method: DELETE
+    headers:
+      Authorization: "Bearer BearerToken123"
+    expected_response:
+      status_code: 404
+
+  - id: TC035
+    group: Countries
+    name: Delete Country When Token Is Invalid Returns Unauthorized
+    description: Exclusão de país com token inválido.
+    preconditions:
+      - "País criado com ID 1"
+    endpoint: /api/countries/1
+    method: DELETE
+    headers:
+      Authorization: "Bearer InvalidToken123"
+    expected_response:
+      status_code: 401

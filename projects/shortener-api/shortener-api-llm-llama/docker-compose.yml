@@ -1,0 +1,50 @@
+﻿volumes:
+  dotnet-minify-url:
+    driver: local
+
+services:
+  mongodb:
+    image: mongo:4.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=2D1wIPm5wzvJNa8OXMYShLGN
+      - MONGO_INITDB_DATABASE=admin
+
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - dotnet-minify-url:/data/db
+    environment:
+        - REDIS_PASSWORD=8mn1JpZ5oumuU2zTNwgK
+    command:
+      - redis-server
+
+  # minify-url:
+  #   image: minify-url
+  #   container_name: minify-url
+  #   build:
+  #       context: .
+  #       dockerfile: src/Web/Dockerfile
+  #   restart: always
+  #   ports:
+  #     - "5001:8080"
+  #   volumes:
+  #     - dotnet-minify-url:/app/MinifyUrl/MinifyUrl.Web/wwwroot
+  #   depends_on:
+  #     - mongodb
+  #     - redis
+  #   environment:
+  #       - ASPNETCORE_ENVIRONMENT=Development
+  #       - Settings:Server:Port=5001
+  #       - Settings:MongoDb:Host=mongodb
+  #       - Settings:Redis:Host=redis
+  #       - Settings:UrlToken:PoolingSize=500000
+  #       - Settings:UrlToken:ExtendSize=100000

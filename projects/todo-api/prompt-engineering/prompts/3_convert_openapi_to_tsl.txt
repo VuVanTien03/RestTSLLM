@@ -1,0 +1,475 @@
+Dado o exemplo que lhe passei de como converter uma especificação OpenApi para TSL, preciso que você me forneça o TSL em yml da seguinte especificação OpenApi:
+Importante ressaltar a importância e necessidade de gerar o maior número de cenários de teste possível visando o aumento máximo de cobertura. 
+Você deve gerar todos os casos, sem retornar uma resposta me solicitando para complementar algo.
+
+```json
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Simple Todo API",
+    "description": "API to manage a simple Todo List with user auth control.",
+    "contact": {
+      "name": "David Fowler",
+      "url": "https://github.com/davidfowl"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    },
+    "version": "v1"
+  },
+  "paths": {
+    "/todos": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "summary": "List all todos",
+        "description": "This endpoint list all existing todos that the user has created. If current user has no todos, an empty array will be returned.",
+        "responses": {
+          "200": {
+            "description": "Todos listed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TodoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token or missing"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [
+              
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Todos"
+        ],
+        "summary": "Create a todo",
+        "description": "This endpoint creates new todo with a simple title (description) always incomplete.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTodoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Todo created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid title",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token or missing"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [
+              
+            ]
+          }
+        ]
+      }
+    },
+    "/todos/{id}": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "summary": "Get a todo",
+        "description": "This endpoint consult an existing todo. It can only be done by the user who created the todo.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of an existing todo created by the user who owns the authentication token.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo consulted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token or missing"
+          },
+          "404": {
+            "description": "Todo does not exists or user is not the owner"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [
+              
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Todos"
+        ],
+        "summary": "Update a todo",
+        "description": "This endpoint updates an existing todo with a simple title (description) and its status (isComplete). It can only be done by the user who created the todo and can also be used to mark or unmark a todo as complete.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of an existing todo created by the user who owns the authentication token.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTodoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Todo updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid title or missing isComplete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token or missing"
+          },
+          "404": {
+            "description": "Todo does not exists or user is not the owner"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [
+              
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Todos"
+        ],
+        "summary": "Delete a todo",
+        "description": "This endpoint deletes an existing todo. It can only be done by the user who created the todo.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of an existing todo created by the user who owns the authentication token.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo deleted successfully"
+          },
+          "401": {
+            "description": "Invalid token or missing"
+          },
+          "404": {
+            "description": "Todo does not exists or user is not the owner"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [
+              
+            ]
+          }
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create an user",
+        "description": "This endpoint creates new user with an username and password.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Invalid fields or user already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/token": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Authenticate user",
+        "description": "Generate a valid token to authenticate Todos endpoints by username and password.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Token generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BadRequestResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+          },
+          "title": {
+            "type": "string",
+            "default": "One or more validation errors occurred."
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "default": 400
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "default": {
+              "property": [
+                "The field <property> is an invalid field (...)"
+              ]
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateTodoRequest": {
+        "required": [
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Title is the description from todo and must be between 1 and 256 characters long.",
+            "default": "Something todo in the future"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateUserRequest": {
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string",
+            "description": "Username must be between 1 and 128 characters long, can only contain uppercase and lowercase letters (a-z, A-Z), numbers (0-9), and the following special characters: hyphen (-), period (.), underscore (_), at symbol (@), and plus sign (+) and must not exist in the database.",
+            "default": "my_username"
+          },
+          "password": {
+            "maxLength": 32,
+            "minLength": 6,
+            "type": "string",
+            "description": "Password must be between 6 and 32 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one non-alphanumeric character.",
+            "default": "P@ssw0rd"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TodoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "default": "1"
+          },
+          "title": {
+            "type": "string",
+            "default": "Something todo in the future"
+          },
+          "isComplete": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Valid token to authenticate todos endpoints with header `Authorization: Bearer eyJhbGc...`",
+            "default": "eyJhbGc..."
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateTodoRequest": {
+        "required": [
+          "isComplete",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Title is the description from todo and must be between 1 and 256 characters long.",
+            "default": "Something todo in the future"
+          },
+          "isComplete": {
+            "type": "boolean",
+            "description": "IsComplete is a boolean flag indicating that a todo has been completed. It can be marked again as incomplete.",
+            "default": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Json Web Token"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Users management operations"
+    },
+    {
+      "name": "Todos",
+      "description": "Todo list management operations"
+    }
+  ]
+}
+```

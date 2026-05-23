@@ -1,0 +1,7 @@
+{
+	"stryker-config" : {
+		"disable-mix-mutants": true,
+		"mutation-level": "Advanced",
+		"additional-timeout": 5000
+	}
+}

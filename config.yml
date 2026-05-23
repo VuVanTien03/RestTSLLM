@@ -1,0 +1,107 @@
+llms:
+- claude
+- deepseek
+- gpt
+- gemini
+- llama
+- maritaca
+- mixtral
+- qwen
+
+cloud: azure
+os: linux-ubuntu-24-04-lts
+host: 172.xx.xx.86
+port: 22
+user: anonymous
+pass: '******'
+
+setup-env-cmd:
+- add-apt-repository ppa:deadsnakes/ppa -y
+- apt-get update && apt-get upgrade -y
+- apt-get install -y python3 && python3 --version
+- apt-get install -y python3-pip && pip --version
+- apt-get install -y git gh && git --version
+- add-apt-repository ppa:dotnet/backports -y
+- apt-get update
+- apt-get install -y dotnet-sdk-7.0 dotnet-sdk-8.0 dotnet-sdk-9.0
+- dotnet --list-sdks
+- apt-get install -y curl apt-transport-https ca-certificates software-properties-common
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+- add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
+- apt-get update 
+- apt-cache policy docker-ce
+- apt-get install -y docker-ce
+- docker --version && docker ps
+- apt-get install docker-compose -y
+- dotnet tool install --global coverlet.console && coverlet --version
+- dotnet tool install --global dotnet-stryker && dotnet stryker
+- gh auth login (...)
+
+execute-llm:
+- cd llm-processor
+- python3 -m pip install -r ./requirements.txt 
+- python3 main.py --prompts-dir="../projects/<project>/prompt-engineering/prompts" --system-command-file="../projects/<project>/prompt-engineering/prompts/0_system_command.txt" --output-dir="../projects/<project>/prompt-engineering/output" --llms=all
+
+projects:
+- name: todo-api
+  repo: davidfowl/TodoApi
+  docker: false
+  test-cmd: coverlet TodoApi.IntegrationTests/bin/Debug/net7.0/TodoApi.IntegrationTests.dll --target "dotnet" --targetargs "test --no-build --nologo" --format "opencover" --output "llm-test-generation-files/reports/result"
+  mutation-cmd: dotnet stryker --output llm-test-generation-files
+  dependencies:
+  - SQLite
+
+- name: restaurants-api
+  repo: jakubkozera/Restaurants
+  docker: true
+  global-pre-exec-cmd: docker-compose -f ../restaurants-api-original/docker-compose.yml up -d
+  global-post-exec-cmd: docker-compose -f ../restaurants-api-original/docker-compose.yml down
+  each-test-pre-exec-cmd: docker exec -it hotels.db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P SqlServer2019! -C -i /tmp/drop_tables.sql
+  test-cmd: coverlet IntegrationTests/bin/Debug/net8.0/IntegrationTests.dll --target "dotnet" --targetargs "test --no-build --nologo" --format "opencover" --output "llm-test-generation-files/reports/result"
+  mutation-cmd: dotnet stryker --output llm-test-generation-files
+  dependencies:
+  - SQLServer
+  - AzureBlobStorage
+
+- name: shortener-api
+  repo: Filiphasan/dotnet-minify-url
+  docker: true
+  global-pre-exec-cmd: docker-compose -f ../shortener-api-original/docker-compose.yml up -d
+  global-post-exec-cmd: docker-compose -f ../shortener-api-original/docker-compose.yml down
+  each-test-pre-exec-cmd: docker exec -it redis redis-cli FLUSHALL && docker exec -it mongodb bash -c "mongo minifyurl  -u 'admin' -p '2D1wIPm5wzvJNa8OXMYShLGN' --authenticationDatabase 'admin' --eval 'db.dropDatabase()'"
+  test-cmd: coverlet IntegrationTests/bin/Debug/net9.0/IntegrationTests.dll --target "dotnet" --targetargs "test --no-build --nologo" --format "opencover" --output "llm-test-generation-files/reports/result"
+  mutation-cmd: dotnet stryker --output llm-test-generation-files
+  dependencies:
+  - Mongo
+  - Redis
+
+- name: books-api
+  repo: poorna-soysa/books-api-docker-compose-postgresql-redis
+  docker: true
+  global-pre-exec-cmd: docker-compose -f ../books-api-original/docker-compose.yml up -d
+  global-post-exec-cmd: docker-compose -f ../books-api-original/docker-compose.yml down
+  each-test-pre-exec-cmd: docker exec -it books.cache redis-cli FLUSHALL && docker exec -it books.db psql -U postgres -d books -c "DELETE FROM \"Books\";"
+  test-cmd: coverlet IntegrationTests/bin/Debug/net8.0/IntegrationTests.dll --target "dotnet" --targetargs "test ./IntegrationTests/IntegrationTests.csproj --no-build --nologo" --format "opencover" --output "llm-test-generation-files/reports/result"
+  mutation-cmd: dotnet stryker --output llm-test-generation-files
+  dependencies:
+  - Postgree
+  - Redis
+
+- name: hotels-api
+  repo: trevoirwilliams/HotelListing.API.NET
+  docker: true
+  global-pre-exec-cmd: docker-compose -f ../hotels-api-original/docker-compose.yml up -d
+  global-post-exec-cmd: docker-compose -f ../hotels-api-original/docker-compose.yml down
+  each-test-pre-exec-cmd: docker exec -it hotels.db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P SqlServer2019! -C -i /tmp/drop_tables.sql
+  test-cmd: coverlet IntegrationTests/bin/Debug/net7.0/IntegrationTests.dll --target "dotnet" --targetargs "test --no-build --nologo" --format "opencover" --output "llm-test-generation-files/reports/result"
+  mutation-cmd: dotnet stryker --output llm-test-generation-files
+  dependencies:
+  - SQLServer
+
+- name: supermarket-api
+  repo: evgomes/supermarket-api
+  docker: false
+  test-cmd: coverlet IntegrationTests/bin/Debug/net8.0/IntegrationTests.dll --target "dotnet" --targetargs "test ./IntegrationTests/IntegrationTests.csproj --no-build --nologo" --format "opencover" --output "llm-test-generation-files/reports/result"
+  mutation-cmd: dotnet stryker --output llm-test-generation-files -tp IntegrationTests/IntegrationTests.csproj
+  dependencies:  
+  - SQLite

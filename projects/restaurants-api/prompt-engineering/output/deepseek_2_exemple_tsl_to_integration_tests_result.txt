@@ -1,0 +1,28 @@
+<think>
+Okay, the user wants me to generate test code from a TSL specification. Let me review the examples they provided.
+
+First, the OpenAPI spec and the TSL examples. They showed how each endpoint's parameters and responses are converted into test cases. Important aspects include varying input values to test boundaries, required fields, and error conditions.
+
+Next, the .NET integration tests. They structured tests into separate classes by groups (Users, People, App). Each test method corresponds to a TSL test case. The tests use xUnit, with IClassFixture for the WebApplicationFactory. Helpers like CreateUserAsync and CreatePersonAsync are used to reduce code duplication.
+
+For each test, the AAA pattern is followed. Arrange sets up preconditions, Act sends the HTTP request, Assert checks the response. They use HttpClient to send requests and assert responses. JsonObject is used to parse and validate response bodies.
+
+Notable points:
+- Preconditions are set up within the test methods, like creating a user before testing authentication.
+- Tokens are generated and reused where necessary.
+- Multipart form data is handled for file uploads.
+- Different test classes for different endpoints, keeping tests organized.
+
+Potential issues to avoid:
+- State leakage between tests. Each test should be independent, so setup is done within the test or via helpers.
+- Proper handling of async/await to prevent deadlocks.
+- Correct use of HttpClient methods, like PostAsJsonAsync and SendAsync.
+
+Need to ensure that when translating TSL to code, each test case's parameters (like invalid lengths, missing fields) are accurately represented in the test methods. Also, verify the correct HTTP status codes and response body validations are implemented as per the TSL.
+
+The user expects tests to be written with the correct namespace and in separate files based on the group. I should follow the structure they provided, using similar helper methods and adhering to xUnit conventions.
+
+Examples showed how to handle various scenarios, including authentication, error responses, and file uploads. I need to replicate this structure, making sure each TSL test case is converted into a corresponding Fact method with appropriate assertions.
+</think>
+
+OK

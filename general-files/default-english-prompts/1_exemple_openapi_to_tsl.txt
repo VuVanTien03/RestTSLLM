@@ -1,0 +1,914 @@
+I will teach you best practices for converting an OpenAPI specification to TSL:
+
+Example OpenAPI specification:
+
+```json
+{
+	"openapi": "3.0.1",
+	"info": {
+		"title": "People Management API",
+		"description": "API to manage people.",
+		"contact": {
+			"name": "Foo Bar",
+			"url": "https://github.com/foobar"
+		},
+		"license": {
+			"name": "MIT",
+			"url": "http://opensource.org/licenses/MIT"
+		},
+		"version": "v1"
+	},
+	"paths": {
+		"/people": {
+			"post": {
+				"tags": [
+					"People"
+				],
+				"summary": "Create person",
+				"description": "Create person.",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreatePersonRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"201": {
+						"description": "Person created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PersonResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Token invalid or missing"
+					},
+					"400": {
+						"description": "Invalid properties",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"Bearer": []
+					}
+				]
+			}
+		},
+		"/people/{id}": {
+			"get": {
+				"tags": [
+					"People"
+				],
+				"summary": "Get person",
+				"description": "Get an existing person created by user.",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Id of person",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Person exists and was returned",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PersonResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Token invalid or missing"
+					},
+					"404": {
+						"description": "Person does not exists"
+					}
+				},
+				"security": [
+					{
+						"Bearer": []
+					}
+				]
+			}
+		},
+		"/users": {
+			"post": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Create user",
+				"description": "Creates new user.",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUser"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "User created"
+					},
+					"400": {
+						"description": "Invalid fields or user exists",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/token": {
+			"post": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Authenticate user",
+				"description": "Generate token to authenticate People endpoints by nickname and password.",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUser"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Token generated successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Token"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid credentials",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/app/logo": {
+			"put": {
+				"tags": [
+					"App"
+				],
+				"summary": "Update App Logo",
+				"description": "Update App logo with a file",
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"description": "Form with 'fileContent' with a file",
+										"format": "binary"
+									}
+								}
+							},
+							"encoding": {
+								"fileContent": {
+									"style": "form"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"415": {
+						"description": "Unsupported Media Type"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ErrorResponse": {
+				"type": "object",
+				"properties": {
+					"error": {
+						"type": "string",
+						"default": "The field <property> is an invalid field (...)"
+					}
+				},
+				"additionalProperties": false
+			},
+			"CreatePersonRequest": {
+				"required": [
+					"name",
+					"age"
+				],
+				"type": "object",
+				"properties": {
+					"name": {
+						"maxLength": 128,
+						"minLength": 1,
+						"type": "string",
+						"description": "Name of person",
+						"default": "John Smith"
+					},
+					"age": {
+						"type": "integer",
+						"format": "int32",
+						"minimum": 0,
+						"maximum": 150,
+						"default": 18
+					}
+				},
+				"additionalProperties": false
+			},
+			"CreateUser": {
+				"required": [
+					"password",
+					"nickname"
+				],
+				"type": "object",
+				"properties": {
+					"nickname": {
+						"maxLength": 32,
+						"minLength": 10,
+						"type": "string",
+						"description": "Nickname can only have letters and digits and must not exist in the database.",
+						"default": "something12"
+					},
+					"password": {
+						"maxLength": 20,
+						"minLength": 6,
+						"type": "string",
+						"description": "Password must contain at least one uppercase letter, one lowercase letter and one digit.",
+						"default": "Something12"
+					}
+				},
+				"additionalProperties": false
+			},
+			"PersonResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"format": "int32",
+						"default": 1
+					},
+					"name": {
+						"type": "string",
+						"default": "John Smith"
+					},
+					"age": {
+						"type": "integer",
+						"format": "int32",
+						"default": 18
+					}
+				},
+				"additionalProperties": false
+			},
+			"Token": {
+				"type": "object",
+				"properties": {
+					"token": {
+						"type": "string",
+						"description": "Token to authenticate in header `Authorization: Bearer <token>`",
+						"default": "abcdefg"
+					}
+				},
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"Bearer": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "Json Web Token"
+			}
+		}
+	},
+	"tags": [
+		{
+			"name": "Users",
+			"description": "Users actions"
+		},
+		{
+			"name": "People",
+			"description": "People actions"
+		},
+		{
+			"name": "App",
+			"description": "App actions"
+		}
+	]
+}
+```
+
+Example of TSL generated from the OpenAPI specification:
+
+```yaml
+test_cases:
+  - id: TC001
+    group: User
+    name: Create User When Valid Data Returns OK
+    description: Creation of a user with valid data.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNickname1"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 200
+  - id: TC002
+    group: User
+    name: Create User When Nickname Already Exists Returns BadRequest
+    description: Attempt to create a user with a nickname that already exists.
+    endpoint: /users
+    method: POST
+    preconditions:
+      - "User with nickname 'existingNick' already exists in the system."
+    request_body:
+      nickname: "existingNick"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 400
+  - id: TC003
+    group: User
+    name: Create User When Invalid Nickname Format Returns BadRequest
+    description: Creation of a user with an invalid nickname (contains special characters).
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "invalid!Nick"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 400
+  - id: TC004
+    group: User
+    name: Create User When Nickname Is Null Returns BadRequest
+    description: Creation of a user with a null nickname.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: null
+      password: "ValidPass1"
+    expected_response:
+      status_code: 400
+  - id: TC005
+    group: User
+    name: Create User When Nickname Is Empty String Returns BadRequest
+    description: Creation of a user with an empty nickname.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: ""
+      password: "ValidPass1"
+    expected_response:
+      status_code: 400
+  - id: TC006
+    group: User
+    name: Create User When Nickname Too Short Returns BadRequest
+    description: Creation of a user with a short nickname - 9 characters.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "invalidNi"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 400
+  - id: TC007
+    group: User
+    name: Create User When Nickname Too Long Returns BadRequest
+    description: Creation of a user with a long nickname - 33 characters.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick1abcabcabcdabcabcabcd123"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 400
+  - id: TC008
+    group: User
+    name: Create User When Nickname Has Minimum Size Returns OK
+    description: Creation of a user with the minimum possible nickname size - 10 characters.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick0"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 200
+  - id: TC009
+    group: User
+    name: Create User When Nickname Has Maximum Size Returns OK
+    description: Creation of a user with the maximum possible nickname size - 32 characters.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick1abcabcabcdabcabcabcd12"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 200
+  - id: TC010
+    group: User
+    name: Create User When Password Is Null Returns BadRequest
+    description: Creation of a user with a null password.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick1"
+      password: null
+    expected_response:
+      status_code: 400
+  - id: TC011
+    group: User
+    name: Create User When Password Is Empty String Returns BadRequest
+    description: Creation of a user with an empty password.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick2"
+      password: ""
+    expected_response:
+      status_code: 400
+  - id: TC012
+    group: User
+    name: Create User When Password Too Short Returns BadRequest
+    description: Creation of a user with a short password - 5 characters.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick3"
+      password: "Abcd1"
+    expected_response:
+      status_code: 400
+  - id: TC013
+    group: User
+    name: Create User When Password Too Long Returns BadRequest
+    description: Creation of a user with a long password - 21 characters.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick4"
+      password: "Ab1Abc2bc2bc2bc2bc2bc"
+    expected_response:
+      status_code: 400
+  - id: TC014
+    group: User
+    name: Create User When Password Has Minimum Size Returns OK
+    description: Creation of a user with the minimum possible password size - 6 characters.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick5"
+      password: "Abcde1"
+    expected_response:
+      status_code: 200    
+  - id: TC015
+    group: User
+    name: Create User When Password Has Maximum Size Returns OK
+    description: Creation of a user with the maximum possible password size - 20 characters.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick6"
+      password: "Ab1Abc2bc2bc2bc2bc2b"
+    expected_response:
+      status_code: 200    
+  - id: TC016
+    group: User
+    name: Create User When Password Missing Uppercase Letter Returns BadRequest
+    description: Creation of a user with a password missing an uppercase letter.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick7"
+      password: "validpass1"
+    expected_response:
+      status_code: 400
+  - id: TC017
+    group: User
+    name: Create User When Password Missing Lowercase Letter Returns BadRequest
+    description: Creation of a user with a password missing a lowercase letter.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick8"
+      password: "VALIDPASS1"
+    expected_response:
+      status_code: 400
+  - id: TC018
+    group: User
+    name: Create User When Password Missing Digit Returns BadRequest
+    description: Creation of a user with a password missing a digit.
+    endpoint: /users
+    method: POST
+    request_body:
+      nickname: "validNick9"
+      password: "ValidPassX"
+    expected_response:
+      status_code: 400
+  - id: TC019
+    group: User
+    name: Authenticate User When Valid Data Returns OK
+    description: Authentication of a user with valid credentials.
+    endpoint: /users/token
+    method: POST
+    preconditions:
+      - "User with nickname 'validNick10' and password 'ValidPass1' exists."
+    request_body:
+      nickname: "validNick10"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+  - id: TC020
+    group: User
+    name: Authenticate User When Invalid Password Returns BadRequest
+    description: Authentication of a user with an invalid password.
+    prconditions:
+      - "User with nickname 'validNick11' and password 'ValidPass1' exists."
+    endpoint: /users/token
+    method: POST
+    request_body:
+      nickname: "validNick11"
+      password: "WrongPass1"
+    expected_response:
+      status_code: 400
+  - id: TC021
+    group: User
+    name: Authenticate User When Invalid Nickname Returns BadRequest
+    description: Authentication of a user with an invalid nickname.
+    preconditions:
+      - "User with nickname 'validNick12' and password 'ValidPass1' exists."
+    endpoint: /users/token
+    method: POST
+    request_body:
+      nickname: "validNickname12"
+      password: "ValidPass1"
+    expected_response:
+      status_code: 400
+  - id: TC022
+    group: People
+    name: Create Person When Valid Data Returns Created
+    description: Creation of a person with valid data.
+    preconditions:
+      - "User with nickname 'validNick13' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick13'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "John Doe"
+      age: 30
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "John Doe"
+        age: 30
+  - id: TC023
+    group: People
+    name: Create Person When Name Is Null Returns BadRequest
+    description: Creation of a person with a null name.
+    preconditions:
+      - "User with nickname 'validNick14' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick14'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: null
+      age: 30
+    expected_response:
+      status_code: 400
+  - id: TC024
+    group: People
+    name: Create Person When Name Is Empty String Returns BadRequest
+    description: Creation of a person with an empty name.
+    preconditions:
+      - "User with nickname 'validNick15' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick15'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: ""
+      age: 30
+    expected_response:
+      status_code: 400
+  - id: TC025
+    group: People
+    name: Create Person When Name Too Short Returns BadRequest
+    description: Creation of a person with a short name - 0 characters.
+    preconditions:
+      - "User with nickname 'validNick16' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick16'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: ""
+      age: 30
+    expected_response:
+      status_code: 400
+  - id: TC026
+    group: People
+    name: Create Person When Name Too Long Returns BadRequest
+    description: Creation of a person with a long name - 129 characters.
+    preconditions:
+      - "User with nickname 'validNick17' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick17'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "John Doe abcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcg"
+      age: 30
+    expected_response:
+      status_code: 400
+  - id: TC027
+    group: People
+    name: Create Person When Name Has Minimum Size Returns Created
+    description: Creation of a person with the minimum possible name size - 1 character.
+    preconditions:
+      - "User with nickname 'validNick18' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick18'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "J"
+      age: 30
+    expected_response:
+      status_code: 201  
+      body:
+        id: is integer greater than 0
+        name: "Joh"
+        age: 30            
+  - id: TC028
+    group: People
+    name: Create Person When Name Has Maximum Size Returns Created
+    description: Creation of a person with the maximum possible name size - 128 characters.
+    preconditions:
+      - "User with nickname 'validNick19' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick19'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "John Doeabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcg"
+      age: 30
+    expected_response:
+      status_code: 201  
+      body:
+        id: is integer greater than 0
+        name: "John Doeabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcgabcabcabcg"
+        age: 30      
+  - id: TC029
+    group: People
+    name: Create Person When Age Is Null Returns BadRequest
+    description: Creation of a person with a null age.
+    preconditions:
+      - "User with nickname 'validNick20' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick20'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "John Doe"
+      age: null
+    expected_response:
+      status_code: 400
+  - id: TC030
+    group: People
+    name: Create Person When Age Below Minimum Returns BadRequest
+    description: Creation of a person with age below the minimum - -1.
+    preconditions:
+      - "User with nickname 'validNick21' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick21'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "John Doe"
+      age: -1
+    expected_response:
+      status_code: 400
+  - id: TC031
+    group: People
+    name: Create Person When Age Above Maximum Returns BadRequest
+    description: Creation of a person with age above the maximum - 151.
+    preconditions:
+      - "User with nickname 'validNick22' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick22'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "John Doe"
+      age: 151
+    expected_response:
+      status_code: 400
+  - id: TC032
+    group: People
+    name: Create Person When Age Has Minimum Value Returns Created
+    description: Creation of a person with the minimum possible age - 0.
+    preconditions:
+      - "User with nickname 'validNick23' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick23'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "John Doe"
+      age: 0
+    expected_response:
+      status_code: 201  
+      body:
+        id: is integer greater than 0
+        name: "John Doe"
+        age: 0            
+  - id: TC033
+    group: People
+    name: Create Person When Age Has Maximum Value Returns Created
+    description: Creation of a person with the maximum possible age - 150.
+    preconditions:
+      - "User with nickname 'validNick24' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick24'"
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "John Doe"
+      age: 150
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "John Doe"
+        age: 150  
+  - id: TC034
+    group: People
+    name: Create Person When Token Is Invalid Returns Unauthorized
+    description: Creation of a person with an invalid token.
+    endpoint: /people
+    method: POST
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      name: "John Doe"
+      age: 30
+    expected_response:
+      status_code: 401
+  - id: TC035
+    group: People
+    name: Create Person When Without Token Returns Unauthorized
+    description: Creation of a person without a token.
+    endpoint: /people
+    method: POST
+    request_body:
+      name: "John Doe"
+      age: 30
+    expected_response:
+      status_code: 401
+  - id: TC036
+    group: People
+    name: Get Person When Valid Data Returns OK
+    description: Get an existing person by ID.
+    preconditions:
+      - "User with nickname 'validNick25' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick25'"
+      - "There is a person created with name 'John Doe' and age 30 with id stored in {person_id}"
+    endpoint: /people/{person_id}
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+      body:
+        id: {person_id}
+        name: "John Doe"
+        age: 30
+  - id: TC037
+    group: People
+    name: Get Person When ID Not Exists Returns NotFound
+    description: Attempt to get a person with an ID that does not exist.
+    preconditions:
+      - "User with nickname 'validNick26' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick26'"
+    endpoint: /people/9999999
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 404
+  - id: TC038
+    group: People
+    name: Get Person When Token Is Invalid Returns Unauthorized
+    description: Attempt to get a person with an invalid token.
+    endpoint: /people/1
+    method: GET
+    headers:
+      Authorization: "Bearer invalidtoken"
+    expected_response:
+      status_code: 401
+  - id: TC039
+    group: People
+    name: Get Person When Without Token Returns Unauthorized
+    description: Attempt to get a person without a token.
+    endpoint: /people/1
+    method: GET
+    expected_response:
+      status_code: 401
+  - id: TC040
+    group: People
+    name: Get Person When Token From Other User Returns NotFound
+    description: Attempt to get an existing person by ID with another user's token.
+    preconditions:
+      - "User with nickname 'validNick27' and password 'ValidPass1' exists."
+      - "There is a valid authentication token {valid_token} for the user with nickname 'validNick27'"
+      - "There is a person created by user 'validNick27' with name 'John Doe' and age 30 with id stored in {person_id}"
+      - "User with nickname 'validNick28' and password 'ValidPass2' exists."
+      - "There is a valid authentication token {other_valid_token} for the user with nickname 'validNick28'"
+    endpoint: /people/{person_id}
+    method: GET
+    headers:
+      Authorization: "Bearer {other_valid_token}"
+    expected_response:
+      status_code: 404
+  - id: TC041
+    group: App
+    name: Update App Logo With Valid Content Type Returns OK
+    description: Update the app logo with an image
+    endpoint: /app/logo
+    method: PUT
+    form_data: 
+      file: <somefile.jpg>
+    expected_response:
+      status_code: 200
+  - id: TC042
+    group: App
+    name: Update App Logo With Invalid Content Type Returns UnsupportedMediaType
+    description: Attempt to update the app logo with a json
+    endpoint: /app/logo
+    method: PUT
+    request_body: 
+      file: somefile.jpg
+    expected_response:
+      status_code: 415
+```
+
+Just reply "OK" if you understand.

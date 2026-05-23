@@ -1,0 +1,7 @@
+Dado o exemplo que lhe passei de como converter uma especificação OpenApi para TSL, preciso que você me forneça o TSL em yml da seguinte especificação OpenApi:
+Importante ressaltar a importância e necessidade de gerar o maior número de cenários de teste possível visando o aumento máximo de cobertura. 
+Você deve gerar todos os casos, sem retornar uma resposta me solicitando para complementar algo.
+
+```json
+<open_api_here>
+```

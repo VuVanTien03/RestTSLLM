@@ -1,0 +1,278 @@
+```csharp
+// File: RestaurantsIntegrationTests.cs
+
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Text.Json.Nodes;
+using System.Net;
+using System.Net.Http.Json;
+using Restaurants.Application.Restaurants.Dtos;
+
+namespace IntegrationTests
+{
+    public class RestaurantsIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly WebApplicationFactory<Program> _factory;
+        private readonly HttpClient _client;
+
+        public RestaurantsIntegrationTests(WebApplicationFactory<Program> factory)
+        {
+            _factory = factory;
+            _client = _factory.CreateClient();
+        }
+
+        private async Task<HttpResponseMessage> CreateRestaurantAsync(JsonObject requestBody)
+        {
+            return await _client.PostAsJsonAsync("/api/restaurants", requestBody);
+        }
+
+        [Fact]
+        public async Task TC113_Create_Restaurant_With_Valid_Data_Returns_Created()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", "Sample Restaurant" },
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "contact@example.com" },
+                { "contactNumber", "12345678901" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            var restaurantResponse = await response.Content.ReadFromJsonAsync<RestaurantDto>();
+            Assert.NotNull(restaurantResponse);
+            Assert.Equal(requestBody["name"].AsValue().GetValue<string>(), restaurantResponse.Name);
+            Assert.Equal(requestBody["description"].AsValue().GetValue<string>(), restaurantResponse.Description);
+            Assert.Equal(requestBody["category"].AsValue().GetValue<string>(), restaurantResponse.Category);
+        }
+
+        [Fact]
+        public async Task TC114_Create_Restaurant_With_Missing_Required_Field_Returns_BadRequest()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "description", "Sample description" },
+                { "hasDelivery", true },
+                { "contactEmail", "contact@example.com" },
+                { "contactNumber", "12345678901" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            }; // Missing required field "name"
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC123_Create_Restaurant_With_Name_At_Minimum_Size_Returns_Created()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", "Res" }, // 3 character, minimum size for restaurant name
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "validemail@example.com" },
+                { "contactNumber", "1234567890" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            var restaurantResponse = await response.Content.ReadFromJsonAsync<RestaurantDto>();
+            Assert.Equal(requestBody["name"].AsValue().GetValue<string>(), restaurantResponse.Name);
+        }
+
+        [Fact]
+        public async Task TC124_Create_Restaurant_With_Name_At_Maximum_Size_Returns_Created()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", "TheMaximumAllowedLengthOf32Chars" }, // 32 characters, maximum size for restaurant name
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "validemail@example.com" },
+                { "contactNumber", "1234567890" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            var restaurantResponse = await response.Content.ReadFromJsonAsync<RestaurantDto>();
+            Assert.Equal(requestBody["name"].AsValue().GetValue<string>(), restaurantResponse.Name);
+        }
+
+        [Fact]
+        public async Task TC125_Create_Restaurant_With_Name_Null_Returns_BadRequest()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", null },
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "validemail@example.com" },
+                { "contactNumber", "1234567890" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC126_Create_Restaurant_With_Name_Empty_String_Returns_BadRequest()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", "" }, // Empty string name
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "validemail@example.com" },
+                { "contactNumber", "1234567890" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC127_Create_Restaurant_With_Name_Too_Short_Returns_BadRequest()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", "Ra" }, // 2 characters, below minimum length
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "validemail@example.com" },
+                { "contactNumber", "1234567890" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC128_Create_Restaurant_With_Name_Too_Long_Returns_BadRequest()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", "SampleNameThatExceedsTheMaximumAllowedLengthOf32CharactersExtraChar" }, // 33 characters, above maximum length
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "validemail@example.com" },
+                { "contactNumber", "1234567890" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC129_Create_Restaurant_With_Invalid_Email_Returns_BadRequest()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", "Sample Restaurant" },
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "invalid-email" },
+                { "contactNumber", "1234567890" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "12345" }
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC130_Create_Restaurant_With_Invalid_PostalCode_Returns_BadRequest()
+        {
+            // arrange
+            var requestBody = new JsonObject
+            {
+                { "name", "Sample Restaurant" },
+                { "description", "Sample description" },
+                { "category", "Sample Category" },
+                { "hasDelivery", true },
+                { "contactEmail", "validemail@example.com" },
+                { "contactNumber", "1234567890" },
+                { "city", "Sample City" },
+                { "street", "Sample Street" },
+                { "postalCode", "abcdefghi" } // Invalid postal code, should be numeric
+            };
+
+            // act
+            var response = await CreateRestaurantAsync(requestBody);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+    }
+}
+```
+
+Este código C# representa os testes de integração para os cenários de criação de restaurantes usando xUnit e o padrão AAA. Cada teste visa cobrir um caso específico, conforme definido no TSL, para garantir que todos os aspectos da criação de um restaurante através da API sejam validados. Lembre-se que cada `requestBody` deve ser ajustado para simular a criação de restaurantes com diferentes parâmetros e verificar os códigos de status HTTP retornados, assim como a estrutura da resposta quando necessário.

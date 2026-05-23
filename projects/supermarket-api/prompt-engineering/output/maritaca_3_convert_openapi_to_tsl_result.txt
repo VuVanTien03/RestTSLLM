@@ -1,0 +1,241 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Categories
+    name: List_All_Categories_Returns_OK
+    description: Listagem de todas as categorias.
+    endpoint: /api/categories
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        is_array: true
+        items:
+          id: is integer
+          name: is string
+
+  - id: TC002
+    group: Categories
+    name: Save_Valid_Category_Returns_OK
+    description: Salvar uma nova categoria com dados válidos.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "New Category"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "New Category"
+
+  - id: TC003
+    group: Categories
+    name: Save_Category_With_Empty_Name_Returns_BadRequest
+    description: Tentativa de salvar uma categoria com nome vazio.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+      body:
+        success: false
+        messages: contains "The field name is required."
+
+  - id: TC004
+    group: Categories
+    name: Save_Category_With_Null_Name_Returns_BadRequest
+    description: Tentativa de salvar uma categoria com nome nulo.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+      body:
+        success: false
+        messages: contains "The field name is required."
+
+  - id: TC005
+    group: Categories
+    name: Update_Valid_Category_Returns_OK
+    description: Atualizar uma categoria existente com dados válidos.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      name: "Updated Category"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: "Updated Category"
+
+  - id: TC006
+    group: Categories
+    name: Update_Category_With_Empty_Name_Returns_BadRequest
+    description: Tentativa de atualizar uma categoria com nome vazio.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+      body:
+        success: false
+        messages: contains "The field name is required."
+
+  - id: TC007
+    group: Categories
+    name: Update_Category_That_Does_Not_Exist_Returns_NotFound
+    description: Tentativa de atualizar uma categoria que não existe.
+    endpoint: /api/categories/9999
+    method: PUT
+    request_body:
+      name: "Nonexistent Category"
+    expected_response:
+      status_code: 404
+
+  - id: TC008
+    group: Categories
+    name: Delete_Category_Returns_OK
+    description: Deletar uma categoria existente.
+    endpoint: /api/categories/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: is string
+
+  - id: TC009
+    group: Categories
+    name: Delete_Category_That_Does_Not_Exist_Returns_NotFound
+    description: Tentativa de deletar uma categoria que não existe.
+    endpoint: /api/categories/9999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  - id: TC010
+    group: Products
+    name: List_All_Products_Returns_OK
+    description: Listagem de todos os produtos.
+    endpoint: /api/products
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        totalItems: is integer greater than or equal to 0
+        items:
+          is_array: true
+          items:
+            id: is integer
+            name: is string
+            quantityInPackage: is integer
+            unitOfMeasurement: is one_of ["Unity", "Milligram", "Gram", "Kilogram", "Liter"]
+            category: 
+              id: is integer
+              name: is string
+
+  - id: TC011
+    group: Products
+    name: Save_Valid_Product_Returns_OK
+    description: Salvar um novo produto com dados válidos.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "New Product"
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      category:
+        id: 1
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "New Product"
+        quantityInPackage: 10
+        unitOfMeasurement: "Gram"
+        category:
+          id: 1
+
+  - id: TC012
+    group: Products
+    name: Save_Product_With_Invalid_CategoryID_Returns_BadRequest
+    description: Tentativa de salvar um produto com ID de categoria inválido.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "New Product"
+      quantityInPackage: 10
+      unitOfMeasurement: "Gram"
+      category:
+        id: 9999
+    expected_response:
+      status_code: 400
+      body:
+        success: false
+        messages: contains "The field category.id is invalid."
+
+  - id: TC013
+    group: Products
+    name: Update_Valid_Product_Returns_OK
+    description: Atualizar um produto existente com dados válidos.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      name: "Updated Product"
+      quantityInPackage: 20
+      unitOfMeasurement: "Kilogram"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: "Updated Product"
+        quantityInPackage: 20
+        unitOfMeasurement: "Kilogram"
+
+  - id: TC014
+    group: Products
+    name: Update_Product_That_Does_Not_Exist_Returns_NotFound
+    description: Tentativa de atualizar um produto que não existe.
+    endpoint: /api/products/9999
+    method: PUT
+    request_body:
+      name: "Nonexistent Product"
+      quantityInPackage: 50
+      unitOfMeasurement: "Gram"
+    expected_response:
+      status_code: 404
+
+  - id: TC015
+    group: Products
+    name: Delete_Product_Returns_OK
+    description: Deletar um produto existente.
+    endpoint: /api/products/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: is string
+
+  - id: TC016
+    group: Products
+    name: Delete_Product_That_Does_Not_Exist_Returns_NotFound
+    description: Tentativa de deletar um produto que não existe.
+    endpoint: /api/products/9999
+    method: DELETE
+    expected_response:
+      status_code: 404
+```

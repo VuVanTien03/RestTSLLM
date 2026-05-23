@@ -1,0 +1,332 @@
+// File: CategoriesIntegrationTests.cs
+
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Text.Json.Nodes;
+using System.Net;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using Xunit;
+using Supermarket.API;
+
+namespace IntegrationTests
+{
+    public class CategoriesIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly WebApplicationFactory<Program> _factory;
+        private readonly HttpClient _client;
+
+        public CategoriesIntegrationTests(WebApplicationFactory<Program> factory)
+        {
+            _factory = factory;
+            _client = _factory.CreateClient();
+        }
+
+        private async Task<HttpResponseMessage> CreateCategoryAsync(string name)
+        {
+            var request = new
+            {
+                name = name
+            };
+
+            return await _client.PostAsJsonAsync("/api/categories", request);
+        }
+
+        private async Task<HttpResponseMessage> UpdateCategoryAsync(int id, string name)
+        {
+            var request = new
+            {
+                name = name
+            };
+
+            return await _client.PutAsJsonAsync($"/api/categories/{id}", request);
+        }
+
+        private async Task<HttpResponseMessage> DeleteCategoryAsync(int id)
+        {
+            return await _client.DeleteAsync($"/api/categories/{id}");
+        }
+
+        [Fact]
+        public async Task TC001_List_All_Categories_Returns_OK()
+        {
+            // arrange
+            await CreateCategoryAsync("Category1");
+            await CreateCategoryAsync("Category2");
+
+            // act
+            var response = await _client.GetAsync("/api/categories");
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var body = await response.Content.ReadFromJsonAsync<JsonArray>();
+            Assert.NotEmpty(body);
+        }
+
+        [Fact]
+        public async Task TC002_Save_Category_When_Valid_Data_Returns_OK()
+        {
+            // arrange
+            string name = "ValidCategory";
+
+            // act
+            var response = await CreateCategoryAsync(name);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var body = await response.Content.ReadFromJsonAsync<JsonObject>();
+            Assert.Equal(name, body["name"].AsValue().GetValue<string>());
+        }
+
+        [Fact]
+        public async Task TC003_Save_Category_When_Name_Is_Null_Returns_BadRequest()
+        {
+            // arrange
+            string name = null;
+
+            // act
+            var response = await CreateCategoryAsync(name);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC004_Save_Category_When_Name_Is_Empty_String_Returns_BadRequest()
+        {
+            // arrange
+            string name = "";
+
+            // act
+            var response = await CreateCategoryAsync(name);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC005_Save_Category_When_Name_Too_Short_Returns_BadRequest()
+        {
+            // arrange
+            string name = "";
+
+            // act
+            var response = await CreateCategoryAsync(name);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC006_Save_Category_When_Name_Too_Long_Returns_BadRequest()
+        {
+            // arrange
+            string name = new string('a', 31);
+
+            // act
+            var response = await CreateCategoryAsync(name);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC007_Save_Category_When_Name_Has_Minimum_Size_Returns_OK()
+        {
+            // arrange
+            string name = "a";
+
+            // act
+            var response = await CreateCategoryAsync(name);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var body = await response.Content.ReadFromJsonAsync<JsonObject>();
+            Assert.Equal(name, body["name"].AsValue().GetValue<string>());
+        }
+
+        [Fact]
+        public async Task TC008_Save_Category_When_Name_Has_Maximum_Size_Returns_OK()
+        {
+            // arrange
+            string name = new string('a', 30);
+
+            // act
+            var response = await CreateCategoryAsync(name);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var body = await response.Content.ReadFromJsonAsync<JsonObject>();
+            Assert.Equal(name, body["name"].AsValue().GetValue<string>());
+        }
+
+        [Fact]
+        public async Task TC009_Update_Category_When_Valid_Data_Returns_OK()
+        {
+            // arrange
+            string name = "ValidCategory";
+            var createResponse = await CreateCategoryAsync(name);
+            var body = await createResponse.Content.ReadFromJsonAsync<JsonObject>();
+            int id = body["id"].AsValue().GetValue<int>();
+            string updatedName = "UpdatedCategory";
+
+            // act
+            var response = await UpdateCategoryAsync(id, updatedName);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var updatedBody = await response.Content.ReadFromJsonAsync<JsonObject>();
+            Assert.Equal(updatedName, updatedBody["name"].AsValue().GetValue<string>());
+        }
+
+        [Fact]
+        public async Task TC010_Update_Category_When_Name_Is_Null_Returns_BadRequest()
+        {
+            // arrange
+            string name = "ValidCategory";
+            var createResponse = await CreateCategoryAsync(name);
+            var body = await createResponse.Content.ReadFromJsonAsync<JsonObject>();
+            int id = body["id"].AsValue().GetValue<int>();
+            string updatedName = null;
+
+            // act
+            var response = await UpdateCategoryAsync(id, updatedName);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC011_Update_Category_When_Name_Is_Empty_String_Returns_BadRequest()
+        {
+            // arrange
+            string name = "ValidCategory";
+            var createResponse = await CreateCategoryAsync(name);
+            var body = await createResponse.Content.ReadFromJsonAsync<JsonObject>();
+            int id = body["id"].AsValue().GetValue<int>();
+            string updatedName = "";
+
+            // act
+            var response = await UpdateCategoryAsync(id, updatedName);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC012_Update_Category_When_Name_Too_Short_Returns_BadRequest()
+        {
+            // arrange
+            string name = "ValidCategory";
+            var createResponse = await CreateCategoryAsync(name);
+            var body = await createResponse.Content.ReadFromJsonAsync<JsonObject>();
+            int id = body["id"].AsValue().GetValue<int>();
+            string updatedName = "";
+
+            // act
+            var response = await UpdateCategoryAsync(id, updatedName);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC013_Update_Category_When_Name_Too_Long_Returns_BadRequest()
+        {
+            // arrange
+            string name = "ValidCategory";
+            var createResponse = await CreateCategoryAsync(name);
+            var body = await createResponse.Content.ReadFromJsonAsync<JsonObject>();
+            int id = body["id"].AsValue().GetValue<int>();
+            string updatedName = new string('a', 31);
+
+            // act
+            var response = await UpdateCategoryAsync(id, updatedName);
+
+            // assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC014_Update_Category_When_Name_Has_Minimum_Size_Returns_OK()
+        {
+            // arrange
+            string name = "ValidCategory";
+            var createResponse = await CreateCategoryAsync(name);
+            var body = await createResponse.Content.ReadFromJsonAsync<JsonObject>();
+            int id = body["id"].AsValue().GetValue<int>();
+            string updatedName = "a";
+
+            // act
+            var response = await UpdateCategoryAsync(id, updatedName);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var updatedBody = await response.Content.ReadFromJsonAsync<JsonObject>();
+            Assert.Equal(updatedName, updatedBody["name"].AsValue().GetValue<string>());
+        }
+
+        [Fact]
+        public async Task TC015_Update_Category_When_Name_Has_Maximum_Size_Returns_OK()
+        {
+            // arrange
+            string name = "ValidCategory";
+            var createResponse = await CreateCategoryAsync(name);
+            var body = await createResponse.Content.ReadFromJsonAsync<JsonObject>();
+            int id = body["id"].AsValue().GetValue<int>();
+            string updatedName = new string('a', 30);
+
+            // act
+            var response = await UpdateCategoryAsync(id, updatedName);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var updatedBody = await response.Content.ReadFromJsonAsync<JsonObject>();
+            Assert.Equal(updatedName, updatedBody["name"].AsValue().GetValue<string>());
+        }
+
+        [Fact]
+        public async Task TC016_Update_Category_When_ID_Not_Exists_Returns_NotFound()
+        {
+            // arrange
+            int id = 99999;
+            string updatedName = "UpdatedCategory";
+
+            // act
+            var response = await UpdateCategoryAsync(id, updatedName);
+
+            // assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC017_Delete_Category_When_Valid_Data_Returns_OK()
+        {
+            // arrange
+            string name = "ValidCategory";
+            var createResponse = await CreateCategoryAsync(name);
+            var body = await createResponse.Content.ReadFromJsonAsync<JsonObject>();
+            int id = body["id"].AsValue().GetValue<int>();
+
+            // act
+            var response = await DeleteCategoryAsync(id);
+
+            // assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var deletedBody = await response.Content.ReadFromJsonAsync<JsonObject>();
+            Assert.Equal(id, deletedBody["id"].AsValue().GetValue<int>());
+        }
+
+        [Fact]
+        public async Task TC018_Delete_Category_When_ID_Not_Exists_Returns_NotFound()
+        {
+            // arrange
+            int id = 99999;
+
+            // act
+            var response = await DeleteCategoryAsync(id);
+
+            // assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+    }
+}

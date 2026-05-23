@@ -1,0 +1,423 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Book
+    name: Get all books returns 200 OK
+    description: Verifica se a API retorna todos os livros com sucesso.
+    endpoint: /books
+    method: GET
+    expected_response:
+      status_code: 200
+  - id: TC002
+    group: Book
+    name: Create book with valid data returns 200 OK
+    description: Verifica se a API cria um livro com dados válidos.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "Valid ISBN"
+      description: "Valid Description"
+      author: "Valid Author"
+    expected_response:
+      status_code: 200
+  - id: TC003
+    group: Book
+    name: Create book with missing title returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o título está faltando.
+    endpoint: /books
+    method: POST
+    request_body:
+      isbn: "Valid ISBN"
+      description: "Valid Description"
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC004
+    group: Book
+    name: Create book with missing isbn returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o ISBN está faltando.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      description: "Valid Description"
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC005
+    group: Book
+    name: Create book with missing description returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando a descrição está faltando.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "Valid ISBN"
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC006
+    group: Book
+    name: Create book with missing author returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o autor está faltando.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "Valid ISBN"
+      description: "Valid Description"
+    expected_response:
+      status_code: 400
+  - id: TC007
+    group: Book
+    name: Create book with empty title returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o título está vazio.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: ""
+      isbn: "Valid ISBN"
+      description: "Valid Description"
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC008
+    group: Book
+    name: Create book with empty isbn returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o ISBN está vazio.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: ""
+      description: "Valid Description"
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC009
+    group: Book
+    name: Create book with empty description returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando a descrição está vazia.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "Valid ISBN"
+      description: ""
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC010
+    group: Book
+    name: Create book with empty author returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o autor está vazio.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "Valid ISBN"
+      description: "Valid Description"
+      author: ""
+    expected_response:
+      status_code: 400
+  - id: TC011
+    group: Book
+    name: Get book by id with valid id returns 200 OK
+    description: Verifica se a API retorna um livro com um ID válido.
+    endpoint: /books/{id}
+    method: GET
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 200
+  - id: TC012
+    group: Book
+    name: Get book by id with invalid id returns 404 Not Found
+    description: Verifica se a API retorna um erro 404 quando o ID é inválido.
+    endpoint: /books/{id}
+    method: GET
+    parameters:
+      id: 99999
+    expected_response:
+      status_code: 404
+  - id: TC013
+    group: Book
+    name: Update book with valid data returns 204 No Content
+    description: Verifica se a API atualiza um livro com dados válidos.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: "Updated ISBN"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 204
+  - id: TC014
+    group: Book
+    name: Update book with invalid id returns 404 Not Found
+    description: Verifica se a API retorna um erro 404 quando o ID é inválido para atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 99999
+    request_body:
+      title: "Updated Title"
+      isbn: "Updated ISBN"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 404
+  - id: TC015
+    group: Book
+    name: Update book with missing title returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o título está faltando na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      isbn: "Updated ISBN"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC016
+    group: Book
+    name: Update book with missing isbn returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o ISBN está faltando na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC017
+    group: Book
+    name: Update book with missing description returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando a descrição está faltando na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: "Updated ISBN"
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC018
+    group: Book
+    name: Update book with missing author returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o autor está faltando na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: "Updated ISBN"
+      description: "Updated Description"
+    expected_response:
+      status_code: 400
+  - id: TC019
+    group: Book
+    name: Update book with empty title returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o título está vazio na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: ""
+      isbn: "Updated ISBN"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC020
+    group: Book
+    name: Update book with empty isbn returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o ISBN está vazio na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: ""
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC021
+    group: Book
+    name: Update book with empty description returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando a descrição está vazia na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: "Updated ISBN"
+      description: ""
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC022
+    group: Book
+    name: Update book with empty author returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o autor está vazio na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: "Updated ISBN"
+      description: "Updated Description"
+      author: ""
+    expected_response:
+      status_code: 400
+  - id: TC023
+    group: Book
+    name: Delete book with valid id returns 204 No Content
+    description: Verifica se a API deleta um livro com um ID válido.
+    endpoint: /books/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 204
+  - id: TC024
+    group: Book
+    name: Delete book with invalid id returns 404 Not Found
+    description: Verifica se a API retorna um erro 404 quando o ID é inválido para deleção.
+    endpoint: /books/{id}
+    method: DELETE
+    parameters:
+      id: 99999
+    expected_response:
+      status_code: 404
+  - id: TC025
+    group: Book
+    name: Create book with null title returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o título é nulo.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: null
+      isbn: "Valid ISBN"
+      description: "Valid Description"
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC026
+    group: Book
+    name: Create book with null isbn returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o ISBN é nulo.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: null
+      description: "Valid Description"
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC027
+    group: Book
+    name: Create book with null description returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando a descrição é nula.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "Valid ISBN"
+      description: null
+      author: "Valid Author"
+    expected_response:
+      status_code: 400
+  - id: TC028
+    group: Book
+    name: Create book with null author returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o autor é nulo.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "Valid ISBN"
+      description: "Valid Description"
+      author: null
+    expected_response:
+      status_code: 400
+  - id: TC029
+    group: Book
+    name: Update book with null title returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o título é nulo na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: null
+      isbn: "Updated ISBN"
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC030
+    group: Book
+    name: Update book with null isbn returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o ISBN é nulo na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: null
+      description: "Updated Description"
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC031
+    group: Book
+    name: Update book with null description returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando a descrição é nula na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: "Updated ISBN"
+      description: null
+      author: "Updated Author"
+    expected_response:
+      status_code: 400
+  - id: TC032
+    group: Book
+    name: Update book with null author returns 400 Bad Request
+    description: Verifica se a API retorna um erro quando o autor é nulo na atualização.
+    endpoint: /books/{id}
+    method: PUT
+    parameters:
+      id: 1
+    request_body:
+      title: "Updated Title"
+      isbn: "Updated ISBN"
+      description: "Updated Description"
+      author: null
+    expected_response:
+      status_code: 400
+
+```

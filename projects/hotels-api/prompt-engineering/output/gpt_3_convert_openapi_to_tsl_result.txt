@@ -1,0 +1,254 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Account
+    name: Create ApiUser When Valid Data Returns OK
+    description: Create an API user with valid data.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      email: "john.doe@example.com"
+      isAdmin: false
+      password: "Password1!"
+    expected_response:
+      status_code: 200
+
+  - id: TC002
+    group: Account
+    name: Create ApiUser When Missing Required Field Returns BadRequest
+    description: Create an API user missing one required field.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: null
+      lastName: "Doe"
+      email: "john.doe@example.com"
+      isAdmin: false
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC003
+    group: Account
+    name: Create ApiUser When Invalid Email Format Returns BadRequest
+    description: Create an API user with invalid email format.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      email: "invalid-email"
+      isAdmin: false
+      password: "Password1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Account
+    name: Create ApiUser When Password Too Short Returns BadRequest
+    description: Create an API user with a password that is shorter than the minimum length.
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      email: "john.doe@example.com"
+      isAdmin: false
+      password: "Pwd1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Account
+    name: Authenticate User When Valid Data Returns OK
+    description: Authenticate user with valid email and password.
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "A user with email 'valid_user@example.com' and password 'Password1!' exists."
+    request_body:
+      email: "valid_user@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        refreshToken: is string not empty
+
+  - id: TC006
+    group: Account
+    name: Authenticate User When Invalid Password Returns Unauthorized
+    description: Authenticate user with invalid password.
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "A user with email 'valid_user@example.com' and password 'Password1!' exists."
+    request_body:
+      email: "valid_user@example.com"
+      password: "WrongPassword"
+    expected_response:
+      status_code: 401
+
+  - id: TC007
+    group: Account
+    name: Authenticate User When Invalid Email Returns Unauthorized
+    description: Authenticate user with invalid email.
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "A user with email 'valid_user@example.com' and password 'Password1!' exists."
+    request_body:
+      email: "invalid_user@example.com"
+      password: "Password1!"
+    expected_response:
+      status_code: 401
+
+  - id: TC008
+    group: Account
+    name: Refresh Token When Valid Data Returns OK
+    description: Refresh token with valid token and refreshToken.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    preconditions:
+      - "A user with token and refreshToken exists."
+    request_body:
+      token: "valid_token"
+      refreshToken: "valid_refresh_token"
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        refreshToken: is string not empty
+
+  - id: TC009
+    group: Account
+    name: Refresh Token When Invalid RefreshToken Returns Unauthorized
+    description: Refresh token with invalid refreshToken.
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    preconditions:
+      - "A user with token and refreshToken exists."
+    request_body:
+      token: "valid_token"
+      refreshToken: "invalid_refresh_token"
+    expected_response:
+      status_code: 401
+
+  - id: TC010
+    group: Countries
+    name: Get All Countries When Valid Data Returns OK
+    description: Retrieve a list of all available countries.
+    endpoint: /api/countries
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        is array with items of type GetCountryDto
+
+  - id: TC011
+    group: Countries
+    name: Create Country When Valid Data Returns Created
+    description: Create a country with valid data.
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer valid_token"
+    request_body:
+      name: "CountryName"
+      shortName: "CN"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "CountryName"
+        shortName: "CN"
+
+  - id: TC012
+    group: Countries
+    name: Create Country When Unauthorized Returns Unauthorized
+    description: Create a country without authorization token.
+    endpoint: /api/countries
+    method: POST
+    request_body:
+      name: "CountryName"
+      shortName: "CN"
+    expected_response:
+      status_code: 401
+
+  - id: TC013
+    group: Countries
+    name: Get Country By ID When Valid ID Returns OK
+    description: Retrieve a country by valid ID.
+    endpoint: /api/countries/{id}
+    method: GET
+    path_variables:
+      id: 1
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: "CountryName"
+        shortName: "CN"
+        hotels: is array or null
+
+  - id: TC014
+    group: Countries
+    name: Get Country By ID When Invalid ID Returns NotFound
+    description: Retrieve a country by invalid ID.
+    endpoint: /api/countries/99999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC015
+    group: Hotels
+    name: Get All Hotels When Valid Data Returns OK
+    description: Retrieve a list of all hotels.
+    endpoint: /api/hotels/all
+    method: GET
+    headers:
+      Authorization: "Bearer valid_token"
+    expected_response:
+      status_code: 200
+      body:
+        is array with items of type HotelDto
+
+  - id: TC016
+    group: Hotels
+    name: Create Hotel When Valid Data Returns Created
+    description: Create a hotel with valid data.
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: "Bearer valid_token"
+    request_body:
+      name: "HotelName"
+      address: "HotelAddress"
+      rating: 4.5
+      countryId: 1
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "HotelName"
+        address: "HotelAddress"
+        rating: 4.5
+        countryId: 1
+
+  - id: TC017
+    group: Hotels
+    name: Create Hotel When Missing Required Fields Returns BadRequest
+    description: Create a hotel missing required fields.
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: "Bearer valid_token"
+    request_body:
+      name: null
+      address: "HotelAddress"
+      countryId: 1
+    expected_response:
+      status_code: 400
+```

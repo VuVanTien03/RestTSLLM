@@ -1,0 +1,884 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AI-CHATBOT-Y1 API",
+    "description": "API for chatbot services",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/ask_mcp": {
+      "post": {
+        "tags": [
+          "AI"
+        ],
+        "summary": "Ask Question Mcp",
+        "description": "Ask endpoint with MCP tool support that returns complete response",
+        "operationId": "ask_question_mcp_ask_mcp_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskMCPRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskMCPResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/ask_mcp/stream": {
+      "post": {
+        "tags": [
+          "AI"
+        ],
+        "summary": "Ask Mcp Stream",
+        "description": "Ask endpoint with streaming response",
+        "operationId": "ask_mcp_stream_ask_mcp_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskMCPRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/mcp_status": {
+      "get": {
+        "tags": [
+          "AI"
+        ],
+        "summary": "Mcp Status",
+        "description": "Check MCP connection status",
+        "operationId": "mcp_status_mcp_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/chat/create": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Create Chat",
+        "description": "Create a new chat for the authenticated user",
+        "operationId": "create_chat_chat_create_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCreateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/chat/get": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Get Chats",
+        "description": "Get all chats for the authenticated user",
+        "operationId": "get_chats_chat_get_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatGet"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatGetResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/chat/get-by-id": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Get Chat By Id",
+        "description": "Get a specific chat by chatId for the authenticated user",
+        "operationId": "get_chat_by_id_chat_get_by_id_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatGetById"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatGetByIdResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/chat/delete": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Delete Chat",
+        "description": "Delete a specific chat",
+        "operationId": "delete_chat_chat_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/chat/rename": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Rename Chat",
+        "description": "Rename a specific chat",
+        "operationId": "rename_chat_chat_rename_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRename"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/chat/message": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Add Message",
+        "description": "Add a message to a specific chat",
+        "operationId": "add_message_chat_message_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatAddMessage"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Health check endpoint",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "description": "Root endpoint with API information",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AskMCPRequest": {
+        "properties": {
+          "conversation": {
+            "items": {
+              "$ref": "#/components/schemas/ConversationDTO"
+            },
+            "type": "array",
+            "title": "Conversation"
+          },
+          "IdDonVi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iddonvi"
+          },
+          "max_iterations": {
+            "type": "integer",
+            "title": "Max Iterations",
+            "default": 3
+          },
+          "chatId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chatid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "conversation"
+        ],
+        "title": "AskMCPRequest"
+      },
+      "AskMCPResponse": {
+        "properties": {
+          "response": {
+            "type": "string",
+            "title": "Response"
+          }
+        },
+        "type": "object",
+        "required": [
+          "response"
+        ],
+        "title": "AskMCPResponse"
+      },
+      "Chat": {
+        "properties": {
+          "_id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "userId": {
+            "type": "string",
+            "title": "Userid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updatedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "userId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "title": "Chat",
+        "description": "Chat model",
+        "example": {
+          "createdAt": "2025-01-01T00:00:00",
+          "messages": [
+            {
+              "content": "Hello",
+              "role": "user",
+              "timestamp": 1609459200000
+            }
+          ],
+          "name": "New Chat",
+          "updatedAt": "2025-01-01T00:00:00",
+          "userId": "user123"
+        }
+      },
+      "ChatAddMessage": {
+        "properties": {
+          "userId": {
+            "type": "string",
+            "title": "Userid"
+          },
+          "chatId": {
+            "type": "string",
+            "title": "Chatid"
+          },
+          "message": {
+            "$ref": "#/components/schemas/Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "userId",
+          "chatId",
+          "message"
+        ],
+        "title": "ChatAddMessage",
+        "description": "Request model for adding a message to a chat",
+        "example": {
+          "chatId": "507f1f77bcf86cd799439011",
+          "message": {
+            "content": "Hello",
+            "role": "user",
+            "timestamp": 1609459200000
+          },
+          "userId": "user123"
+        }
+      },
+      "ChatCreate": {
+        "properties": {
+          "userId": {
+            "type": "string",
+            "title": "Userid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "New Chat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "userId"
+        ],
+        "title": "ChatCreate",
+        "description": "Request model for creating a chat",
+        "example": {
+          "name": "My Chat",
+          "userId": "user123"
+        }
+      },
+      "ChatCreateResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "chatId": {
+            "type": "string",
+            "title": "Chatid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "title": "ChatCreateResponse",
+        "description": "Response model for creating a chat"
+      },
+      "ChatDelete": {
+        "properties": {
+          "userId": {
+            "type": "string",
+            "title": "Userid"
+          },
+          "chatId": {
+            "type": "string",
+            "title": "Chatid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "userId",
+          "chatId"
+        ],
+        "title": "ChatDelete",
+        "description": "Request model for deleting a chat",
+        "example": {
+          "chatId": "507f1f77bcf86cd799439011",
+          "userId": "user123"
+        }
+      },
+      "ChatGet": {
+        "properties": {
+          "userId": {
+            "type": "string",
+            "title": "Userid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "userId"
+        ],
+        "title": "ChatGet",
+        "description": "Request model for getting chats",
+        "example": {
+          "userId": "user123"
+        }
+      },
+      "ChatGetById": {
+        "properties": {
+          "userId": {
+            "type": "string",
+            "title": "Userid"
+          },
+          "chatId": {
+            "type": "string",
+            "title": "Chatid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "userId",
+          "chatId"
+        ],
+        "title": "ChatGetById",
+        "description": "Request model for getting a specific chat by ID",
+        "example": {
+          "chatId": "507f1f77bcf86cd799439011",
+          "userId": "user123"
+        }
+      },
+      "ChatGetByIdResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Chat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "ChatGetByIdResponse",
+        "description": "Response model for getting a chat by ID"
+      },
+      "ChatGetResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Chat"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "ChatGetResponse",
+        "description": "Response model for getting chats"
+      },
+      "ChatRename": {
+        "properties": {
+          "userId": {
+            "type": "string",
+            "title": "Userid"
+          },
+          "chatId": {
+            "type": "string",
+            "title": "Chatid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "userId",
+          "chatId",
+          "name"
+        ],
+        "title": "ChatRename",
+        "description": "Request model for renaming a chat",
+        "example": {
+          "chatId": "507f1f77bcf86cd799439011",
+          "name": "Updated Chat Name",
+          "userId": "user123"
+        }
+      },
+      "ChatResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "title": "ChatResponse",
+        "description": "Response model for renaming a chat"
+      },
+      "ConversationDTO": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "ConversationDTO"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Message": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "timestamp": {
+            "type": "number",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "content",
+          "timestamp"
+        ],
+        "title": "Message",
+        "description": "Message model",
+        "example": {
+          "content": "Hello, how are you?",
+          "role": "user",
+          "timestamp": 1609459200000
+        }
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

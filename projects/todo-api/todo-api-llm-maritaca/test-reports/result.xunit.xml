@@ -1,0 +1,144 @@
+<assemblies timestamp="11/29/2024 00:21:14">
+  <assembly name="C:\GIT\integration-test-generation-llm-efficiency\todo-api-llm-maritaca\TodoApi.IntegrationTests\bin\Debug\net7.0\TodoApi.IntegrationTests.dll" run-date="2024-11-29" run-time="00:21:14" total="45" passed="45" failed="0" skipped="0" time="11.636" errors="0">
+    <errors />
+    <collection total="26" passed="26" failed="0" skipped="0" name="Test collection for TodoApi.IntegrationTests.TodosIntegrationTests" time="8.490">
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC024_List_Todos_When_User_Has_No_Todos_Returns_OK" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC024_List_Todos_When_User_Has_No_Todos_Returns_OK" time="2.0974550" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC052_Delete_Todo_When_Invalid_Token_Returns_Unauthorized" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC052_Delete_Todo_When_Invalid_Token_Returns_Unauthorized" time="0.6225943" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC038_Get_Todo_When_Missing_Token_Returns_Unauthorized" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC038_Get_Todo_When_Missing_Token_Returns_Unauthorized" time="0.3779243" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC036_Get_Todo_When_ID_Not_Exists_Returns_NotFound" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC036_Get_Todo_When_ID_Not_Exists_Returns_NotFound" time="0.2425750" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC042_Update_Todo_When_Title_Is_Empty_String_Returns_BadRequest" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC042_Update_Todo_When_Title_Is_Empty_String_Returns_BadRequest" time="0.2223993" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC037_Get_Todo_When_Invalid_Token_Returns_Unauthorized" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC037_Get_Todo_When_Invalid_Token_Returns_Unauthorized" time="0.1949194" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC023_List_Todos_When_Valid_Data_Returns_OK" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC023_List_Todos_When_Valid_Data_Returns_OK" time="0.1921798" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC031_Create_Todo_When_Title_Has_Minimum_Size_Returns_Created" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC031_Create_Todo_When_Title_Has_Minimum_Size_Returns_Created" time="0.1924847" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC027_Create_Todo_When_Valid_Data_Returns_Created" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC027_Create_Todo_When_Valid_Data_Returns_Created" time="0.2385921" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC045_Update_Todo_When_Title_Has_Maximum_Size_Returns_OK" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC045_Update_Todo_When_Title_Has_Maximum_Size_Returns_OK" time="0.2878827" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC029_Create_Todo_When_Title_Is_Empty_String_Returns_BadRequest" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC029_Create_Todo_When_Title_Is_Empty_String_Returns_BadRequest" time="0.2675320" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC025_List_Todos_When_Invalid_Token_Returns_Unauthorized" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC025_List_Todos_When_Invalid_Token_Returns_Unauthorized" time="0.0017663" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC026_List_Todos_When_Missing_Token_Returns_Unauthorized" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC026_List_Todos_When_Missing_Token_Returns_Unauthorized" time="0.0015896" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC044_Update_Todo_When_Title_Has_Minimum_Size_Returns_OK" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC044_Update_Todo_When_Title_Has_Minimum_Size_Returns_OK" time="0.3182515" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC039_Get_Todo_When_Todo_Does_Not_Belong_To_User_Returns_NotFound" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC039_Get_Todo_When_Todo_Does_Not_Belong_To_User_Returns_NotFound" time="0.5599174" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC053_Delete_Todo_When_Missing_Token_Returns_Unauthorized" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC053_Delete_Todo_When_Missing_Token_Returns_Unauthorized" time="0.2377312" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC040_Update_Todo_When_Valid_Data_Returns_OK" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC040_Update_Todo_When_Valid_Data_Returns_OK" time="0.2407780" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC028_Create_Todo_When_Title_Is_Null_Returns_BadRequest" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC028_Create_Todo_When_Title_Is_Null_Returns_BadRequest" time="0.2533196" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC041_Update_Todo_When_Title_Is_Null_Returns_BadRequest" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC041_Update_Todo_When_Title_Is_Null_Returns_BadRequest" time="0.1897718" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC050_Delete_Todo_When_Valid_Data_Returns_OK" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC050_Delete_Todo_When_Valid_Data_Returns_OK" time="0.2091653" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC032_Create_Todo_When_Title_Has_Maximum_Size_Returns_Created" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC032_Create_Todo_When_Title_Has_Maximum_Size_Returns_Created" time="0.1893802" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC035_Get_Todo_When_Valid_Data_Returns_OK" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC035_Get_Todo_When_Valid_Data_Returns_OK" time="0.2101557" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC043_Update_Todo_When_Title_Too_Long_Returns_BadRequest" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC043_Update_Todo_When_Title_Too_Long_Returns_BadRequest" time="0.2249218" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC051_Delete_Todo_When_ID_Not_Exists_Returns_NotFound" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC051_Delete_Todo_When_ID_Not_Exists_Returns_NotFound" time="0.2560138" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC030_Create_Todo_When_Title_Too_Long_Returns_BadRequest" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC030_Create_Todo_When_Title_Too_Long_Returns_BadRequest" time="0.2674064" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.TodosIntegrationTests.TC054_Delete_Todo_When_Todo_Does_Not_Belong_To_User_Returns_NotFound" type="TodoApi.IntegrationTests.TodosIntegrationTests" method="TC054_Delete_Todo_When_Todo_Does_Not_Belong_To_User_Returns_NotFound" time="0.3932240" result="Pass">
+        <traits />
+      </test>
+    </collection>
+    <collection total="19" passed="19" failed="0" skipped="0" name="Test collection for TodoApi.IntegrationTests.UsersIntegrationTests" time="3.116">
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC011_Create_User_When_Password_Is_Empty_String_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC011_Create_User_When_Password_Is_Empty_String_Returns_BadRequest" time="1.3161523" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC001_Create_User_When_Valid_Data_Returns_OK" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC001_Create_User_When_Valid_Data_Returns_OK" time="0.6185271" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC007_Create_User_When_Username_Has_Minimum_Size_Returns_OK" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC007_Create_User_When_Username_Has_Minimum_Size_Returns_OK" time="0.1463405" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC003_Create_User_When_Username_Is_Null_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC003_Create_User_When_Username_Is_Null_Returns_BadRequest" time="0.0045256" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC002_Create_User_When_Username_Already_Exists_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC002_Create_User_When_Username_Already_Exists_Returns_BadRequest" time="0.3278094" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC004_Create_User_When_Username_Is_Empty_String_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC004_Create_User_When_Username_Is_Empty_String_Returns_BadRequest" time="0.0021137" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC005_Create_User_When_Username_Too_Short_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC005_Create_User_When_Username_Too_Short_Returns_BadRequest" time="0.0018917" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC010_Create_User_When_Password_Is_Null_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC010_Create_User_When_Password_Is_Null_Returns_BadRequest" time="0.0026649" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC009_Create_User_When_Username_Contains_Invalid_Characters_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC009_Create_User_When_Username_Contains_Invalid_Characters_Returns_BadRequest" time="0.1726744" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC008_Create_User_When_Username_Has_Maximum_Size_Returns_OK" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC008_Create_User_When_Username_Has_Maximum_Size_Returns_OK" time="0.1699542" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC015_Create_User_When_Password_Has_Maximum_Size_Returns_OK" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC015_Create_User_When_Password_Has_Maximum_Size_Returns_OK" time="0.1889403" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC016_Create_User_When_Password_Missing_Uppercase_Letter_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC016_Create_User_When_Password_Missing_Uppercase_Letter_Returns_BadRequest" time="0.0030705" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC017_Create_User_When_Password_Missing_Lowercase_Letter_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC017_Create_User_When_Password_Missing_Lowercase_Letter_Returns_BadRequest" time="0.0022088" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC012_Create_User_When_Password_Too_Short_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC012_Create_User_When_Password_Too_Short_Returns_BadRequest" time="0.0026723" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC014_Create_User_When_Password_Has_Minimum_Size_Returns_OK" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC014_Create_User_When_Password_Has_Minimum_Size_Returns_OK" time="0.1481001" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC018_Create_User_When_Password_Missing_Digit_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC018_Create_User_When_Password_Missing_Digit_Returns_BadRequest" time="0.0027347" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC013_Create_User_When_Password_Too_Long_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC013_Create_User_When_Password_Too_Long_Returns_BadRequest" time="0.0023218" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC006_Create_User_When_Username_Too_Long_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC006_Create_User_When_Username_Too_Long_Returns_BadRequest" time="0.0016747" result="Pass">
+        <traits />
+      </test>
+      <test name="TodoApi.IntegrationTests.UsersIntegrationTests.TC019_Create_User_When_Password_Missing_Special_Character_Returns_BadRequest" type="TodoApi.IntegrationTests.UsersIntegrationTests" method="TC019_Create_User_When_Password_Missing_Special_Character_Returns_BadRequest" time="0.0015326" result="Pass">
+        <traits />
+      </test>
+    </collection>
+  </assembly>
+</assemblies>

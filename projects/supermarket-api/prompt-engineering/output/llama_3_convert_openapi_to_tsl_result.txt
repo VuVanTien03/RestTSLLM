@@ -1,0 +1,719 @@
+```yml
+test_cases:
+  - id: TC001
+    group: Categories
+    name: List Categories Returns OK
+    description: Returning all the categories.
+    endpoint: /api/categories
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC002
+    group: Categories
+    name: Save Category When Valid Data Returns OK
+    description: Create a new category with valid data.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "Category"
+    expected_response:
+      status_code: 200
+
+  - id: TC003
+    group: Categories
+    name: Save Category When Name Is Null Returns BadRequest
+    description: Criação de categoria com nome nulo.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Categories
+    name: Save Category When Name Is Empty String Returns BadRequest
+    description: Criação de categoria com nome vazio.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Categories
+    name: Save Category When Name Too Short Returns BadRequest
+    description: Criação de categoria com nome curto - 0 caracteres.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Categories
+    name: Save Category When Name Too Long Returns BadRequest
+    description: Criação de categoria com nome longo - 31 caracteres.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "This is a very long name for category, lets test it"
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: Categories
+    name: Save Category When Name Has Minimum Size Returns OK
+    description: Criação de categoria com nome com menor tamanho possível - 1 caracteres.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "C"
+    expected_response:
+      status_code: 200
+
+  - id: TC008
+    group: Categories
+    name: Save Category When Name Has Maximum Size Returns OK
+    description: Criação de categoria com nome com maior tamanho possível - 30 caracteres.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "This is category with maximum size of 30"
+    expected_response:
+      status_code: 200
+
+  - id: TC009
+    group: Categories
+    name: Update Category When Valid Data Returns OK
+    description: Atualização de categoria com dados válidos.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'Categoria com id "1" existe.'
+    request_body:
+      name: "Category"
+    expected_response:
+      status_code: 200
+
+  - id: TC010
+    group: Categories
+    name: Update Category When ID Not Found Returns NotFound
+    description: Atualização de categoria inexistente.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 9999
+    request_body:
+      name: "Category"
+    expected_response:
+      status_code: 404
+
+  - id: TC011
+    group: Categories
+    name: Update Category When Name Is Null Returns BadRequest
+    description: Criação de categoria com nome nulo.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'Categoria com id "1" existe.'
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: Categories
+    name: Update Category When Name Is Empty String Returns BadRequest
+    description: Criação de categoria com nome vazio.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'Categoria com id "1" existe.'
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC013
+    group: Categories
+    name: Update Category When Name Too Short Returns BadRequest
+    description: Criação de categoria com nome curto - 0 caracteres.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'Categoria com id "1" existe.'
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC014
+    group: Categories
+    name: Update Category When Name Too Long Returns BadRequest
+    description: Criação de categoria com nome longo - 31 caracteres.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'Categoria com id "1" existe.'
+    request_body:
+      name: "This is a very long name for category, lets test it"
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: Categories
+    name: Update Category When Name Has Minimum Size Returns OK
+    description: Criação de categoria com nome com menor tamanho possível - 1 caracteres.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'Categoria com id "1" existe.'
+    request_body:
+      name: "C"
+    expected_response:
+      status_code: 200
+
+  - id: TC016
+    group: Categories
+    name: Update Category When Name Has Maximum Size Returns OK
+    description: Criação de categoria com nome com maior tamanho possível - 30 caracteres.
+    endpoint: /api/categories/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'Categoria com id "1" existe.'
+    request_body:
+      name: "This is category with maximum size of 30"
+    expected_response:
+      status_code: 200
+
+  - id: TC017
+    group: Categories
+    name: Delete Category When ID Found Returns OK
+    description: Deleção de categoria existente.
+    endpoint: /api/categories/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    preconditions:
+      - 'Categoria com id "1" existe.'
+    expected_response:
+      status_code: 200
+
+  - id: TC018
+    group: Categories
+    name: Delete Category When ID Not Found Returns NotFound
+    description: Deleção de uma categoria inexistente.
+    endpoint: /api/categories/{id}
+    method: DELETE
+    parameters:
+      id: 9999
+    expected_response:
+      status_code: 404
+
+  - id: TC019
+    group: Products
+    name: List Products Returns OK
+    description: Returning all products with category id.
+    endpoint: /api/products
+    method: GET
+    parameters:
+      categoryId: 1
+      page: 1
+      itemsPerPage: 10
+    expected_response:
+      status_code: 200
+
+  - id: TC020
+    group: Products
+    name: List Products When Page Value Is Less Than 1 Returns BadRequest
+    description: Returning products with an invalid pagination page value.
+    endpoint: /api/products
+    method: GET
+    parameters:
+      page: 0
+      itemsPerPage: 10
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC021
+    group: Products
+    name: List Products When ItemsPerPage Value Is Less Than 1 Returns BadRequest
+    description: Returning products with an invalid pagination itemsPerPage value.
+    endpoint: /api/products
+    method: GET
+    parameters:
+      page: 1
+      itemsPerPage: 0
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC022
+    group: Products
+    name: List Products When Page Is Null Returns BadRequest
+    description: Returning products with null page.
+    endpoint: /api/products
+    method: GET
+    parameters:
+      page: null
+      itemsPerPage: 10
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC023
+    group: Products
+    name: List Products When ItemsPerPage Is Null Returns BadRequest
+    description: Returning products with null itemsPerPage.
+    endpoint: /api/products
+    method: GET
+    parameters:
+      page: 1
+      itemsPerPage: null
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC024
+    group: Products
+    name: Save Product When Valid Data Returns OK
+    description: Create a new product with valid data.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC025
+    group: Products
+    name: Save Product When Name Is Null Returns BadRequest
+    description: Criação de produto com nome nulo.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: null
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC026
+    group: Products
+    name: Save Product When Name Is Empty String Returns BadRequest
+    description: Criação de produto com nome vazio.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: ""
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC027
+    group: Products
+    name: Save Product When Name Too Short Returns BadRequest
+    description: Criar um novo produto com nome curto - 0 caracteres.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: ""
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC028
+    group: Products
+    name: Save Product When Name Too Long Returns BadRequest
+    description: Criar um novo produto com nome longo - 51 caracteres.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "This is a very long name for a product, lets test it for save."
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC029
+    group: Products
+    name: Save Product When Name Has Minimum Size Returns OK
+    description: Criar um novo produto com nome com menor tamanho possível - 1 caracteres.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "P"
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC030
+    group: Products
+    name: Save Product When Name Has Maximum Size Returns OK
+    description: Criar um novo produto com nome com maior tamanho possível - 50 caracteres.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "This is product with a maximum size of 50 characters"
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC031
+    group: Products
+    name: Save Product When QuantityInPackage Is Null Returns BadRequest
+    description: Criar um novo produto com quantidade em pacote nulo.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: null
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC032
+    group: Products
+    name: Save Product When QuantityInPackage Below Minimum Returns BadRequest
+    description: Criar um novo produto com quantidade em pacote abaixo do minimo.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: -1
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC033
+    group: Products
+    name: Save Product When QuantityInPackage Above Maximum Returns BadRequest
+    description: Criar um novo produto com quantidade em pacote acima do máximo.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: 101
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC034
+    group: Products
+    name: Save Product When QuantityInPackage Has Minimum Value Returns OK
+    description: Criar um novo produto com quantidade em pacote com menor valor possível.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: 0
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC035
+    group: Products
+    name: Save Product When QuantityInPackage Has Maximum Value Returns OK
+    description: Criar um novo produto com quantidade em pacote com maior valor possível.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Product"
+      quantityInPackage: 100
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC036
+    group: Products
+    name: Update Product When Valid Data Returns OK
+    description: Atualização de um produto com dados válidos.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "Product"
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC037
+    group: Products
+    name: Update Product When ID Not Found Returns NotFound
+    description: Atualização de produto inexistente.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 9999
+    request_body:
+      name: "Product"
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 404
+
+  - id: TC038
+    group: Products
+    name: Update Product When Name Is Null Returns BadRequest
+    description: Atualizar produto com nome nulo.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: null
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC039
+    group: Products
+    name: Update Product When Name Is Empty String Returns BadRequest
+    description: Atualizar produto com nome vazio.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: ""
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC040
+    group: Products
+    name: Update Product When Name Too Short Returns BadRequest
+    description: Criar o novo produto com nome curto - 0 caracteres.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: ""
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC041
+    group: Products
+    name: Update Product When Name Too Long Returns BadRequest
+    description: Criar o novo produto com nome longo - 51 caracteres.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "This is a very long name for a product, lets test it for update."
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC042
+    group: Products
+    name: Update Product When Name Has Minimum Size Returns OK
+    description: Criar o novo produto com nome com menor tamanho possível - 1 caracteres.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "P"
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC043
+    group: Products
+    name: Update Product When Name Has Maximum Size Returns OK
+    description: Criar o novo produto com nome com maior tamanho possível - 50 caracteres.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "This is product with a maximum size of 50 characters"
+      quantityInPackage: 10
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC044
+    group: Products
+    name: Update Product When QuantityInPackage Is Null Returns BadRequest
+    description: Atualizar produto com quantidade em pacote nulo.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "Product"
+      quantityInPackage: null
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC045
+    group: Products
+    name: Update Product When QuantityInPackage Below Minimum Returns BadRequest
+    description: Atualização do produto com quantidade em pacote abaixo do mínimo.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "Product"
+      quantityInPackage: -1
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC046
+    group: Products
+    name: Update Product When QuantityInPackage Above Maximum Returns BadRequest
+    description: Atualização do produto com quantidade em pacote acima do máximo.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "Product"
+      quantityInPackage: 101
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 400
+
+  - id: TC047
+    group: Products
+    name: Update Product When QuantityInPackage Has Minimum Value Returns OK
+    description: Atualização do produto com quantidade em pacote com o menor valor possível.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "Product"
+      quantityInPackage: 0
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC048
+    group: Products
+    name: Update Product When QuantityInPackage Has Maximum Value Returns OK
+    description: Atualização do produto com quantidade em pacote com o maior valor possível.
+    endpoint: /api/products/{id}
+    method: PUT
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    request_body:
+      name: "Product"
+      quantityInPackage: 100
+      unitOfMeasurement: Unity
+      categoryId: 1
+    expected_response:
+      status_code: 200
+
+  - id: TC049
+    group: Products
+    name: Delete Product When ID Found Returns OK
+    description: Deleção de produto existente.
+    endpoint: /api/products/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    preconditions:
+      - 'O produto com id "1" existe.'
+    expected_response:
+      status_code: 200
+
+  - id: TC050
+    group: Products
+    name: Delete Product When ID Not Found Returns NotFound
+    description: Deleção de um produto inexistente.
+    endpoint: /api/products/{id}
+    method: DELETE
+    parameters:
+      id: 9999
+    expected_response:
+      status_code: 404
+```

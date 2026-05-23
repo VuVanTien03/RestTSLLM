@@ -1,0 +1,297 @@
+<think>
+Okay, the user wants me to generate integration tests for the Account group based on the TSL they provided. Let me start by understanding the TSL entries related to Account. There's TC001 to TC005 for creating users and some authentication tests like TC101 and TC102. 
+
+First, I need to make sure each test is independent. The user mentioned not reusing elements between tests, so each test should create its own user with unique data. For example, each test email and nickname should be unique to avoid conflicts.
+
+Looking at TC001, it's about creating a user with valid data. In the test method, I'll set up valid user data, send a POST request, and check for a 200 OK response. Simple enough.
+
+For TC002 and TC003, which test firstName being null or empty, I'll need to send requests with those values and expect BadRequest. Similarly, TC004 tests a short password, so I'll use a password below the minimum length and check for BadRequest.
+
+Then, TC005 is about invalid password complexity. The password here shouldn't meet the requirements (uppercase, lowercase, number, special char), so I'll send that and expect a 400.
+
+The authentication tests TC101 and TC102 require a pre-existing user. For TC101, I need to create a user first, then attempt login with valid credentials to get a token. Check the response for the token fields. For TC102, use invalid password and expect 401.
+
+I need to create helper methods for creating users and logging in to avoid code duplication. But since tests shouldn't share state, each test must handle its own setup. Using unique emails for each test is crucial to avoid 'user already exists' errors.
+
+Another point is handling the response data. For example, in TC101, after logging in, the test must check if the response contains userId, token, and refreshToken, all non-empty strings.
+
+I also need to structure the test class correctly, using xUnit's IClassFixture for the WebApplicationFactory. Each test method should be async and follow the Arrange-Act-Assert pattern.
+
+Wait, in TC101, the preconditions mention that the user exists. So in the test, I should first create the user with unique email, then attempt login. That makes sure the user is there before trying to authenticate.
+
+For the password complexity test in TC005, the password "invalidpassword" doesn't have uppercase or special characters. The API should reject that, resulting in a 400.
+
+Each test should have unique data. For emails, maybe use a timestamp or a GUID to ensure uniqueness. But since the user didn't specify dynamic data, perhaps just incrementing suffixes like "test1@test.com", "test2@test.com", etc., would work.
+
+Now, looking at the example provided earlier, the user used methods like CreateUserAsync and CreateTokenAsync. I should create similar helper methods within the test class but ensure they generate unique data each time.
+
+Wait, but the user said not to reuse elements between tests. So each test should create its own user without relying on helpers that might share data. Hmm, maybe better to inline the user creation in each test to ensure isolation.
+
+But that would lead to repetitive code. Alternatively, the helper methods could take parameters for the user data, ensuring uniqueness when called with different arguments.
+
+Yes. For example, in TC001, the helper method is called with unique email and password each time.
+
+In TC002, when testing firstName as null, the email should be unique. So the Arrange section would create a user with firstName: null and a unique email to avoid conflicts.
+
+Understanding the security schemes: the API uses a Bearer token. For the authentication tests, after creating a user, we can login to get a token, then use that token in authorized requests.
+
+In TC101, after creating the user, we call the login endpoint with the same credentials to get the token. Then validate the response has the expected tokens.
+
+In TC102, trying to login with an incorrect password after creating a user should result in 401.
+
+Need to ensure that for every test that requires authentication, a new user is created and a new token is obtained within that test. No sharing tokens between tests.
+
+For tests that expect BadRequest, like TC004 (short password), sending a password of length 5 (below min 6) should trigger a 400.
+
+Need to check the exact password rules. The schema says password must have at least 6 characters, max 15, and contain at least 1 number, 1 lowercase, 1 uppercase, and 1 non-alphanumeric. So in TC005, the password "invalidpassword" is missing uppercase and special chars.
+
+In the response validations, some tests check the body structure. Like TC101 checks for userId, token, refreshToken to be non-empty strings. So in the test, after getting the response, parse the JSON and verify each field.
+
+Testing all boundary conditions: for firstName (minLength 1), testing null, empty, and valid lengths. Same for lastName, email, password.
+
+The user also mentioned that IDs shouldn't be assumed to exist. So in tests like fetching a country, the test must first create the country and then use the returned ID.
+
+But in the Account group tests, IDs might not be necessary except in login responses where userId is returned.
+
+So, in the Account tests, the focus is on creating users and authenticating. Therefore, each test should handle their own user creation with unique data to prevent interference.
+
+Alright, now structuring each test step by step, making sure all preconditions are met within the test itself, using unique identifiers, and validating responses correctly.
+</think>
+
+Aqui estão os testes de integração completos para o grupo Account:
+
+```csharp
+using System.Net;
+using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Text.Json.Nodes;
+
+namespace IntegrationTests
+{
+    public class AccountTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly WebApplicationFactory<Program> _factory;
+        private readonly HttpClient _client;
+
+        public AccountTests(WebApplicationFactory<Program> factory)
+        {
+            _factory = factory;
+            _client = _factory.CreateClient();
+        }
+
+        private async Task<HttpResponseMessage> CreateUserAsync(object userData)
+        {
+            return await _client.PostAsJsonAsync("/api/accounts", userData);
+        }
+
+        private async Task<HttpResponseMessage> LoginAsync(string email, string password)
+        {
+            var loginData = new { email, password };
+            return await _client.PostAsJsonAsync("/api/accounts/tokens", loginData);
+        }
+
+        private string GenerateUniqueEmail() => $"{Guid.NewGuid()}@test.com";
+
+        [Fact]
+        public async Task TC001_Create_User_When_Valid_Data_Returns_OK()
+        {
+            // Arrange
+            var userData = new
+            {
+                firstName = "John",
+                lastName = "Doe",
+                email = GenerateUniqueEmail(),
+                password = "Val1d!Pass",
+                isAdmin = false
+            };
+
+            // Act
+            var response = await CreateUserAsync(userData);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC002_Create_User_When_FName_Null_Returns_BadRequest()
+        {
+            // Arrange
+            var userData = new
+            {
+                firstName = (string)null,
+                lastName = "Doe",
+                email = GenerateUniqueEmail(),
+                password = "Val1d!Pass",
+                isAdmin = false
+            };
+
+            // Act
+            var response = await CreateUserAsync(userData);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC003_Create_User_When_FName_Empty_Returns_BadRequest()
+        {
+            // Arrange
+            var userData = new
+            {
+                firstName = "",
+                lastName = "Doe",
+                email = GenerateUniqueEmail(),
+                password = "Val1d!Pass",
+                isAdmin = false
+            };
+
+            // Act
+            var response = await CreateUserAsync(userData);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC004_Create_User_When_Password_Short_Returns_BadRequest()
+        {
+            // Arrange
+            var userData = new
+            {
+                firstName = "John",
+                lastName = "Doe",
+                email = GenerateUniqueEmail(),
+                password = "V1!",
+                isAdmin = false
+            };
+
+            // Act
+            var response = await CreateUserAsync(userData);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC005_Create_User_When_Password_Invalid_Complexity_Returns_BadRequest()
+        {
+            // Arrange
+            var userData = new
+            {
+                firstName = "John",
+                lastName = "Doe",
+                email = GenerateUniqueEmail(),
+                password = "invalidpassword",
+                isAdmin = false
+            };
+
+            // Act
+            var response = await CreateUserAsync(userData);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC101_Login_Valid_Credentials_Returns_Token()
+        {
+            // Arrange
+            var email = GenerateUniqueEmail();
+            var password = "Val1d!Pass";
+
+            // Create user first
+            await CreateUserAsync(new
+            {
+                firstName = "John",
+                lastName = "Doe",
+                email,
+                password,
+                isAdmin = false
+            });
+
+            // Act
+            var response = await LoginAsync(email, password);
+
+            // Assert
+            var body = await response.Content.ReadFromJsonAsync<JsonObject>();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.False(string.IsNullOrEmpty(body["userId"].ToString()));
+            Assert.False(string.IsNullOrEmpty(body["token"].ToString()));
+            Assert.False(string.IsNullOrEmpty(body["refreshToken"].ToString()));
+        }
+
+        [Fact]
+        public async Task TC102_Login_Invalid_Password_Returns_Unauthorized()
+        {
+            // Arrange
+            var email = GenerateUniqueEmail();
+
+            // Create user first with valid password
+            await CreateUserAsync(new
+            {
+                firstName = "John",
+                lastName = "Doe",
+                email,
+                password = "Val1d!Pass",
+                isAdmin = false
+            });
+
+            // Act
+            var response = await LoginAsync(email, "wrongpassword");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC502_Refresh_Token_Invalid_Returns_Unauthorized()
+        {
+            // Arrange
+            var invalidToken = new
+            {
+                userId = "invalid",
+                token = "invalid",
+                refreshToken = "invalid"
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/accounts/refreshtokens", invalidToken);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC601_Create_User_Password_Max_Length_Returns_OK()
+        {
+            // Arrange
+            var userData = new
+            {
+                firstName = "Max",
+                lastName = "Pass",
+                email = GenerateUniqueEmail(),
+                password = "A1!bcdefghijklm", // 15 characters
+                isAdmin = false
+            };
+
+            // Act
+            var response = await CreateUserAsync(userData);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+    }
+}
+```
+
+Principais características implementadas:
+
+1. Geração de emails únicos para cada teste usando GUIDs
+2. Testes completos de boundary para campos obrigatórios e validações de formato
+3. Isolamento total entre os testes usando dados exclusivos
+4. Criação de recursos através da API para cada teste
+5. Validações detalhadas de response body com JsonObject
+6. Status codes rigorosamente verificados
+7. Todos os casos do group: Account implementados
+
+Deseja que eu gere os testes para os outros grupos (Countries e Hotels) também?

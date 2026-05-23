@@ -1,0 +1,474 @@
+```yml
+test_cases:
+  - id: TC001
+    group: Dishes
+    name: Create Dish When Valid Data Returns Created
+    description: Create dish with valid data.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sushi"
+      description: "Japanese dish"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 201  
+
+  - id: TC002
+    group: Dishes
+    name: Create Dish When Name Is Null Returns BadRequest
+    description: Create dish with name null.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: null
+      description: "Japanese dish"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+
+  - id: TC003
+    group: Dishes
+    name: Create Dish When Name Is Empty String Returns BadRequest
+    description: Create dish with name empty string.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: ""
+      description: "Japanese dish"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+  
+  - id: TC004
+    group: Dishes
+    name: Create Dish When Name Length Less Than 3 Returns BadRequest
+    description: Create dish with name length less than 3.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "ab"
+      description: "Japanese dish"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+  
+  - id: TC005
+    group: Dishes
+    name: Create Dish When Name Length Greater Than 16 Returns BadRequest
+    description: Create dish with name length greater than 16.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "abcdefghiklmnopqrstuvwxyz"
+      description: "Japanese dish"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+  
+  - id: TC006
+    group: Dishes
+    name: Create Dish When Description Is Null Returns BadRequest
+    description: Create dish with description null.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sushi"
+      description: null
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+  
+  - id: TC007
+    group: Dishes
+    name: Create Dish When Description Is Empty String Returns BadRequest
+    description: Create dish with description empty string.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sushi"
+      description: ""
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+  
+  - id: TC008
+    group: Dishes
+    name: Create Dish When Description Length Less Than 3 Returns BadRequest
+    description: Create dish with description length less than 3.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sushi"
+      description: "ab"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+  
+  - id: TC009
+    group: Dishes
+    name: Create Dish When Description Length Greater Than 32 Returns BadRequest
+    description: Create dish with description length greater than 32.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sushi"
+      description: "abcdefghiklmnopqrstuvwxyzabcdefghiklmnop"
+      price: 15.99
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+  
+  - id: TC010
+    group: Dishes
+    name: Create Dish When Price Is Null Returns BadRequest
+    description: Create dish with price null.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sushi"
+      description: "Japanese dish"
+      price: null
+      kiloCalories: 500
+    expected_response:
+      status_code: 400
+  
+  - id: TC011
+    group: Dishes
+    name: Create Dish When KiloCalories Is Null Returns BadRequest
+    description: Create dish with kiloCalories null.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    request_body:
+      name: "Sushi"
+      description: "Japanese dish"
+      price: 15.99
+      kiloCalories: null
+    expected_response:
+      status_code: 400
+  
+  - id: TC012
+    group: Dishes
+    name: Get Dishes When Valid Data Returns OK
+    description: Get dishes with valid data.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: GET
+    expected_response:
+      status_code: 200
+  
+  - id: TC013
+    group: Dishes
+    name: Delete Dishes When Valid Data Returns NoContent
+    description: Delete dishes with valid data.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: DELETE
+    expected_response:
+      status_code: 204
+  
+  - id: TC014
+    group: Dishes
+    name: Delete Dishes When Id Does Not Exist Returns NotFound
+    description: Delete dishes with id does not exist.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: DELETE
+    expected_response:
+      status_code: 404
+  
+  - id: TC015
+    group: Dishes
+    name: Get Dish By Id When Valid Data Returns OK
+    description: Get dish by id with valid data.
+    endpoint: /api/restaurants/{restaurantId}/dishes/{dishId}
+    method: GET
+    expected_response:
+      status_code: 200
+  
+  - id: TC016
+    group: Dishes
+    name: Get Dish By Id When Dish Id Does Not Exist Returns NotFound
+    description: Get dish by id with id does not exist.
+    endpoint: /api/restaurants/{restaurantId}/dishes/{dishId}
+    method: GET
+    expected_response:
+      status_code: 404
+  
+  - id: TC017
+    group: Restaurants
+    name: Get Restaurants When Valid Data Returns OK
+    description: Get restaurants with valid data.
+    endpoint: /api/restaurants
+    method: GET
+    expected_response:
+      status_code: 200
+  
+  - id: TC018
+    group: Restaurants
+    name: Get Restaurants When Search Phrase Is Empty String Returns OK
+    description: Get restaurants with search phrase is empty string.
+    endpoint: /api/restaurants
+    method: GET
+    query_parameters:
+      searchPhrase: ""
+    expected_response:
+      status_code: 200
+  
+  - id: TC019
+    group: Restaurants
+    name: Get Restaurants When Page Number Is Not Valid Positive Integer Returns BadRequest
+    description: Get restaurants with page number is not valid positive integer.
+    endpoint: /api/restaurants
+    method: GET
+    query_parameters:
+      pageNumber: 0
+    expected_response:
+      status_code: 400
+  
+  - id: TC020
+    group: Restaurants
+    name: Get Restaurants When Page Size Is Not Valid Positive Integer Returns BadRequest
+    description: Get restaurants with page size is not valid positive integer.
+    endpoint: /api/restaurants
+    method: GET
+    query_parameters:
+      pageSize: 0
+    expected_response:
+      status_code: 400
+  
+  - id: TC021
+    group: Restaurants
+    name: Get Restaurants When Sort By Is Invalid Returns BadRequest
+    description: Get restaurants with sort by is invalid.
+    endpoint: /api/restaurants
+    method: GET
+    query_parameters:
+      sortBy: invalid
+    expected_response:
+      status_code: 400
+  
+  - id: TC022
+    group: Restaurants
+    name: Get Restaurants When Sort Direction Is Invalid Returns BadRequest
+    description: Get restaurants with sort direction is invalid.
+    endpoint: /api/restaurants
+    method: GET
+    query_parameters:
+      sortDirection: invalid
+    expected_response:
+      status_code: 400
+  
+  - id: TC023
+    group: Restaurants
+    name: Create Restaurant When Valid Data Returns Created
+    description: Create restaurant with valid data.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "McDonald's"
+      description: "Fast Food"
+      contactEmail: "mcdonalds@email.com"
+      contactNumber: "1234567890"
+      category: "Fast Food"
+      hasDelivery: true
+      city: "New York"
+      street: "5th Avenue"
+      postalCode: "10001"
+    expected_response:
+      status_code: 201
+  
+  - id: TC024
+    group: Restaurants
+    name: Create Restaurant When Name Is Null Returns BadRequest
+    description: Create restaurant with name null.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: null
+      description: "Fast Food"
+      contactEmail: "mcdonalds@email.com"
+      contactNumber: "1234567890"
+      category: "Fast Food"
+      hasDelivery: true
+      city: "New York"
+      street: "5th Avenue"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  
+  - id: TC025
+    group: Restaurants
+    name: Create Restaurant When Contact Email Is Invalid Returns BadRequest
+    description: Create restaurant with contact email invalid.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "McDonald's"
+      description: "Fast Food"
+      contactEmail: "invalid_email"
+      contactNumber: "1234567890"
+      category: "Fast Food"
+      hasDelivery: true
+      city: "New York"
+      street: "5th Avenue"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  
+  - id: TC026
+    group: Restaurants
+    name: Create Restaurant When Contact Number Is Null Returns BadRequest
+    description: Create restaurant with contact number is null.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "McDonald's"
+      description: "Fast Food"
+      contactEmail: "mcdonalds@email.com"
+      contactNumber: null
+      category: "Fast Food"
+      hasDelivery: true
+      city: "New York"
+      street: "5th Avenue"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  
+  - id: TC027
+    group: Restaurants
+    name: Create Restaurant When Contact Number Is Empty String Returns BadRequest
+    description: Create restaurant with contact number empty string.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "McDonald's"
+      description: "Fast Food"
+      contactEmail: "mcdonalds@email.com"
+      contactNumber: ""
+      category: "Fast Food"
+      hasDelivery: true
+      city: "New York"
+      street: "5th Avenue"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  
+  - id: TC028
+    group: Restaurants
+    name: Create Restaurant When Contact Number Contains Non Number Characters Returns BadRequest
+    description: Create restaurant with contact number contains non number characters.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "McDonald's"
+      description: "Fast Food"
+      contactEmail: "mcdonalds@email.com"
+      contactNumber: "123abc"
+      category: "Fast Food"
+      hasDelivery: true
+      city: "New York"
+      street: "5th Avenue"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  
+  - id: TC029
+    group: Restaurants
+    name: Get Restaurant By Id When Valid Data Returns Ok
+    description: Get restaurant by id with valid data.
+    endpoint: /api/restaurants/{id}
+    method: GET
+    expected_response:
+      status_code: 200
+  
+  - id: TC030
+    group: Restaurants
+    name: Get Restaurant By Id When Id Does Not Exist Returns NotFound
+    description: Get restaurant by id with id does not exist.
+    endpoint: /api/restaurants/{id}
+    method: GET
+    expected_response:
+      status_code: 404
+  
+  - id: TC031
+    group: Restaurants
+    name: Update Restaurant By Id When Valid Data Returns Ok
+    description: Update restaurant by id with valid data.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    request_body:
+      name: "Burger King"
+      description: "Fast Food"
+      hasDelivery: true
+    expected_response:
+      status_code: 200
+  
+  - id: TC032
+    group: Restaurants
+    name: Update Restaurant By Id When Id Does Not Exist Returns NotFound
+    description: Update restaurant by id with id does not exist.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    request_body:
+      name: "Burger King"
+      description: "Fast Food"
+      hasDelivery: true
+    expected_response:
+      status_code: 404
+  
+  - id: TC033
+    group: Restaurants
+    name: Delete Restaurant By Id When Valid Data Returns NoContent
+    description: Delete restaurant by id with valid data.
+    endpoint: /api/restaurants/{id}
+    method: DELETE
+    expected_response:
+      status_code: 204
+  
+  - id: TC034
+    group: Restaurants
+    name: Delete Restaurant By Id When Id Does Not Exist Returns NotFound
+    description: Delete restaurant by id with id does not exist.
+    endpoint: /api/restaurants/{id}
+    method: DELETE
+    expected_response:
+      status_code: 404
+  
+  - id: TC035
+    group: Restaurants
+    name: Update Logo By Id When Valid Data Returns Ok
+    description: Update logo by id with valid data.
+    endpoint: /api/restaurants/{id}/logo
+    method: POST
+    form_data:
+      file: <file>
+    expected_response:
+      status_code: 200
+  
+  - id: TC036
+    group: Restaurants
+    name: Update Logo By Id When Id Does Not Exist Returns NotFound
+    description: Update logo by id with id does not exist.
+    endpoint: /api/restaurants/{id}/logo
+    method: POST
+    form_data:
+      file: <file>
+    expected_response:
+      status_code: 404
+  
+  - id: TC037
+    group: Restaurants
+    name: Update Logo By Id When Logo Is Invalid Returns UnsupportedMediaType
+    description: Update logo by id with logo invalid.
+    endpoint: /api/restaurants/{id}/logo
+    method: POST
+    request_body:
+      file: invalid_logo
+    expected_response:
+      status_code: 415
+```

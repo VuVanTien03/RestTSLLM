@@ -1,0 +1,233 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Categories
+    name: Get Categories When No Data Exists Returns Empty
+    description: Attempt to retrieve list of categories when none exist.
+    endpoint: /api/categories
+    method: GET
+    expected_response:
+      status_code: 200
+      body: []
+
+  - id: TC002
+    group: Categories
+    name: Get Categories When Data Exists Returns OK
+    description: Retrieve list of categories with existing data.
+    preconditions:
+      - A category with id=1 and name="Fruits" exists.
+      - A category with id=2 and name="Vegetables" exists.
+    endpoint: /api/categories
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        - id: 1
+          name: "Fruits"
+        - id: 2
+          name: "Vegetables"
+
+  - id: TC003
+    group: Categories
+    name: Save Category When Valid Data Returns OK
+    description: Create a new category with valid data.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "Beverages"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "Beverages"
+
+  - id: TC004
+    group: Categories
+    name: Save Category When Name Is Null Returns BadRequest
+    description: Attempt to create a category with a null name.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Categories
+    name: Save Category When Name Is Empty String Returns BadRequest
+    description: Attempt to create a category with an empty name.
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Categories
+    name: Save Category When Name Too Long Returns BadRequest
+    description: Attempt to create a category with a name length exceeding the maximum limit (31 chars).
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "A" * 31
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: Categories
+    name: Save Category When Name Has Minimum Length Returns OK
+    description: Create a category with a name of the minimum length (1 char).
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "A"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "A"
+
+  - id: TC008
+    group: Categories
+    name: Save Category When Name Has Maximum Length Returns OK
+    description: Create a category with a name of the maximum length (30 chars).
+    endpoint: /api/categories
+    method: POST
+    request_body:
+      name: "A" * 30
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "A" * 30
+
+  - id: TC009
+    group: Categories
+    name: Update Category When Valid Data Returns OK
+    description: Update an existing category's name with valid data.
+    preconditions:
+      - A category with id=1 and name="Fruits" exists.
+    endpoint: /api/categories/1
+    method: PUT
+    request_body:
+      name: "Dry Fruits"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: "Dry Fruits"
+
+  - id: TC010
+    group: Categories
+    name: Update Category When Id Not Exists Returns NotFound
+    description: Attempt to update a category with a non-existent id.
+    endpoint: /api/categories/9999
+    method: PUT
+    request_body:
+      name: "New Category"
+    expected_response:
+      status_code: 404
+
+  - id: TC011
+    group: Categories
+    name: Update Category When Name Is Null Returns BadRequest
+    description: Attempt to update a category with null name.
+    preconditions:
+      - A category with id=1 and name="Fruits" exists.
+    endpoint: /api/categories/1
+    method: PUT
+    request_body:
+      name: null
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: Categories
+    name: Delete Category When Id Exists Returns OK
+    description: Successfully deletes a category with id=1.
+    preconditions:
+      - A category with id=1 and name="Fruits" exists.
+    endpoint: /api/categories/1
+    method: DELETE
+    expected_response:
+      status_code: 200
+
+  - id: TC013
+    group: Categories
+    name: Delete Category When Id Not Exists Returns NotFound
+    description: Attempt to delete a category with a non-existent id.
+    endpoint: /api/categories/9999
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  - id: TC014
+    group: Products
+    name: Get Products When No Data Exists Returns Empty
+    description: Retrieve products when no products exist.
+    endpoint: /api/products?page=1&itemsPerPage=10
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        totalItems: 0
+        items: []
+
+  - id: TC015
+    group: Products
+    name: Get Products When Data Exists Using Category Filter Returns OK
+    description: Retrieve products with an existing category filter.
+    preconditions:
+      - A product with id=1, name="Milk", quantityInPackage=1, unitOfMeasurement="Liter", categoryId=1 exists.
+    endpoint: /api/products?categoryId=1&page=1&itemsPerPage=10
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        totalItems: 1
+        items:
+          - id: 1
+            name: "Milk"
+            quantityInPackage: 1
+            unitOfMeasurement: "Liter"
+            category:
+              id: 1
+              name: "Dairy"
+
+  - id: TC016
+    group: Products
+    name: Save Product When Valid Data Returns OK
+    description: Create a product with valid data.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Eggs"
+      quantityInPackage: 12
+      unitOfMeasurement: "Unity"
+      categoryId: 1
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        name: "Eggs"
+        quantityInPackage: 12
+        unitOfMeasurement: "Unity"
+        category:
+          id: 1
+          name: is string
+
+  - id: TC017
+    group: Products
+    name: Save Product When QuantityInPackage Below Minimum Returns BadRequest
+    description: Attempt to save a product with invalid quantity below allowed minimum.
+    endpoint: /api/products
+    method: POST
+    request_body:
+      name: "Eggs"
+      quantityInPackage: -1
+      unitOfMeasurement: "Unity"
+      categoryId: 1
+    expected_response:
+      status_code: 400
+```

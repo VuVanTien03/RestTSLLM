@@ -1,0 +1,869 @@
+test_cases:
+  - id: TC001
+    group: Users
+    name: Create User When Valid Data Returns OK
+    description: Criação de usuário com dados válidos.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "my_username"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 200
+
+  - id: TC002
+    group: Users
+    name: Create User When Username Has Minimum Size Returns OK
+    description: Criação de usuário com username no tamanho mínimo permitido.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "a"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 200
+
+  - id: TC003
+    group: Users
+    name: Create User When Username Has Maximum Size Returns OK
+    description: Criação de usuário com username no tamanho máximo permitido.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 200
+
+  - id: TC004
+    group: Users
+    name: Create User When Username Contains Allowed Special Characters Returns OK
+    description: Criação de usuário com username contendo caracteres especiais permitidos.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "my-user.name_+@01"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 200
+
+  - id: TC005
+    group: Users
+    name: Create User When Username Is Null Returns BadRequest
+    description: Criação de usuário com username nulo.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: null
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Users
+    name: Create User When Username Is Empty String Returns BadRequest
+    description: Criação de usuário com username vazio.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: ""
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: Users
+    name: Create User When Username Too Long Returns BadRequest
+    description: Criação de usuário com username acima do limite máximo.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: Users
+    name: Create User When Username Has Invalid Character Returns BadRequest
+    description: Criação de usuário com username contendo caractere inválido.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "invalid!user"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: Users
+    name: Create User When Password Has Minimum Size Returns OK
+    description: Criação de usuário com senha no tamanho mínimo permitido.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_min_pass"
+      password: "Aa1@bc"
+    expected_response:
+      status_code: 200
+
+  - id: TC010
+    group: Users
+    name: Create User When Password Has Maximum Size Returns OK
+    description: Criação de usuário com senha no tamanho máximo permitido.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_max_pass"
+      password: "Aa1@bcdefghijklmnopqrstuvwxyzAB"
+    expected_response:
+      status_code: 200
+
+  - id: TC011
+    group: Users
+    name: Create User When Password Is Null Returns BadRequest
+    description: Criação de usuário com senha nula.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_null_pass"
+      password: null
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: Users
+    name: Create User When Password Is Empty String Returns BadRequest
+    description: Criação de usuário com senha vazia.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_empty_pass"
+      password: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC013
+    group: Users
+    name: Create User When Password Too Short Returns BadRequest
+    description: Criação de usuário com senha abaixo do tamanho mínimo.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_short_pass"
+      password: "Aa1@b"
+    expected_response:
+      status_code: 400
+
+  - id: TC014
+    group: Users
+    name: Create User When Password Too Long Returns BadRequest
+    description: Criação de usuário com senha acima do tamanho máximo.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_long_pass"
+      password: "Aa1@bcdefghijklmnopqrstuvwxyzABC"
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: Users
+    name: Create User When Password Missing Uppercase Letter Returns BadRequest
+    description: Criação de usuário com senha sem letra maiúscula.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_no_upper"
+      password: "aa1@bcde"
+    expected_response:
+      status_code: 400
+
+  - id: TC016
+    group: Users
+    name: Create User When Password Missing Lowercase Letter Returns BadRequest
+    description: Criação de usuário com senha sem letra minúscula.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_no_lower"
+      password: "AA1@BCDE"
+    expected_response:
+      status_code: 400
+
+  - id: TC017
+    group: Users
+    name: Create User When Password Missing Digit Returns BadRequest
+    description: Criação de usuário com senha sem dígito.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_no_digit"
+      password: "Aa@bcdef"
+    expected_response:
+      status_code: 400
+
+  - id: TC018
+    group: Users
+    name: Create User When Password Missing Special Character Returns BadRequest
+    description: Criação de usuário com senha sem caractere especial.
+    endpoint: /users
+    method: POST
+    request_body:
+      username: "user_no_special"
+      password: "Aa1bcdef"
+    expected_response:
+      status_code: 400
+
+  - id: TC019
+    group: Users
+    name: Create User When Username Already Exists Returns BadRequest
+    description: Tentativa de criar um usuário com username já existente.
+    endpoint: /users
+    method: POST
+    preconditions:
+      - "Usuário com username 'existing_user' já existe no sistema."
+    request_body:
+      username: "existing_user"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 400
+
+  - id: TC020
+    group: Users
+    name: Authenticate User When Valid Data Returns OK
+    description: Autenticação com credenciais válidas.
+    endpoint: /users/token
+    method: POST
+    preconditions:
+      - "Usuário com username 'auth_user_01' e senha 'P@ssw0rd1' existe."
+    request_body:
+      username: "auth_user_01"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+
+  - id: TC021
+    group: Users
+    name: Authenticate User When Invalid Password Returns BadRequest
+    description: Autenticação com senha inválida.
+    endpoint: /users/token
+    method: POST
+    preconditions:
+      - "Usuário com username 'auth_user_02' e senha 'P@ssw0rd1' existe."
+    request_body:
+      username: "auth_user_02"
+      password: "WrongPass1!"
+    expected_response:
+      status_code: 400
+
+  - id: TC022
+    group: Users
+    name: Authenticate User When Invalid Username Returns BadRequest
+    description: Autenticação com username inválido.
+    endpoint: /users/token
+    method: POST
+    preconditions:
+      - "Usuário com username 'auth_user_03' e senha 'P@ssw0rd1' existe."
+    request_body:
+      username: "not_existing_user"
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 400
+
+  - id: TC023
+    group: Users
+    name: Authenticate User When Username Is Null Returns BadRequest
+    description: Autenticação com username nulo.
+    endpoint: /users/token
+    method: POST
+    request_body:
+      username: null
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 400
+
+  - id: TC024
+    group: Users
+    name: Authenticate User When Password Is Null Returns BadRequest
+    description: Autenticação com senha nula.
+    endpoint: /users/token
+    method: POST
+    request_body:
+      username: "auth_user_04"
+      password: null
+    expected_response:
+      status_code: 400
+
+  - id: TC025
+    group: Users
+    name: Authenticate User When Username Is Empty String Returns BadRequest
+    description: Autenticação com username vazio.
+    endpoint: /users/token
+    method: POST
+    request_body:
+      username: ""
+      password: "P@ssw0rd1"
+    expected_response:
+      status_code: 400
+
+  - id: TC026
+    group: Users
+    name: Authenticate User When Password Is Empty String Returns BadRequest
+    description: Autenticação com senha vazia.
+    endpoint: /users/token
+    method: POST
+    request_body:
+      username: "auth_user_05"
+      password: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC027
+    group: Todos
+    name: Create Todo When Valid Data Returns Created
+    description: Criação de todo com dados válidos.
+    endpoint: /todos
+    method: POST
+    preconditions:
+      - "Usuário com username 'todo_user_01' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'todo_user_01'."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "Something todo in the future"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        title: "Something todo in the future"
+        isComplete: false
+
+  - id: TC028
+    group: Todos
+    name: Create Todo When Title Has Minimum Size Returns Created
+    description: Criação de todo com título no tamanho mínimo permitido.
+    endpoint: /todos
+    method: POST
+    preconditions:
+      - "Usuário com username 'todo_user_02' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'todo_user_02'."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "a"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        title: "a"
+        isComplete: false
+
+  - id: TC029
+    group: Todos
+    name: Create Todo When Title Has Maximum Size Returns Created
+    description: Criação de todo com título no tamanho máximo permitido.
+    endpoint: /todos
+    method: POST
+    preconditions:
+      - "Usuário com username 'todo_user_03' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'todo_user_03'."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        title: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        isComplete: false
+
+  - id: TC030
+    group: Todos
+    name: Create Todo When Title Is Null Returns BadRequest
+    description: Criação de todo com título nulo.
+    endpoint: /todos
+    method: POST
+    preconditions:
+      - "Usuário com username 'todo_user_04' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'todo_user_04'."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: null
+    expected_response:
+      status_code: 400
+
+  - id: TC031
+    group: Todos
+    name: Create Todo When Title Is Empty String Returns BadRequest
+    description: Criação de todo com título vazio.
+    endpoint: /todos
+    method: POST
+    preconditions:
+      - "Usuário com username 'todo_user_05' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'todo_user_05'."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC032
+    group: Todos
+    name: Create Todo When Title Too Long Returns BadRequest
+    description: Criação de todo com título acima do tamanho máximo permitido.
+    endpoint: /todos
+    method: POST
+    preconditions:
+      - "Usuário com username 'todo_user_06' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'todo_user_06'."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    expected_response:
+      status_code: 400
+
+  - id: TC033
+    group: Todos
+    name: Create Todo When Token Is Missing Returns Unauthorized
+    description: Criação de todo sem token de autenticação.
+    endpoint: /todos
+    method: POST
+    request_body:
+      title: "Buy milk"
+    expected_response:
+      status_code: 401
+
+  - id: TC034
+    group: Todos
+    name: Create Todo When Token Is Invalid Returns Unauthorized
+    description: Criação de todo com token inválido.
+    endpoint: /todos
+    method: POST
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      title: "Buy milk"
+    expected_response:
+      status_code: 401
+
+  - id: TC035
+    group: Todos
+    name: List Todos When User Has No Todos Returns Empty Array
+    description: Listagem de todos quando o usuário não possui itens cadastrados.
+    endpoint: /todos
+    method: GET
+    preconditions:
+      - "Usuário com username 'list_user_empty' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'list_user_empty'."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+      body: is empty array
+
+  - id: TC036
+    group: Todos
+    name: List Todos When User Has Todos Returns Array
+    description: Listagem de todos quando o usuário possui itens cadastrados.
+    endpoint: /todos
+    method: GET
+    preconditions:
+      - "Usuário com username 'list_user_full' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'list_user_full'."
+      - "Existe um todo criado com título 'Todo 1' para o usuário com username 'list_user_full' e id armazenado em {todo_id_1}."
+      - "Existe um todo criado com título 'Todo 2' para o usuário com username 'list_user_full' e id armazenado em {todo_id_2}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+      body: is array of todo objects created by the current user
+
+  - id: TC037
+    group: Todos
+    name: List Todos When Token Is Invalid Returns Unauthorized
+    description: Listagem de todos com token inválido.
+    endpoint: /todos
+    method: GET
+    headers:
+      Authorization: "Bearer invalidtoken"
+    expected_response:
+      status_code: 401
+
+  - id: TC038
+    group: Todos
+    name: List Todos When Token Is Missing Returns Unauthorized
+    description: Listagem de todos sem token de autenticação.
+    endpoint: /todos
+    method: GET
+    expected_response:
+      status_code: 401
+
+  - id: TC039
+    group: Todos
+    name: List Todos When Using Another User Token Returns Only Own Todos
+    description: Listagem de todos com token de outro usuário deve retornar apenas os itens do usuário autenticado.
+    endpoint: /todos
+    method: GET
+    preconditions:
+      - "Usuário com username 'owner_user' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {owner_token} válido para o usuário com username 'owner_user'."
+      - "Usuário com username 'other_user' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {other_token} válido para o usuário com username 'other_user'."
+      - "Existe um todo criado com título 'Owner Todo' para o usuário com username 'owner_user' e id armazenado em {owner_todo_id}."
+      - "Existe um todo criado com título 'Other Todo' para o usuário com username 'other_user' e id armazenado em {other_todo_id}."
+    headers:
+      Authorization: "Bearer {other_token}"
+    expected_response:
+      status_code: 200
+      body: is array containing only the todos owned by the authenticated user
+
+  - id: TC040
+    group: Todos
+    name: Get Todo When Valid Data Returns OK
+    description: Consulta de todo existente pelo proprietário.
+    endpoint: /todos/{todo_id}
+    method: GET
+    preconditions:
+      - "Usuário com username 'get_user_01' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'get_user_01'."
+      - "Existe um todo criado com título 'Read book' para o usuário com username 'get_user_01' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+      body:
+        id: {todo_id}
+        title: "Read book"
+        isComplete: false
+
+  - id: TC041
+    group: Todos
+    name: Get Todo When Id Does Not Exist Returns NotFound
+    description: Consulta de todo com id inexistente.
+    endpoint: /todos/9999999
+    method: GET
+    preconditions:
+      - "Usuário com username 'get_user_02' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'get_user_02'."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 404
+
+  - id: TC042
+    group: Todos
+    name: Get Todo When Using Another User Token Returns NotFound
+    description: Consulta de todo existente por usuário que não é o proprietário.
+    endpoint: /todos/{todo_id}
+    method: GET
+    preconditions:
+      - "Usuário com username 'get_owner_user' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {owner_token} válido para o usuário com username 'get_owner_user'."
+      - "Existe um todo criado com título 'Owner Todo' para o usuário com username 'get_owner_user' e id armazenado em {todo_id}."
+      - "Usuário com username 'get_other_user' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {other_token} válido para o usuário com username 'get_other_user'."
+    headers:
+      Authorization: "Bearer {other_token}"
+    expected_response:
+      status_code: 404
+
+  - id: TC043
+    group: Todos
+    name: Get Todo When Token Is Invalid Returns Unauthorized
+    description: Consulta de todo com token inválido.
+    endpoint: /todos/1
+    method: GET
+    headers:
+      Authorization: "Bearer invalidtoken"
+    expected_response:
+      status_code: 401
+
+  - id: TC044
+    group: Todos
+    name: Get Todo When Token Is Missing Returns Unauthorized
+    description: Consulta de todo sem token de autenticação.
+    endpoint: /todos/1
+    method: GET
+    expected_response:
+      status_code: 401
+
+  - id: TC045
+    group: Todos
+    name: Update Todo When Valid Data Returns OK
+    description: Atualização de todo existente com título e status válidos.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_user_01' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'update_user_01'."
+      - "Existe um todo criado com título 'Old title' para o usuário com username 'update_user_01' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "New title"
+      isComplete: true
+    expected_response:
+      status_code: 200
+      body:
+        id: {todo_id}
+        title: "New title"
+        isComplete: true
+
+  - id: TC046
+    group: Todos
+    name: Update Todo When Marking As Incomplete Returns OK
+    description: Atualização de todo marcando como incompleto.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_user_02' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'update_user_02'."
+      - "Existe um todo criado com título 'Finish homework' para o usuário com username 'update_user_02' e id armazenado em {todo_id}."
+      - "O todo foi previamente marcado como concluído."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "Finish homework"
+      isComplete: false
+    expected_response:
+      status_code: 200
+      body:
+        id: {todo_id}
+        title: "Finish homework"
+        isComplete: false
+
+  - id: TC047
+    group: Todos
+    name: Update Todo When Title Has Minimum Size Returns OK
+    description: Atualização de todo com título no tamanho mínimo permitido.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_user_03' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'update_user_03'."
+      - "Existe um todo criado com título 'Old title' para o usuário com username 'update_user_03' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "a"
+      isComplete: false
+    expected_response:
+      status_code: 200
+      body:
+        id: {todo_id}
+        title: "a"
+        isComplete: false
+
+  - id: TC048
+    group: Todos
+    name: Update Todo When Title Has Maximum Size Returns OK
+    description: Atualização de todo com título no tamanho máximo permitido.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_user_04' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'update_user_04'."
+      - "Existe um todo criado com título 'Old title' para o usuário com username 'update_user_04' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      isComplete: true
+    expected_response:
+      status_code: 200
+      body:
+        id: {todo_id}
+        title: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        isComplete: true
+
+  - id: TC049
+    group: Todos
+    name: Update Todo When Title Is Null Returns BadRequest
+    description: Atualização de todo com título nulo.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_user_05' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'update_user_05'."
+      - "Existe um todo criado com título 'Old title' para o usuário com username 'update_user_05' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: null
+      isComplete: true
+    expected_response:
+      status_code: 400
+
+  - id: TC050
+    group: Todos
+    name: Update Todo When Title Is Empty String Returns BadRequest
+    description: Atualização de todo com título vazio.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_user_06' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'update_user_06'."
+      - "Existe um todo criado com título 'Old title' para o usuário com username 'update_user_06' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: ""
+      isComplete: true
+    expected_response:
+      status_code: 400
+
+  - id: TC051
+    group: Todos
+    name: Update Todo When Title Too Long Returns BadRequest
+    description: Atualização de todo com título acima do limite máximo.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_user_07' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'update_user_07'."
+      - "Existe um todo criado com título 'Old title' para o usuário com username 'update_user_07' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      isComplete: true
+    expected_response:
+      status_code: 400
+
+  - id: TC052
+    group: Todos
+    name: Update Todo When IsComplete Is Missing Returns BadRequest
+    description: Atualização de todo sem o campo isComplete.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_user_08' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'update_user_08'."
+      - "Existe um todo criado com título 'Old title' para o usuário com username 'update_user_08' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      title: "New title"
+    expected_response:
+      status_code: 400
+
+  - id: TC053
+    group: Todos
+    name: Update Todo When Token Is Missing Returns Unauthorized
+    description: Atualização de todo sem token de autenticação.
+    endpoint: /todos/1
+    method: PUT
+    request_body:
+      title: "New title"
+      isComplete: true
+    expected_response:
+      status_code: 401
+
+  - id: TC054
+    group: Todos
+    name: Update Todo When Token Is Invalid Returns Unauthorized
+    description: Atualização de todo com token inválido.
+    endpoint: /todos/1
+    method: PUT
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      title: "New title"
+      isComplete: true
+    expected_response:
+      status_code: 401
+
+  - id: TC055
+    group: Todos
+    name: Update Todo When Using Another User Token Returns NotFound
+    description: Atualização de todo por usuário que não é o proprietário.
+    endpoint: /todos/{todo_id}
+    method: PUT
+    preconditions:
+      - "Usuário com username 'update_owner_user' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {owner_token} válido para o usuário com username 'update_owner_user'."
+      - "Existe um todo criado com título 'Owner todo' para o usuário com username 'update_owner_user' e id armazenado em {todo_id}."
+      - "Usuário com username 'update_other_user' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {other_token} válido para o usuário com username 'update_other_user'."
+    headers:
+      Authorization: "Bearer {other_token}"
+    request_body:
+      title: "New title"
+      isComplete: true
+    expected_response:
+      status_code: 404
+
+  - id: TC056
+    group: Todos
+    name: Delete Todo When Valid Data Returns OK
+    description: Remoção de todo existente pelo proprietário.
+    endpoint: /todos/{todo_id}
+    method: DELETE
+    preconditions:
+      - "Usuário com username 'delete_user_01' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'delete_user_01'."
+      - "Existe um todo criado com título 'Todo to delete' para o usuário com username 'delete_user_01' e id armazenado em {todo_id}."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+
+  - id: TC057
+    group: Todos
+    name: Delete Todo When Already Deleted Returns NotFound
+    description: Remoção de todo que já foi excluído anteriormente.
+    endpoint: /todos/{todo_id}
+    method: DELETE
+    preconditions:
+      - "Usuário com username 'delete_user_02' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {valid_token} válido para o usuário com username 'delete_user_02'."
+      - "Existe um todo criado com título 'Todo to delete' para o usuário com username 'delete_user_02' e id armazenado em {todo_id}."
+      - "O todo identificado por {todo_id} já foi excluído."
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 404
+
+  - id: TC058
+    group: Todos
+    name: Delete Todo When Using Another User Token Returns NotFound
+    description: Remoção de todo por usuário que não é o proprietário.
+    endpoint: /todos/{todo_id}
+    method: DELETE
+    preconditions:
+      - "Usuário com username 'delete_owner_user' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {owner_token} válido para o usuário com username 'delete_owner_user'."
+      - "Existe um todo criado com título 'Owner todo' para o usuário com username 'delete_owner_user' e id armazenado em {todo_id}."
+      - "Usuário com username 'delete_other_user' e senha 'P@ssw0rd1' existe."
+      - "Existe um token de autenticação {other_token} válido para o usuário com username 'delete_other_user'."
+    headers:
+      Authorization: "Bearer {other_token}"
+    expected_response:
+      status_code: 404
+
+  - id: TC059
+    group: Todos
+    name: Delete Todo When Token Is Invalid Returns Unauthorized
+    description: Remoção de todo com token inválido.
+    endpoint: /todos/1
+    method: DELETE
+    headers:
+      Authorization: "Bearer invalidtoken"
+    expected_response:
+      status_code: 401
+
+  - id: TC060
+    group: Todos
+    name: Delete Todo When Token Is Missing Returns Unauthorized
+    description: Remoção de todo sem token de autenticação.
+    endpoint: /todos/1
+    method: DELETE
+    expected_response:
+      status_code: 401

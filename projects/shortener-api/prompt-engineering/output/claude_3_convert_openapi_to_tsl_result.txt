@@ -1,0 +1,205 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Web
+    name: Get Test Token Returns OK
+    description: Verificar se o endpoint de teste retorna um token
+    endpoint: /test
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        token: is string nullable
+
+  - id: TC002
+    group: Url Shorten 
+    name: Get URL When Token Exists Returns OK
+    description: Buscar URL a partir de um token válido
+    endpoint: /{token}
+    method: GET
+    preconditions:
+      - "Existe um token válido {valid_token} cadastrado para a URL 'https://valid.com'"
+    parameters:
+      token: "{valid_token}"
+    expected_response:
+      status_code: 200
+      body:
+        url: "https://valid.com"
+
+  - id: TC003
+    group: Url Shorten
+    name: Get URL When Token Not Found Returns NotFound
+    description: Buscar URL com token inexistente
+    endpoint: /{token}
+    method: GET
+    parameters:
+      token: "invalid_token"
+    expected_response:
+      status_code: 404
+      body:
+        message: is string nullable
+        statusCode: 404
+
+  - id: TC004
+    group: Url Shorten
+    name: Create Short URL When Valid Data With QR Code Returns OK
+    description: Criar URL encurtada com dados válidos e QR code habilitado
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://valid.com"
+      expireMinutes: 60
+      hasQrCode: true
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is string not empty
+
+  - id: TC005
+    group: Url Shorten
+    name: Create Short URL When Valid Data Without QR Code Returns OK
+    description: Criar URL encurtada com dados válidos e QR code desabilitado
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://valid.com"
+      expireMinutes: 60
+      hasQrCode: false
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is null
+
+  - id: TC006
+    group: Url Shorten
+    name: Create Short URL When Valid Data Without Expiry Returns OK
+    description: Criar URL encurtada com dados válidos sem expiração
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://valid.com"
+      expireMinutes: null
+      hasQrCode: false
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is null
+
+  - id: TC007
+    group: Url Shorten
+    name: Create Short URL When URL Is Null Returns BadRequest
+    description: Criar URL encurtada com URL nula
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: null
+      expireMinutes: 60
+      hasQrCode: false
+    expected_response:
+      status_code: 400
+      body:
+        message: is string nullable
+        statusCode: 400
+
+  - id: TC008
+    group: Url Shorten
+    name: Create Short URL When URL Is Empty Returns BadRequest
+    description: Criar URL encurtada com URL vazia
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: ""
+      expireMinutes: 60
+      hasQrCode: false
+    expected_response:
+      status_code: 400
+      body:
+        message: is string nullable
+        statusCode: 400
+
+  - id: TC009
+    group: Url Shorten
+    name: Create Short URL When URL Is Invalid Returns BadRequest
+    description: Criar URL encurtada com URL inválida
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "invalid-url"
+      expireMinutes: 60
+      hasQrCode: false
+    expected_response:
+      status_code: 400
+      body:
+        message: is string nullable
+        statusCode: 400
+
+  - id: TC010
+    group: Url Shorten
+    name: Create Short URL When Expire Minutes Is Zero Returns BadRequest
+    description: Criar URL encurtada com tempo de expiração zero
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://valid.com"
+      expireMinutes: 0
+      hasQrCode: false
+    expected_response:
+      status_code: 400
+      body:
+        message: is string nullable
+        statusCode: 400
+
+  - id: TC011
+    group: Url Shorten
+    name: Create Short URL When Expire Minutes Is Negative Returns BadRequest
+    description: Criar URL encurtada com tempo de expiração negativo
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://valid.com"
+      expireMinutes: -1
+      hasQrCode: false
+    expected_response:
+      status_code: 400
+      body:
+        message: is string nullable
+        statusCode: 400
+
+  - id: TC012
+    group: Url Shorten
+    name: Create Short URL When HasQrCode Is Null Returns BadRequest
+    description: Criar URL encurtada com hasQrCode nulo
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "https://valid.com"
+      expireMinutes: 60
+      hasQrCode: null
+    expected_response:
+      status_code: 400
+      body:
+        message: is string nullable
+        statusCode: 400
+
+  - id: TC013
+    group: Url Shorten
+    name: Get URL When Token Is Expired Returns NotFound
+    description: Buscar URL com token expirado
+    preconditions:
+      - "Existe um token expirado {expired_token} cadastrado para a URL 'https://valid.com'"
+    endpoint: /{token}
+    method: GET
+    parameters:
+      token: "{expired_token}"
+    expected_response:
+      status_code: 404
+      body:
+        message: is string nullable
+        statusCode: 404
+```

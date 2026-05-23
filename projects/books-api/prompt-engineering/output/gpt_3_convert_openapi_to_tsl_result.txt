@@ -1,0 +1,243 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: BookEndpoints
+    name: Get All Books When Books Exist Returns OK
+    description: Retrieve a list of all books when books are available.
+    endpoint: /books
+    method: GET
+    expected_response:
+      status_code: 200
+      body: 
+        type: array
+        elements:
+          - id: is integer greater than 0
+            title: is string or null
+            isbn: is string or null
+            description: is string or null
+            author: is string or null
+
+  - id: TC002
+    group: BookEndpoints
+    name: Create Book With Valid Data Returns OK
+    description: Create a book with all valid data.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "1234567890"
+      description: "Valid Description"
+      author: "John Doe"
+    expected_response:
+      status_code: 200
+      body:
+        id: is integer greater than 0
+        title: "Valid Title"
+        isbn: "1234567890"
+        description: "Valid Description"
+        author: "John Doe"
+
+  - id: TC003
+    group: BookEndpoints
+    name: Create Book With Missing Title Returns BadRequest
+    description: Attempt to create a book with missing title.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: null
+      isbn: "1234567890"
+      description: "Valid Description"
+      author: "John Doe"
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: BookEndpoints
+    name: Create Book With Empty Title Returns BadRequest
+    description: Attempt to create a book with an empty title.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: ""
+      isbn: "1234567890"
+      description: "Valid Description"
+      author: "John Doe"
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: BookEndpoints
+    name: Create Book With Missing ISBN Returns BadRequest
+    description: Attempt to create a book with missing ISBN.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: null
+      description: "Valid Description"
+      author: "John Doe"
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: BookEndpoints
+    name: Create Book With Empty ISBN Returns BadRequest
+    description: Attempt to create a book with an empty ISBN.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: ""
+      description: "Valid Description"
+      author: "John Doe"
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: BookEndpoints
+    name: Create Book With Missing Description Returns BadRequest
+    description: Attempt to create a book with missing description.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "1234567890"
+      description: null
+      author: "John Doe"
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: BookEndpoints
+    name: Create Book With Empty Description Returns BadRequest
+    description: Attempt to create a book with an empty description.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "1234567890"
+      description: ""
+      author: "John Doe"
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: BookEndpoints
+    name: Create Book With Missing Author Returns BadRequest
+    description: Attempt to create a book with missing author.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "1234567890"
+      description: "Valid Description"
+      author: null
+    expected_response:
+      status_code: 400
+
+  - id: TC010
+    group: BookEndpoints
+    name: Create Book With Empty Author Returns BadRequest
+    description: Attempt to create a book with an empty author.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "Valid Title"
+      isbn: "1234567890"
+      description: "Valid Description"
+      author: ""
+    expected_response:
+      status_code: 400
+
+  - id: TC011
+    group: BookEndpoints
+    name: Get Book By ID When Book Exists Returns OK
+    description: Retrieve a book by ID when it exists.
+    preconditions:
+      - "A book exists with id 1."
+    endpoint: /books/1
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        title: is string or null
+        isbn: is string or null
+        description: is string or null
+        author: is string or null
+
+  - id: TC012
+    group: BookEndpoints
+    name: Get Book By ID When Book Does Not Exist Returns NotFound
+    description: Attempt to retrieve a book by ID that does not exist.
+    endpoint: /books/999
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC013
+    group: BookEndpoints
+    name: Update Book With Valid Data Returns NoContent
+    description: Update a book with valid data.
+    preconditions:
+      - "Book with id 1 exists."
+    endpoint: /books/1
+    method: PUT
+    request_body:
+      title: "Updated Title"
+      isbn: "0987654321"
+      description: "Updated Description"
+      author: "Jane Doe"
+    expected_response:
+      status_code: 204
+
+  - id: TC014
+    group: BookEndpoints
+    name: Update Book When Book Does Not Exist Returns NotFound
+    description: Attempt to update a book that does not exist.
+    endpoint: /books/999
+    method: PUT
+    request_body:
+      title: "Updated Title"
+      isbn: "0987654321"
+      description: "Updated Description"
+      author: "Jane Doe"
+    expected_response:
+      status_code: 404
+
+  - id: TC015
+    group: BookEndpoints
+    name: Update Book With Invalid Data Returns BadRequest
+    description: Attempt to update a book with invalid data.
+    preconditions:
+      - "Book with id 1 exists."
+    endpoint: /books/1
+    method: PUT
+    request_body:
+      title: ""
+      isbn: "0987654321"
+      description: "Updated Description"
+      author: "Jane Doe"
+    expected_response:
+      status_code: 400
+
+  - id: TC016
+    group: BookEndpoints
+    name: Delete Book By ID When Book Exists Returns NoContent
+    description: Delete a book by ID when it exists.
+    preconditions:
+      - "Book with id 1 exists."
+    endpoint: /books/1
+    method: DELETE
+    expected_response:
+      status_code: 204
+
+  - id: TC017
+    group: BookEndpoints
+    name: Delete Book By ID When Book Does Not Exist Returns NotFound
+    description: Attempt to delete a book by ID that does not exist.
+    endpoint: /books/999
+    method: DELETE
+    expected_response:
+      status_code: 404
+```

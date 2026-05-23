@@ -1,0 +1,7 @@
+python-dotenv
+gitpython
+requests
+jsonpath-ng
+argparse
+tqdm
+openai

@@ -1,0 +1,198 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: UrlShortenEndpoint
+    name: Get Url When Token Exists Returns OK
+    description: Obter URL quando o token existe.
+    endpoint: /{token}
+    method: GET
+    path_parameters:
+      token: "existingToken"
+    expected_response:
+      status_code: 200
+      body:
+        url: is string not empty
+
+  - id: TC002
+    group: UrlShortenEndpoint
+    name: Get Url When Token Does Not Exist Returns NotFound
+    description: Tentativa de obter URL quando o token não existe.
+    endpoint: /{token}
+    method: GET
+    path_parameters:
+      token: "nonExistingToken"
+    expected_response:
+      status_code: 404
+      body:
+        message: is string
+        statusCode: 404
+
+  - id: TC003
+    group: UrlShortenEndpoint
+    name: Get Url When Token Is Null Returns NotFound
+    description: Tentativa de obter URL quando o token é nulo.
+    endpoint: /{token}
+    method: GET
+    path_parameters:
+      token: null
+    expected_response:
+      status_code: 404
+      body:
+        message: is string
+        statusCode: 404
+
+  - id: TC004
+    group: UrlShortenEndpoint
+    name: Get Url When Token Is Empty String Returns NotFound
+    description: Tentativa de obter URL quando o token é uma string vazia.
+    endpoint: /{token}
+    method: GET
+    path_parameters:
+      token: ""
+    expected_response:
+      status_code: 404
+      body:
+        message: is string
+        statusCode: 404
+
+  - id: TC005
+    group: UrlShortenEndpoint
+    name: Create Short Url When Valid Data Returns OK
+    description: Criação de URL curta com dados válidos.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "http://example.com"
+      expireMinutes: 60
+      hasQrCode: true
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is string not empty
+
+  - id: TC006
+    group: UrlShortenEndpoint
+    name: Create Short Url When Url Is Null Returns BadRequest
+    description: Tentativa de criar URL curta com URL nula.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: null
+      expireMinutes: 60
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+      body:
+        message: is string
+        statusCode: 400
+
+  - id: TC007
+    group: UrlShortenEndpoint
+    name: Create Short Url When Url Is Empty String Returns BadRequest
+    description: Tentativa de criar URL curta com URL vazia.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: ""
+      expireMinutes: 60
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+      body:
+        message: is string
+        statusCode: 400
+
+  - id: TC008
+    group: UrlShortenEndpoint
+    name: Create Short Url When Expire Minutes Is Null Returns OK
+    description: Criação de URL curta com expireMinutes nulo (valor padrão).
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "http://example.com"
+      expireMinutes: null
+      hasQrCode: true
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is string not empty
+
+  - id: TC009
+    group: UrlShortenEndpoint
+    name: Create Short Url When Expire Minutes Is Zero Returns BadRequest
+    description: Tentativa de criar URL curta com expireMinutes igual a zero.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "http://example.com"
+      expireMinutes: 0
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+      body:
+        message: is string
+        statusCode: 400
+
+  - id: TC010
+    group: UrlShortenEndpoint
+    name: Create Short Url When Expire Minutes Is Negative Returns BadRequest
+    description: Tentativa de criar URL curta com expireMinutes negativo.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "http://example.com"
+      expireMinutes: -1
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+      body:
+        message: is string
+        statusCode: 400
+
+  - id: TC011
+    group: UrlShortenEndpoint
+    name: Create Short Url When Has Qr Code Is Null Returns BadRequest
+    description: Tentativa de criar URL curta com hasQrCode nulo.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "http://example.com"
+      expireMinutes: 60
+      hasQrCode: null
+    expected_response:
+      status_code: 400
+      body:
+        message: is string
+        statusCode: 400
+
+  - id: TC012
+    group: UrlShortenEndpoint
+    name: Create Short Url When Url Is Invalid Returns BadRequest
+    description: Tentativa de criar URL curta com URL inválida.
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: "invalid-url"
+      expireMinutes: 60
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+      body:
+        message: is string
+        statusCode: 400
+
+  - id: TC013
+    group: Web
+    name: Get Test Returns OK
+    description: Obter token de teste.
+    endpoint: /test
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+```

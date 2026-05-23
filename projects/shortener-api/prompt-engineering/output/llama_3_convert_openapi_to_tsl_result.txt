@@ -1,0 +1,195 @@
+```yml
+test_cases:
+  - id: TC001
+    group: UrlShorten
+    name: Get_Url_By_Token_When_Token_Is_Empty_Returns_NotFound
+    description: "Tentativa de obter URL pelo token quando o token esta vazio."
+    endpoint: /
+    method: GET
+    path_variables:
+      token: ''
+    expected_response:
+      status_code: 404
+
+  - id: TC002
+    group: UrlShorten
+    name: Get_Url_By_Token_When_Token_Is_Null_Returns_NotFound
+    description: "Tentativa de obter URL pelo token quando o token é nulo."
+    endpoint: /
+    method: GET
+    path_variables:
+      token: null
+    expected_response:
+      status_code: 404
+
+  - id: TC003
+    group: UrlShorten
+    name: Get_Url_By_Token_When_Token_Is_Invalid_Returns_NotFound
+    description: "Tentativa de obter URL pelo token quando o token é inválido."
+    endpoint: /
+    method: GET
+    path_variables:
+      token: 'invalid'
+    expected_response:
+      status_code: 404
+
+  - id: TC004
+    group: UrlShorten
+    name: Get_Url_By_Token_When_Token_Is_Valid_Returns_OK
+    description: "Obter URL pelo token quando o token é valido."
+    endpoint: /
+    method: GET
+    path_variables:
+      token: 'valid-token'
+    preconditions:
+      - "O token 'valid-token' existe no sistema."
+    expected_response:
+      status_code: 200
+      body:
+        url: is string not empty
+
+  - id: TC005
+    group: UrlShorten
+    name: Create_Speed_When_Url_Is_Empty_String_Returns_BadRequest
+    description: "Criação de URL curta com URL vazia."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: ''
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: UrlShorten
+    name: Create_Speed_When_Url_Is_Null_Returns_BadRequest
+    description: "Criação de URL curta com URL nula."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: null
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+
+  - id: TC007
+    group: UrlShorten
+    name: Create_Speed_When_Url_Is_Too_Short_Returns_BadRequest
+    description: "Criação de URL curta com URL muito curta."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: 'x'
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+
+  - id: TC008
+    group: UrlShorten
+    name: Create_Speed_When_Url_Is_Invalid_Returns_BadRequest
+    description: "Criação de URL curta com URL inválida."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: 'invalid-url'
+      hasQrCode: true
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: UrlShorten
+    name: Create_Speed_When_HasQrCode_Is_Null_Returns_BadRequest
+    description: "Criação de URL curta com hasQrCode nulo."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: 'http://example.com'
+      hasQrCode: null
+    expected_response:
+      status_code: 400
+
+  - id: TC010
+    group: UrlShorten
+    name: Create_Speed_When_HasQrCode_Is_False_Returns_OK
+    description: "Criação de URL curta com hasQrCode falso."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: 'http://example.com'
+      hasQrCode: false
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+
+  - id: TC011
+    group: UrlShorten
+    name: Create_Speed_When_HasQrCode_Is_True_Returns_OK
+    description: "Criação de URL curta com hasQrCode verdadeiro."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: 'http://example.com'
+      hasQrCode: true
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+        qrCode: is string not empty
+
+  - id: TC012
+    group: UrlShorten
+    name: Create_Speed_When_ExpireMinutes_Is_Null_Returns_OK
+    description: "Criação de URL curta com expireMinutes nulo."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: 'http://example.com'
+      hasQrCode: true
+      expireMinutes: null
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+        shortenedUrl: is string not empty
+
+  - id: TC013
+    group: UrlShorten
+    name: Create_Speed_When_ExpireMinutes_Is_Zero_Returns_BadRequest
+    description: "Criação de URL curta com expireMinutes zero."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: 'http://example.com'
+      hasQrCode: true
+      expireMinutes: 0
+    expected_response:
+      status_code: 400
+
+  - id: TC014
+    group: UrlShorten
+    name: Create_Speed_When_ExpireMinutes_Is_Below_Minimum_Returns_BadRequest
+    description: "Criação de URL curta com expireMinutes abaixo do mínimo."
+    endpoint: /api/url-shorts
+    method: POST
+    request_body:
+      url: 'http://example.com'
+      hasQrCode: true
+      expireMinutes: -1
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: Web
+    name: Get_Test_Returns_OK
+    description: "Retorna um token de teste."
+    endpoint: /test
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        token: is string not empty
+```
+É um TSL completo para o OpenApi fornecido, englobando todos os possíveis casos incluindo a obtenção de sucesso, falhas invalidações de URLs, etc.

@@ -1,0 +1,678 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Dishes
+    name: Create Dish When Valid Data Returns Created
+    description: Criação de um prato com dados válidos.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "ValidDishName"
+        description: "Valid description"
+        price: 10.5
+        kiloCalories: 300
+
+  - id: TC002
+    group: Dishes
+    name: Create Dish When Name Is Null Returns BadRequest
+    description: Criação de um prato com nome nulo.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: null
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC003
+    group: Dishes
+    name: Create Dish When Name Is Empty String Returns BadRequest
+    description: Criação de um prato com nome vazio.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: ""
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Dishes
+    name: Create Dish When Name Too Short Returns BadRequest
+    description: Criação de um prato com nome curto - 2 caracteres.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ab"
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Dishes
+    name: Create Dish When Name Too Long Returns BadRequest
+    description: Criação de um prato com nome longo - 17 caracteres.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ThisIsAVeryLongName"
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC006
+    group: Dishes
+    name: Create Dish When Name Has Minimum Size Returns Created
+    description: Criação de um prato com nome com o menor tamanho possível - 3 caracteres.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "abc"
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "abc"
+        description: "Valid description"
+        price: 10.5
+        kiloCalories: 300
+
+  - id: TC007
+    group: Dishes
+    name: Create Dish When Name Has Maximum Size Returns Created
+    description: Criação de um prato com nome com o maior tamanho possível - 16 caracteres.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName123"
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "ValidDishName123"
+        description: "Valid description"
+        price: 10.5
+        kiloCalories: 300
+
+  - id: TC008
+    group: Dishes
+    name: Create Dish When Description Is Null Returns BadRequest
+    description: Criação de um prato com descrição nula.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: null
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC009
+    group: Dishes
+    name: Create Dish When Description Is Empty String Returns BadRequest
+    description: Criação de um prato com descrição vazia.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: ""
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC010
+    group: Dishes
+    name: Create Dish When Description Too Short Returns BadRequest
+    description: Criação de um prato com descrição curta - 2 caracteres.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "ab"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC011
+    group: Dishes
+    name: Create Dish When Description Too Long Returns BadRequest
+    description: Criação de um prato com descrição longa - 33 caracteres.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "ThisIsAVeryLongDescription123"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC012
+    group: Dishes
+    name: Create Dish When Description Has Minimum Size Returns Created
+    description: Criação de um prato com descrição com o menor tamanho possível - 3 caracteres.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "abc"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "ValidDishName"
+        description: "abc"
+        price: 10.5
+        kiloCalories: 300
+
+  - id: TC013
+    group: Dishes
+    name: Create Dish When Description Has Maximum Size Returns Created
+    description: Criação de um prato com descrição com o maior tamanho possível - 32 caracteres.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "ThisIsAVeryLongDescription1234"
+      price: 10.5
+      kiloCalories: 300
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "ValidDishName"
+        description: "ThisIsAVeryLongDescription1234"
+        price: 10.5
+        kiloCalories: 300
+
+  - id: TC014
+    group: Dishes
+    name: Create Dish When Price Is Null Returns BadRequest
+    description: Criação de um prato com preço nulo.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "Valid description"
+      price: null
+      kiloCalories: 300
+    expected_response:
+      status_code: 400
+
+  - id: TC015
+    group: Dishes
+    name: Create Dish When Price Is Zero Returns Created
+    description: Criação de um prato com preço zero.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "Valid description"
+      price: 0.0
+      kiloCalories: 300
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "ValidDishName"
+        description: "Valid description"
+        price: 0.0
+        kiloCalories: 300
+
+  - id: TC016
+    group: Dishes
+    name: Create Dish When KiloCalories Is Null Returns BadRequest
+    description: Criação de um prato com calorias nula.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: null
+    expected_response:
+      status_code: 400
+
+  - id: TC017
+    group: Dishes
+    name: Create Dish When KiloCalories Is Zero Returns Created
+    description: Criação de um prato com calorias zero.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: 0
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "ValidDishName"
+        description: "Valid description"
+        price: 10.5
+        kiloCalories: 0
+
+  - id: TC018
+    group: Dishes
+    name: Create Dish When KiloCalories Is Negative Returns BadRequest
+    description: Criação de um prato com calorias negativa.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    request_body:
+      name: "ValidDishName"
+      description: "Valid description"
+      price: 10.5
+      kiloCalories: -1
+    expected_response:
+      status_code: 400
+
+  - id: TC019
+    group: Dishes
+    name: Get Dish When Valid Data Returns OK
+    description: Obter um prato válido.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: GET
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+      - "Existem pratos criados para o restaurante com id {restaurantId}"
+    expected_response:
+      status_code: 200
+      body:
+        - id: is integer greater than 0
+          name: is string not null
+          description: is string not null
+          price: is double
+          kiloCalories: is integer not null
+
+  - id: TC020
+    group: Dishes
+    name: Get Dish When Restaurant Not Found Returns NotFound
+    description: Obter pratos de um restaurante que não existe.
+    endpoint: /api/restaurants/9999999/dishes
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC021
+    group: Dishes
+    name: Delete Dish When Valid Data Returns NoContent
+    description: Deletar um prato de um restaurante válido.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: DELETE
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+      - "Existem pratos criados para o restaurante com id {restaurantId}"
+    expected_response:
+      status_code: 204
+
+  - id: TC022
+    group: Dishes
+    name: Delete Dish When Restaurant Not Found Returns NotFound
+    description: Deletar pratos de um restaurante que não existe.
+    endpoint: /api/restaurants/9999999/dishes
+    method: DELETE
+    expected_response:
+      status_code: 404
+
+  - id: TC023
+    group: Dishes
+    name: Get Dish By Id When Valid Data Returns OK
+    description: Obter um prato por id.
+    endpoint: /api/restaurants/{restaurantId}/dishes/{dishId}
+    method: GET
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+      - "Existe um prato com id {dishId} para o restaurante com id {restaurantId}"
+    expected_response:
+      status_code: 200
+      body:
+        id: {dishId}
+        name: is string not null
+        description: is string not null
+        price: is double
+        kiloCalories: is integer not null
+
+  - id: TC024
+    group: Dishes
+    name: Get Dish By Id When Restaurant Not Found Returns NotFound
+    description: Obter um prato de um restaurante que não existe.
+    endpoint: /api/restaurants/9999999/dishes/1
+    method: GET
+    expected_response:
+      status_code: 404
+
+  - id: TC025
+    group: Dishes
+    name: Get Dish By Id When Dish Not Found Returns NotFound
+    description: Obter um prato que não existe de um restaurante válido.
+    endpoint: /api/restaurants/{restaurantId}/dishes/9999999
+    method: GET
+    preconditions:
+      - "Restaurante com id {restaurantId} existe."
+    expected_response:
+      status_code: 404
+
+  - id: TC026
+    group: Restaurants
+    name: Get Restaurants When Valid Data Returns OK
+    description: Obter restaurantes com dados válidos.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      searchPhrase: "search"
+      pageNumber: 1
+      pageSize: 10
+      sortBy: "Name"
+      sortDirection: "Ascending"
+    expected_response:
+      status_code: 200
+      body:
+        items:
+          - id: is integer greater than 0
+            name: is string not null
+            description: is string not null
+            category: is string not null
+            hasDelivery: is boolean
+            city: is string not null
+            street: is string not null
+            postalCode: is string not null
+            logoSasUrl: is string not null
+            dishes:
+              - id: is integer greater than 0
+                name: is string not null
+                description: is string not null
+                price: is double
+                kiloCalories: is integer not null
+        totalPages: is integer
+        totalItemsCount: is integer
+        itemsFrom: is integer
+        itemsTo: is integer
+
+  - id: TC027
+    group: Restaurants
+    name: Get Restaurants When PageNumber Is Zero Returns BadRequest
+    description: Obter restaurantes com página zero.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      searchPhrase: "search"
+      pageNumber: 0
+      pageSize: 10
+      sortBy: "Name"
+      sortDirection: "Ascending"
+    expected_response:
+      status_code: 400
+
+  - id: TC028
+    group: Restaurants
+    name: Get Restaurants When PageNumber Is Negative Returns BadRequest
+    description: Obter restaurantes com página negativa.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      searchPhrase: "search"
+      pageNumber: -1
+      pageSize: 10
+      sortBy: "Name"
+      sortDirection: "Ascending"
+    expected_response:
+      status_code: 400
+
+  - id: TC029
+    group: Restaurants
+    name: Get Restaurants When PageSize Is Zero Returns BadRequest
+    description: Obter restaurantes com tamanho de página zero.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      searchPhrase: "search"
+      pageNumber: 1
+      pageSize: 0
+      sortBy: "Name"
+      sortDirection: "Ascending"
+    expected_response:
+      status_code: 400
+
+  - id: TC030
+    group: Restaurants
+    name: Get Restaurants When PageSize Is Negative Returns BadRequest
+    description: Obter restaurantes com tamanho de página negativo.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      searchPhrase: "search"
+      pageNumber: 1
+      pageSize: -1
+      sortBy: "Name"
+      sortDirection: "Ascending"
+    expected_response:
+      status_code: 400
+
+  - id: TC031
+    group: Restaurants
+    name: Get Restaurants When SortBy Is Invalid Returns BadRequest
+    description: Obter restaurantes com ordenação inválida.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      searchPhrase: "search"
+      pageNumber: 1
+      pageSize: 10
+      sortBy: "Invalid"
+      sortDirection: "Ascending"
+    expected_response:
+      status_code: 400
+
+  - id: TC032
+    group: Restaurants
+    name: Get Restaurants When SortDirection Is Invalid Returns BadRequest
+    description: Obter restaurantes com direção de ordenação inválida.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      searchPhrase: "search"
+      pageNumber: 1
+      pageSize: 10
+      sortBy: "Name"
+      sortDirection: "Invalid"
+    expected_response:
+      status_code: 400
+
+  - id: TC033
+    group: Restaurants
+    name: Create Restaurant When Valid Data Returns Created
+    description: Criação de um restaurante com dados válidos.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "ValidName"
+      description: "Valid description"
+      category: "ValidCategory"
+      hasDelivery: true
+      contactEmail: "valid@example.com"
+      contactNumber: "1234567890"
+      city: "ValidCity"
+      street: "ValidStreet"
+      postalCode: "12345"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "ValidName"
+        description: "Valid description"
+        category: "ValidCategory"
+        hasDelivery: true
+        city: "ValidCity"
+        street: "ValidStreet"
+        postalCode: "12345"
+        logoSasUrl: is string not null
+        dishes: is array of objects
+
+  - id: TC034
+    group: Restaurants
+    name: Create Restaurant When Name Is Null Returns BadRequest
+    description: Criação de um restaurante com nome nulo.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: null
+      description: "Valid description"
+      category: "ValidCategory"
+      hasDelivery: true
+      contactEmail: "valid@example.com"
+      contactNumber: "1234567890"
+      city: "ValidCity"
+      street: "ValidStreet"
+      postalCode: "12345"
+    expected_response:
+      status_code: 400
+
+  - id: TC035
+    group: Restaurants
+    name: Create Restaurant When Name Is Empty String Returns BadRequest
+    description: Criação de um restaurante com nome vazio.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: ""
+      description: "Valid description"
+      category: "ValidCategory"
+      hasDelivery: true
+      contactEmail: "valid@example.com"
+      contactNumber: "1234567890"
+      city: "ValidCity"
+      street: "ValidStreet"
+      postalCode: "12345"
+    expected_response:
+      status_code: 400
+
+  - id: TC036
+    group: Restaurants
+    name: Create Restaurant When Name Too Short Returns BadRequest
+    description: Criação de um restaurante com nome curto - 2 caracteres.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "ab"
+      description: "Valid description"
+      category: "ValidCategory"
+      hasDelivery: true
+      contactEmail: "valid@example.com"
+      contactNumber: "1234567890"
+      city: "ValidCity"
+      street: "ValidStreet"
+      postalCode: "12345"
+    expected_response:
+      status_code: 400
+
+  - id: TC037
+    group: Restaurants
+    name: Create Restaurant When Name Too Long Returns BadRequest
+    description: Criação de um restaurante com nome longo - 33 caracteres.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "ThisIsAVeryLongRestaurantName123"
+      description: "Valid description"
+      category: "ValidCategory"
+      hasDelivery: true
+      contactEmail: "valid@example.com"
+      contactNumber: "1234567890"
+      city: "ValidCity"
+      street: "ValidStreet"
+      postalCode: "12345"
+    expected_response:
+      status_code: 400
+
+  - id: TC038
+    group: Restaurants
+    name: Create Restaurant When Name Has Minimum Size Returns Created
+    description: Criação de um restaurante com nome com o menor tamanho possível - 3 caracteres.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "abc"
+      description: "Valid description"
+      category: "ValidCategory"
+      hasDelivery: true
+      contactEmail: "valid@example.com"
+      contactNumber: "1234567890"
+      city: "ValidCity"
+      street: "ValidStreet"
+      postalCode: "12345"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "abc"
+        description: "Valid description"
+        category: "ValidCategory"
+        hasDelivery: true
+        city: "ValidCity"
+        street: "ValidStreet"
+        postalCode: "12345"
+        logoSasUrl: is string not null

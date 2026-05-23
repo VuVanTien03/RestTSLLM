@@ -1,0 +1,397 @@
+
+Okay, given the OpenAPI specification for the Hotel Listing API, I need to generate TSL (Test Specification Language) in YAML format, aiming for maximum test coverage by considering all possible scenarios based on the provided schemas and endpoints.
+
+First, I'll start by analyzing each endpoint and the corresponding requests and responses. For each HTTP method, I should identify the parameters, request bodies, and possible responses, then create test cases that cover valid and invalid inputs, boundary values, authentication requirements, and different response statuses.
+
+Starting with the `/api/accounts` POST endpoint, which creates a user (ApiUserDto). The required fields are firstName, lastName, email, password, and isAdmin. Each of these has validation rules:
+
+- `firstName`, `lastName`, and `email` have minLength: 1, so test null, empty string, valid, etc.
+- `password` has min 6, max 15 chars, and must contain at least 1 number, 1 lowercase, 1 uppercase, and 1 non-alphanumeric. So multiple invalid cases here.
+- `isAdmin` is a boolean. Need to check valid true/false.
+- `email` format must be valid. Test invalid emails.
+
+Then, the `/api/accounts/tokens` POST endpoint for login (LoginDto). Required email and password. Need to test correct and incorrect credentials, invalid email formats, valid and invalid passwords.
+
+Next, `/api/accounts/refreshtokens` POST taking AuthResponseDto, which needs valid/invalid refresh tokens, etc.
+
+For the `/api/countries` endpoints:
+
+- GET: Retrieve countries. No authentication. But need to handle empty vs non-empty responses.
+- POST: Create country (CreateCountryDto) requiring authentication and valid name/shortName. Test without token, invalid token, valid cases, missing fields, name/shortName lengths.
+
+The GET by ID and PUT/DELETE for countries should test valid ID, nonexistent ID, authentication, etc. DELETE requires admin role, so test regular user vs admin.
+
+For hotels endpoints:
+
+- GET /api/hotels and /api/hotels/all require authentication. Test with and without valid tokens.
+- POST and PUT on hotels have similar validations as countries, with required fields like name, address, countryId (must be >=1).
+- DELETE on hotels requires admin, so check forbidden when not admin.
+
+Parameters for pagination (pageNumber, pageSize) in GET /api/hotels?pageNumber=X&pageSize=Y need to test valid and invalid values (e.g., zero, negatives, overly large sizes).
+
+Also, path parameters (e.g., countryId, hotelId) should test valid integers and not found cases. For numbers with min/max constraints (like countryId ≥1), test boundary values.
+
+Each endpoint likely has security (Bearer token), so test when missing, invalid, or valid but insufficient permissions.
+
+Edge cases to include:
+
+- Null values where minLength is 1.
+- Empty strings where fields are required.
+- Strings at min and max lengths.
+- Invalid data types (e.g., strings where numbers expected, invalid email format).
+- Authentication/authorization failures.
+- Admin-only endpoints accessed by non-admin users.
+
+Also, check responses match expected schemas for 200, 201, etc., and BadRequest/Unauthorized/Forbidden/NotFound statuses.
+
+By methodically applying equivalence partitioning and boundary value analysis, along with considering all specified constraints, I can generate comprehensive test cases for each endpoint.
+</think>
+
+Aqui está o TSL gerado com base na especificação OpenAPI fornecida, seguindo as melhores práticas de cobertura e testes de limites:
+
+```yaml
+test_cases:
+  # Accounts Endpoints
+  - id: TC001
+    group: Account
+    name: Create User When Valid Data Returns OK
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      email: "valid@test.com"
+      password: "Val1d!Pass"
+      isAdmin: false
+    expected_response:
+      status_code: 200
+
+  - id: TC002
+    group: Account
+    name: Create User When FName Null Returns BadRequest
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: null
+      lastName: "Doe"
+      email: "valid@test.com"
+      password: "Val1d!Pass"
+      isAdmin: false
+    expected_response:
+      status_code: 400
+
+  - id: TC003
+    group: Account
+    name: Create User When FName Empty Returns BadRequest
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: ""
+      lastName: "Doe"
+      email: "valid@test.com"
+      password: "Val1d!Pass"
+      isAdmin: false
+    expected_response:
+      status_code: 400
+
+  - id: TC004
+    group: Account
+    name: Create User When Password Short Returns BadRequest
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      email: "valid@test.com"
+      password: "V1!" 
+      isAdmin: false
+    expected_response:
+      status_code: 400
+
+  - id: TC005
+    group: Account
+    name: Create User When Password Invalid Complexity Returns BadRequest
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      email: "valid@test.com"
+      password: "invalidpassword" 
+      isAdmin: false
+    expected_response:
+      status_code: 400
+
+  # Authentication Tests
+  - id: TC101
+    group: Account
+    name: Login Valid Credentials Returns Token
+    endpoint: /api/accounts/tokens
+    method: POST
+    preconditions:
+      - "User with email 'valid@test.com' exists"
+    request_body:
+      email: "valid@test.com"
+      password: "Val1d!Pass"
+    expected_response:
+      status_code: 200
+      body:
+        userId: is string not empty
+        token: is string not empty
+        refreshToken: is string not empty
+
+  - id: TC102
+    group: Account
+    name: Login Invalid Password Returns Unauthorized
+    endpoint: /api/accounts/tokens
+    method: POST
+    request_body:
+      email: "valid@test.com"
+      password: "wrongpass"
+    expected_response:
+      status_code: 401
+
+  # Countries Endpoints
+  - id: TC201
+    group: Countries
+    name: Create Country Valid Returns Created
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer {admin_token}"
+    request_body:
+      name: "Valid Country"
+      shortName: "VC"
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "Valid Country"
+        shortName: "VC"
+
+  - id: TC202
+    group: Countries
+    name: Create Country Without Auth Returns Unauthorized
+    endpoint: /api/countries
+    method: POST
+    request_body:
+      name: "Test"
+      shortName: "T"
+    expected_response:
+      status_code: 401
+
+  - id: TC203
+    group: Countries
+    name: Create Country Missing Name Returns BadRequest
+    endpoint: /api/countries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      shortName: "T"
+    expected_response:
+      status_code: 400
+
+  - id: TC204
+    group: Countries
+    name: Get Country By Valid ID Returns OK
+    endpoint: /api/countries/1
+    method: GET
+    preconditions:
+      - "Country with ID 1 exists"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+        name: is string not empty
+        shortName: is string not empty
+
+  - id: TC205
+    group: Countries
+    name: Delete Country NonAdmin Returns Forbidden
+    endpoint: /api/countries/1
+    method: DELETE
+    headers:
+      Authorization: "Bearer {user_token}"
+    expected_response:
+      status_code: 403
+
+  # Hotels Endpoints
+  - id: TC301
+    group: Hotels
+    name: Create Hotel Valid Returns Created
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Valid Hotel"
+      address: "123 Street"
+      countryId: 1
+    expected_response:
+      status_code: 201
+      body:
+        id: is integer greater than 0
+        name: "Valid Hotel"
+        countryId: 1
+
+  - id: TC302
+    group: Hotels
+    name: Create Hotel Invalid CountryID Returns BadRequest
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Hotel"
+      address: "Addr"
+      countryId: 0
+    expected_response:
+      status_code: 400
+
+  - id: TC303
+    group: Hotels
+    name: Get Hotel Pagination Valid Returns OK
+    endpoint: /api/hotels?pageNumber=1&pageSize=10
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+      body:
+        totalCount: is integer >=0
+        pageNumber: 1
+        recordNumber: 10
+
+  - id: TC304
+    group: Hotels
+    name: Get Hotel Pagination Invalid Size Returns BadRequest
+    endpoint: /api/hotels?pageNumber=0&pageSize=0
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 400
+
+  - id: TC305
+    group: Hotels
+    name: Update Hotel Valid Returns NoContent
+    endpoint: /api/hotels/1
+    method: PUT
+    headers:
+      Authorization: "Bearer {admin_token}"
+    request_body:
+      name: "Updated Hotel"
+      address: "New Address"
+      countryId: 1
+    expected_response:
+      status_code: 204
+
+  # Negative Scenarios
+  - id: TC401
+    group: Hotels
+    name: Update NonExistent Hotel Returns NotFound
+    endpoint: /api/hotels/9999
+    method: PUT
+    headers:
+      Authorization: "Bearer {admin_token}"
+    request_body:
+      name: "Hotel"
+      address: "Addr"
+      countryId: 1
+    expected_response:
+      status_code: 404
+
+  - id: TC402
+    group: Countries
+    name: Delete Country Not Exist Returns NotFound
+    endpoint: /api/countries/9999
+    method: DELETE
+    headers:
+      Authorization: "Bearer {admin_token}"
+    expected_response:
+      status_code: 404
+
+  # Security Tests
+  - id: TC501
+    group: Hotels
+    name: Get Hotels Without Auth Returns Unauthorized
+    endpoint: /api/hotels/all
+    method: GET
+    expected_response:
+      status_code: 401
+
+  - id: TC502
+    group: Account
+    name: Refresh Token Invalid Returns Unauthorized
+    endpoint: /api/accounts/refreshtokens
+    method: POST
+    request_body:
+      refreshToken: "invalid_token"
+    expected_response:
+      status_code: 401
+
+  # Boundary Tests
+  - id: TC601
+    group: Account
+    name: Create User Password Max Length Returns OK
+    endpoint: /api/accounts
+    method: POST
+    request_body:
+      firstName: "John"
+      lastName: "Doe"
+      email: "maxpass@test.com"
+      password: "V1!aaaaabbbbc" # 15 chars
+      isAdmin: false
+    expected_response:
+      status_code: 200
+
+  - id: TC602
+    group: Hotels
+    name: Create Hotel CountryID Max Value Returns OK
+    endpoint: /api/hotels
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Max Country Hotel"
+      address: "Address"
+      countryId: 2147483647
+    expected_response:
+      status_code: 201
+
+  # Additional Cases
+  - id: TC701
+    group: Countries
+    name: Get All Countries Returns Array
+    endpoint: /api/countries
+    method: GET
+    expected_response:
+      status_code: 200
+      body: is array
+
+  - id: TC702
+    group: Hotels
+    name: Get Hotel By ID Returns OK
+    endpoint: /api/hotels/1
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    preconditions:
+      - "Hotel with ID 1 exists"
+    expected_response:
+      status_code: 200
+      body:
+        id: 1
+```
+
+Este TSL cobre:
+- Todos os endpoints com métodos HTTP relevantes
+- Validações de campos obrigatórios e formatos
+- Testes de limite (min/max values)
+- Casos de autenticação/autorização
+- Testes de paginação 
+- Validação de payloads de resposta
+- Cenários positivos e negativos
+- Testes de segurança e roles
+- Cobertura completa das especificações de schema

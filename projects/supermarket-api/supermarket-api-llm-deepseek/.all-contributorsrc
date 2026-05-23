@@ -1,0 +1,114 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "mattbarry",
+      "name": "Matt Barry",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1567119?v=4",
+      "profile": "https://github.com/mattbarry",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "hippieZhou",
+      "name": "hippie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13598361?v=4",
+      "profile": "https://hippiezhou.fun",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "NoobInTraining",
+      "name": "NoobInTraining",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23185961?v=4",
+      "profile": "https://github.com/NoobInTraining",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mahmmoudkinawy",
+      "name": "Ma'hmmoud Kinawy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57391128?v=4",
+      "profile": "https://www.linkedin.com/in/mahmmoud-kinawy-7928b218a/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "AhsanRazaUK",
+      "name": "Ahsan Raza",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22678337?v=4",
+      "profile": "https://www.linkedin.com/in/arazauk/",
+      "contributions": [
+        "review"
+      ]
+    },
+    {
+      "login": "dundich",
+      "name": "dundich",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1078713?v=4",
+      "profile": "https://github.com/dundich",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "thedon-chris",
+      "name": "thedon_chris",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30728737?v=4",
+      "profile": "https://github.com/thedon-chris",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "subhanisyed17",
+      "name": "subhanisyed17",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46715997?v=4",
+      "profile": "https://github.com/subhanisyed17",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "eric-wilson",
+      "name": "Eric Wilson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3632968?v=4",
+      "profile": "https://www.geekcafe.com",
+      "contributions": [
+        "question"
+      ]
+    },
+    {
+      "login": "Pham-Tuan-Phat",
+      "name": "Phạm Tuấn Phát",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61822642?v=4",
+      "profile": "https://github.com/Pham-Tuan-Phat",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "miki-nis",
+      "name": "miki-nis",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12809735?v=4",
+      "profile": "https://github.com/miki-nis",
+      "contributions": [
+        "bug"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "supermarket-api",
+  "projectOwner": "evgomes",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

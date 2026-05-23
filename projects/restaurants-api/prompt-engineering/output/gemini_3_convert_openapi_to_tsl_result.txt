@@ -1,0 +1,949 @@
+```yaml
+test_cases:
+  - id: TC001
+    group: Dishes
+    name: Create Dish - Valid Data
+    description: Creates a dish with valid data.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Dish Name"
+      description: "Dish Description"
+      price: 10.99
+      kiloCalories: 250
+    expected_response:
+      status_code: 201
+  - id: TC002
+    group: Dishes
+    name: Create Dish - Missing Name
+    description: Attempts to create a dish with a missing name.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      description: "Dish Description"
+      price: 10.99
+      kiloCalories: 250
+    expected_response:
+      status_code: 400
+  - id: TC003
+    group: Dishes
+    name: Create Dish - Name Too Short
+    description: Attempts to create a dish with a name shorter than the minimum length.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Di"
+      description: "Dish Description"
+      price: 10.99
+      kiloCalories: 250
+    expected_response:
+      status_code: 400
+  - id: TC004
+    group: Dishes
+    name: Create Dish - Name Too Long
+    description: Attempts to create a dish with a name longer than the maximum length.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "ThisDishNameIsWayTooLongToMeetTheRequirementsOfTheTest"
+      description: "Dish Description"
+      price: 10.99
+      kiloCalories: 250
+    expected_response:
+      status_code: 400
+  - id: TC005
+    group: Dishes
+    name: Create Dish - Missing Description
+    description: Attempts to create a dish with a missing description.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Dish Name"
+      price: 10.99
+      kiloCalories: 250
+    expected_response:
+      status_code: 400
+  - id: TC006
+    group: Dishes
+    name: Create Dish - Description Too Short
+    description: Attempts to create a dish with a description shorter than the minimum length.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Dish Name"
+      description: "De"
+      price: 10.99
+      kiloCalories: 250
+    expected_response:
+      status_code: 400
+  - id: TC007
+    group: Dishes
+    name: Create Dish - Description Too Long
+    description: Attempts to create a dish with a description longer than the maximum length.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Dish Name"
+      description: "ThisDishDescriptionIsWayTooLongToMeetTheRequirementsOfTheTest"
+      price: 10.99
+      kiloCalories: 250
+    expected_response:
+      status_code: 400
+  - id: TC008
+    group: Dishes
+    name: Create Dish - Missing Price
+    description: Attempts to create a dish with a missing price.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Dish Name"
+      description: "Dish Description"
+      kiloCalories: 250
+    expected_response:
+      status_code: 400
+  - id: TC009
+    group: Dishes
+    name: Create Dish - Missing KiloCalories
+    description: Attempts to create a dish with missing kiloCalories.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Dish Name"
+      description: "Dish Description"
+      price: 10.99
+    expected_response:
+      status_code: 400
+  - id: TC010
+    group: Dishes
+    name: Create Dish - Invalid Price (Negative)
+    description: Attempts to create a dish with a negative price.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Dish Name"
+      description: "Dish Description"
+      price: -10.99
+      kiloCalories: 250
+    expected_response:
+      status_code: 400
+  - id: TC011
+    group: Dishes
+    name: Create Dish - Invalid KiloCalories (Negative)
+    description: Attempts to create a dish with negative kiloCalories.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: POST
+    parameters:
+      restaurantId: 1
+    request_body:
+      name: "Dish Name"
+      description: "Dish Description"
+      price: 10.99
+      kiloCalories: -250
+    expected_response:
+      status_code: 400
+  - id: TC012
+    group: Dishes
+    name: Get Dishes - Valid Restaurant ID
+    description: Retrieves dishes for a valid restaurant ID.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: GET
+    parameters:
+      restaurantId: 1
+    expected_response:
+      status_code: 200
+  - id: TC013
+    group: Dishes
+    name: Get Dishes - Invalid Restaurant ID
+    description: Attempts to retrieve dishes for an invalid restaurant ID.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: GET
+    parameters:
+      restaurantId: 999999
+    expected_response:
+      status_code: 404
+  - id: TC014
+    group: Dishes
+    name: Delete Dishes - Valid Restaurant ID
+    description: Deletes dishes for a valid restaurant ID.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: DELETE
+    parameters:
+      restaurantId: 1
+    expected_response:
+      status_code: 204
+  - id: TC015
+    group: Dishes
+    name: Delete Dishes - Invalid Restaurant ID
+    description: Attempts to delete dishes for an invalid restaurant ID.
+    endpoint: /api/restaurants/{restaurantId}/dishes
+    method: DELETE
+    parameters:
+      restaurantId: 999999
+    expected_response:
+      status_code: 404
+  - id: TC016
+    group: Dishes
+    name: Get Dish - Valid Restaurant and Dish IDs
+    description: Retrieves a dish with valid restaurant and dish IDs.
+    endpoint: /api/restaurants/{restaurantId}/dishes/{dishId}
+    method: GET
+    parameters:
+      restaurantId: 1
+      dishId: 1
+    expected_response:
+      status_code: 200
+  - id: TC017
+    group: Dishes
+    name: Get Dish - Invalid Restaurant ID
+    description: Attempts to retrieve a dish with an invalid restaurant ID.
+    endpoint: /api/restaurants/{restaurantId}/dishes/{dishId}
+    method: GET
+    parameters:
+      restaurantId: 999999
+      dishId: 1
+    expected_response:
+      status_code: 404
+  - id: TC018
+    group: Dishes
+    name: Get Dish - Invalid Dish ID
+    description: Attempts to retrieve a dish with an invalid dish ID.
+    endpoint: /api/restaurants/{restaurantId}/dishes/{dishId}
+    method: GET
+    parameters:
+      restaurantId: 1
+      dishId: 999999
+    expected_response:
+      status_code: 404
+  - id: TC019
+    group: Restaurants
+    name: Get Restaurants - Valid Parameters
+    description: Retrieves restaurants with valid parameters.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      pageNumber: 1
+      pageSize: 10
+      sortBy: Name
+      sortDirection: Ascending
+    expected_response:
+      status_code: 200
+  - id: TC020
+    group: Restaurants
+    name: Get Restaurants - Invalid Page Number
+    description: Attempts to retrieve restaurants with an invalid page number.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      pageNumber: 0
+      pageSize: 10
+      sortBy: Name
+      sortDirection: Ascending
+    expected_response:
+      status_code: 400
+  - id: TC021
+    group: Restaurants
+    name: Get Restaurants - Invalid Page Size
+    description: Attempts to retrieve restaurants with an invalid page size.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      pageNumber: 1
+      pageSize: 0
+      sortBy: Name
+      sortDirection: Ascending
+    expected_response:
+      status_code: 400
+  - id: TC022
+    group: Restaurants
+    name: Get Restaurants - Invalid Sort By
+    description: Attempts to retrieve restaurants with an invalid sort by value.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      pageNumber: 1
+      pageSize: 10
+      sortBy: InvalidSort
+      sortDirection: Ascending
+    expected_response:
+      status_code: 400
+  - id: TC023
+    group: Restaurants
+    name: Get Restaurants - Invalid Sort Direction
+    description: Attempts to retrieve restaurants with an invalid sort direction.
+    endpoint: /api/restaurants
+    method: GET
+    parameters:
+      pageNumber: 1
+      pageSize: 10
+      sortBy: Name
+      sortDirection: InvalidDirection
+    expected_response:
+      status_code: 400
+  - id: TC024
+    group: Restaurants
+    name: Create Restaurant - Valid Data
+    description: Creates a restaurant with valid data.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 201
+  - id: TC025
+    group: Restaurants
+    name: Create Restaurant - Missing Name
+    description: Attempts to create a restaurant with a missing name.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC026
+    group: Restaurants
+    name: Create Restaurant - Name Too Short
+    description: Attempts to create a restaurant with a name shorter than the minimum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Re"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC027
+    group: Restaurants
+    name: Create Restaurant - Name Too Long
+    description: Attempts to create a restaurant with a name longer than the maximum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "ThisRestaurantNameIsWayTooLongToMeetTheRequirementsOfTheTest"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC028
+    group: Restaurants
+    name: Create Restaurant - Missing Description
+    description: Attempts to create a restaurant with a missing description.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC029
+    group: Restaurants
+    name: Create Restaurant - Description Too Short
+    description: Attempts to create a restaurant with a description shorter than the minimum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "De"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC030
+    group: Restaurants
+    name: Create Restaurant - Description Too Long
+    description: Attempts to create a restaurant with a description longer than the maximum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "ThisRestaurantDescriptionIsWayTooLongToMeetTheRequirementsOfTheTest"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC031
+    group: Restaurants
+    name: Create Restaurant - Missing Category
+    description: Attempts to create a restaurant with a missing category.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC032
+    group: Restaurants
+    name: Create Restaurant - Category Too Short
+    description: Attempts to create a restaurant with a category shorter than the minimum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "It"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC033
+    group: Restaurants
+    name: Create Restaurant - Category Too Long
+    description: Attempts to create a restaurant with a category longer than the maximum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "ThisCategoryIsWayTooLongToMeetTheRequirementsOfTheTest"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC034
+    group: Restaurants
+    name: Create Restaurant - Missing Contact Email
+    description: Attempts to create a restaurant with a missing contact email.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC035
+    group: Restaurants
+    name: Create Restaurant - Invalid Contact Email
+    description: Attempts to create a restaurant with an invalid contact email.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "invalid-email"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC036
+    group: Restaurants
+    name: Create Restaurant - Missing Contact Number
+    description: Attempts to create a restaurant with a missing contact number.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC037
+    group: Restaurants
+    name: Create Restaurant - Contact Number Too Short
+    description: Attempts to create a restaurant with a contact number shorter than the minimum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC038
+    group: Restaurants
+    name: Create Restaurant - Contact Number Too Long
+    description: Attempts to create a restaurant with a contact number longer than the maximum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "123456789012345"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC039
+    group: Restaurants
+    name: Create Restaurant - Invalid Contact Number (Characters)
+    description: Attempts to create a restaurant with an invalid contact number containing characters.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890abc"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC040
+    group: Restaurants
+    name: Create Restaurant - Missing City
+    description: Attempts to create a restaurant with a missing city.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC041
+    group: Restaurants
+    name: Create Restaurant - City Too Short
+    description: Attempts to create a restaurant with a city shorter than the minimum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "Ne"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC042
+    group: Restaurants
+    name: Create Restaurant - City Too Long
+    description: Attempts to create a restaurant with a city longer than the maximum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "ThisCityNameIsWayTooLongToMeetTheRequirementsOfTheTest"
+      street: "Main Street"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC043
+    group: Restaurants
+    name: Create Restaurant - Missing Street
+    description: Attempts to create a restaurant with a missing street.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC044
+    group: Restaurants
+    name: Create Restaurant - Street Too Short
+    description: Attempts to create a restaurant with a street shorter than the minimum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Ma"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC045
+    group: Restaurants
+    name: Create Restaurant - Street Too Long
+    description: Attempts to create a restaurant with a street longer than the maximum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "ThisStreetNameIsWayTooLongToMeetTheRequirementsOfTheTest"
+      postalCode: "10001"
+    expected_response:
+      status_code: 400
+  - id: TC046
+    group: Restaurants
+    name: Create Restaurant - Missing Postal Code
+    description: Attempts to create a restaurant with a missing postal code.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+    expected_response:
+      status_code: 400
+  - id: TC047
+    group: Restaurants
+    name: Create Restaurant - Postal Code Too Short
+    description: Attempts to create a restaurant with a postal code shorter than the minimum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "12"
+    expected_response:
+      status_code: 400
+  - id: TC048
+    group: Restaurants
+    name: Create Restaurant - Postal Code Too Long
+    description: Attempts to create a restaurant with a postal code longer than the maximum length.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "1234567890123456"
+    expected_response:
+      status_code: 400
+  - id: TC049
+    group: Restaurants
+    name: Create Restaurant - Invalid Postal Code (Characters)
+    description: Attempts to create a restaurant with an invalid postal code containing characters.
+    endpoint: /api/restaurants
+    method: POST
+    request_body:
+      name: "Restaurant Name"
+      description: "Restaurant Description"
+      category: "Italian"
+      hasDelivery: true
+      contactEmail: "test@example.com"
+      contactNumber: "1234567890"
+      city: "New York"
+      street: "Main Street"
+      postalCode: "10001abc"
+    expected_response:
+      status_code: 400
+  - id: TC050
+    group: Restaurants
+    name: Get Restaurant - Valid ID
+    description: Retrieves a restaurant with a valid ID.
+    endpoint: /api/restaurants/{id}
+    method: GET
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 200
+  - id: TC051
+    group: Restaurants
+    name: Get Restaurant - Invalid ID
+    description: Attempts to retrieve a restaurant with an invalid ID.
+    endpoint: /api/restaurants/{id}
+    method: GET
+    parameters:
+      id: 999999
+    expected_response:
+      status_code: 404
+  - id: TC052
+    group: Restaurants
+    name: Update Restaurant - Valid Data
+    description: Updates a restaurant with valid data.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    parameters:
+      id: 1
+    request_body:
+      name: "Updated Restaurant Name"
+      description: "Updated Restaurant Description"
+      hasDelivery: false
+    expected_response:
+      status_code: 200
+  - id: TC053
+    group: Restaurants
+    name: Update Restaurant - Missing Name
+    description: Attempts to update a restaurant with a missing name.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    parameters:
+      id: 1
+    request_body:
+      description: "Updated Restaurant Description"
+      hasDelivery: false
+    expected_response:
+      status_code: 400
+  - id: TC054
+    group: Restaurants
+    name: Update Restaurant - Name Too Short
+    description: Attempts to update a restaurant with a name shorter than the minimum length.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    parameters:
+      id: 1
+    request_body:
+      name: "Up"
+      description: "Updated Restaurant Description"
+      hasDelivery: false
+    expected_response:
+      status_code: 400
+  - id: TC055
+    group: Restaurants
+    name: Update Restaurant - Name Too Long
+    description: Attempts to update a restaurant with a name longer than the maximum length.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    parameters:
+      id: 1
+    request_body:
+      name: "ThisUpdatedRestaurantNameIsWayTooLongToMeetTheRequirementsOfTheTest"
+      description: "Updated Restaurant Description"
+      hasDelivery: false
+    expected_response:
+      status_code: 400
+  - id: TC056
+    group: Restaurants
+    name: Update Restaurant - Missing Description
+    description: Attempts to update a restaurant with a missing description.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    parameters:
+      id: 1
+    request_body:
+      name: "Updated Restaurant Name"
+      hasDelivery: false
+    expected_response:
+      status_code: 400
+  - id: TC057
+    group: Restaurants
+    name: Update Restaurant - Description Too Short
+    description: Attempts to update a restaurant with a description shorter than the minimum length.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    parameters:
+      id: 1
+    request_body:
+      name: "Updated Restaurant Name"
+      description: "Up"
+      hasDelivery: false
+    expected_response:
+      status_code: 400
+  - id: TC058
+    group: Restaurants
+    name: Update Restaurant - Description Too Long
+    description: Attempts to update a restaurant with a description longer than the maximum length.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    parameters:
+      id: 1
+    request_body:
+      name: "Updated Restaurant Name"
+      description: "ThisUpdatedRestaurantDescriptionIsWayTooLongToMeetTheRequirementsOfTheTest"
+      hasDelivery: false
+    expected_response:
+      status_code: 400
+  - id: TC059
+    group: Restaurants
+    name: Update Restaurant - Invalid ID
+    description: Attempts to update a restaurant with an invalid ID.
+    endpoint: /api/restaurants/{id}
+    method: PATCH
+    parameters:
+      id: 999999
+    request_body:
+      name: "Updated Restaurant Name"
+      description: "Updated Restaurant Description"
+      hasDelivery: false
+    expected_response:
+      status_code: 404
+  - id: TC060
+    group: Restaurants
+    name: Delete Restaurant - Valid ID
+    description: Deletes a restaurant with a valid ID.
+    endpoint: /api/restaurants/{id}
+    method: DELETE
+    parameters:
+      id: 1
+    expected_response:
+      status_code: 204
+  - id: TC061
+    group: Restaurants
+    name: Delete Restaurant - Invalid ID
+    description: Attempts to delete a restaurant with an invalid ID.
+    endpoint: /api/restaurants/{id}
+    method: DELETE
+    parameters:
+      id: 999999
+    expected_response:
+      status_code: 404
+  - id: TC062
+    group: Restaurants
+    name: Upload Restaurant Logo - Valid Data
+    description: Uploads a logo for a restaurant with a valid ID.
+    endpoint: /api/restaurants/{id}/logo
+    method: POST
+    parameters:
+      id: 1
+    form_data:
+      file: test.jpg
+    expected_response:
+      status_code: 200
+  - id: TC063
+    group: Restaurants
+    name: Upload Restaurant Logo - Invalid ID
+    description: Attempts to upload a logo for a restaurant with an invalid ID.
+    endpoint: /api/restaurants/{id}/logo
+    method: POST
+    parameters:
+      id: 999999
+    form_data:
+      file: test.jpg
+    expected_response:
+      status_code: 404
+  - id: TC064
+    group: Restaurants
+    name: Upload Restaurant Logo - Invalid File Type
+    description: Attempts to upload a logo with an invalid file type.
+    endpoint: /api/restaurants/{id}/logo
+    method: POST
+    parameters:
+      id: 1
+    form_data:
+      file: test.txt
+    expected_response:
+      status_code: 415
+
+```

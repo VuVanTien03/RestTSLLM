@@ -1,0 +1,477 @@
+```yml
+test_cases:
+  - id: TC001
+    group: BookEndpoints
+    name: Get_All_Books_When_Exist_Returns_OK
+    description: Obtém todos os livros quando existem livros.
+    endpoint: /books
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int32
+            title:
+              type: string
+              nullable: true
+            isbn:
+              type: string
+              nullable: true
+            description:
+              type: string
+              nullable: true
+            author:
+              type: string
+              nullable: true
+  - id: TC002
+    group: BookEndpoints
+    name: Get_All_Books_When_None_Exist_Returns_Empty_Array
+    description: Obtém todos os livros quando nenhum livro existe.
+    endpoint: /books
+    method: GET
+    expected_response:
+      status_code: 200
+      body:
+        type: array
+  - id: TC003
+    group: BookEndpoints
+    name: Create_Book_When_Valid_Data_Returns_OK
+    description: Criação de um livro com dados válidos.
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "livro válido"
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "autor válido"
+    expected_response:
+      status_code: 200
+      body:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          title:
+            type: string
+            nullable: true
+          isbn:
+            type: string
+            nullable: true
+          description:
+            type: string
+            nullable: true
+          author:
+            type: string
+            nullable: true
+  - id: TC004
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Title_Returns_Bad_Request
+    description: Criação de um livro com título inválido (null).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: null
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC005
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Title_Returns_Bad_Request
+    description: Criação de um livro com título inválido (vazio).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: ""
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC006
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Title_Returns_Bad_Request
+    description: Criação de um livro com título inválido (com espaços em branco).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "   "
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC007
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_ISBN_Returns_Bad_Request
+    description: Criação de um livro com ISBN inválido (null).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: null
+      description: "descrição válida"
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC008
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_ISBN_Returns_Bad_Request
+    description: Criação de um livro com ISBN inválido (vazio).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: ""
+      description: "descrição válida"
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC009
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_ISBN_Returns_Bad_Request
+    description: Criação de um livro com ISBN inválido (com espaços em branco).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: "   "
+      description: "descrição válida"
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC010
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Description_Returns_Bad_Request
+    description: Criação de um livro com descrição inválida (null).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: null
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC011
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Description_Returns_Bad_Request
+    description: Criação de um livro com descrição inválida (vazio).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: ""
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC012
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Description_Returns_Bad_Request
+    description: Criação de um livro com descrição inválida (com espaços em branco).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: "   "
+      author: "autor válido"
+    expected_response:
+      status_code: 400
+  - id: TC013
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Author_Returns_Bad_Request
+    description: Criação de um livro com autor inválido (null).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: null
+    expected_response:
+      status_code: 400
+  - id: TC014
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Author_Returns_Bad_Request
+    description: Criação de um livro com autor inválido (vazio).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: ""
+    expected_response:
+      status_code: 400
+  - id: TC015
+    group: BookEndpoints
+    name: Create_Book_When_Invalid_Author_Returns_Bad_Request
+    description: Criação de um livro com autor inválido (com espaços em branco).
+    endpoint: /books
+    method: POST
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "   "
+    expected_response:
+      status_code: 400
+  - id: TC016
+    group: BookEndpoints
+    name: Get_Book_By_Id_When_Exist_Returns_OK
+    description: Obtém um livro pelo id quando existente.
+    endpoint: /books/{id}
+    method: GET
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 200
+      body:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          title:
+            type: string
+            nullable: true
+          isbn:
+            type: string
+            nullable: true
+          description:
+            type: string
+            nullable: true
+          author:
+            type: string
+            nullable: true
+  - id: TC017
+    group: BookEndpoints
+    name: Get_Book_By_Id_When_None_Exist_Returns_Not_Found
+    description: Obtém um livro pelo id quando não existente.
+    endpoint: /books/{id}
+    method: GET
+    expected_response:
+      status_code: 404
+  - id: TC018
+    group: BookEndpoints
+    name: Update_Book_When_Valid_Data_Returns_No_Content
+    description: Atualização de um livro com dados válidos.
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "novo título válido"
+      isbn: "novo isbn válido"
+      description: "nova descrição válida"
+      author: "novo autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 204
+  - id: TC019
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Title_Returns_Bad_Request
+    description: Atualização de um livro com título inválido (null).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: null
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC020
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Title_Returns_Bad_Request
+    description: Atualização de um livro com título inválido (vazio).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: ""
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC021
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Title_Returns_Bad_Request
+    description: Atualização de um livro com título inválido (com espaços em branco).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "   "
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC022
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_ISBN_Returns_Bad_Request
+    description: Atualização de um livro com ISBN inválido (null).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: null
+      description: "descrição válida"
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC023
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_ISBN_Returns_Bad_Request
+    description: Atualização de um livro com ISBN inválido (vazio).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: ""
+      description: "descrição válida"
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC024
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_ISBN_Returns_Bad_Request
+    description: Atualização de um livro com ISBN inválido (com espaços em branco).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: "   "
+      description: "descrição válida"
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC025
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Description_Returns_Bad_Request
+    description: Atualização de um livro com descrição inválida (null).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: null
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC026
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Description_Returns_Bad_Request
+    description: Atualização de um livro com descrição inválida (vazio).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: ""
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC027
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Description_Returns_Bad_Request
+    description: Atualização de um livro com descrição inválida (com espaços em branco).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: "   "
+      author: "autor válido"
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC028
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Author_Returns_Bad_Request
+    description: Atualização de um livro com autor inválido (null).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: null
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC029
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Author_Returns_Bad_Request
+    description: Atualização de um livro com autor inválido (vazio).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: ""
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC030
+    group: BookEndpoints
+    name: Update_Book_When_Invalid_Author_Returns_Bad_Request
+    description: Atualização de um livro com autor inválido (com espaços em branco).
+    endpoint: /books/{id}
+    method: PUT
+    request_body:
+      title: "título válido"
+      isbn: "isbn válido"
+      description: "descrição válida"
+      author: "   "
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 400
+  - id: TC031
+    group: BookEndpoints
+    name: Delete_Book_By_Id_When_Exist_Returns_No_Content
+    description: Deleção de um livro pelo id quando existente.
+    endpoint: /books/{id}
+    method: DELETE
+    preconditions:
+      - "Livro com id {id} existe."
+    expected_response:
+      status_code: 204
+  - id: TC032
+    group: BookEndpoints
+    name: Delete_Book_By_Id_When_None_Exist_Returns_Not_Found
+    description: Deleção de um livro pelo id quando não existente.
+    endpoint: /books/{id}
+    method: DELETE
+    expected_response:
+      status_code: 404
+```
