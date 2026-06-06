@@ -1,0 +1,7 @@
+Thank you!
+
+It is important to emphasize again that you should not reuse elements created in one test in another. For example, you should always create a new user with a different username for each test.
+
+You should generate all tests for all scenarios generated in TSL, without omitting any, and without returning a response asking me to add anything.
+
+Now, generate integration tests for all scenarios in `group: Chat`.

@@ -1,3 +1,10 @@
+Given the example I gave you of how to convert an OpenAPI specification to TSL, I need you to provide me with the TSL in yml format for the following OpenAPI specification.
+
+It is important to emphasize the importance and necessity of generating as many test scenarios as possible to maximize coverage.
+
+You should generate all cases without returning a response asking me to add anything.
+
+```json
 {
   "openapi": "3.1.0",
   "info": {
@@ -849,3 +856,4 @@
     }
   }
 }
+```

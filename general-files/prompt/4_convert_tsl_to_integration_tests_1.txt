@@ -1,0 +1,9 @@
+Very good! Given the generated TSL, now following the example I gave earlier, I would d like you to generate the integration tests with dotnet (xUnit) for the TSL returned, considering the `<project_name>.IntegrationTests` namespace.
+
+It is important to emphasize that you should not reuse elements created in one test in another; for example, you should always create a new user with a different username for each test. Limit validations must be efficient. If a property accepts 10 to 30 characters, for example, the limit test should at least test with null, empty (""), and lengths of 9, 10, 30, and 31.
+
+You should never assume an "id" exists or ask me to provide it. The test must create all the resources it needs by calling the API. This is mandatory.
+
+You must generate all tests for all scenarios generated in the TSL, without omitting any, without returning a response asking me to add anything.
+
+Generate integration tests for all possible scenarios. First, generate integration tests for all scenarios in `group: AI`.

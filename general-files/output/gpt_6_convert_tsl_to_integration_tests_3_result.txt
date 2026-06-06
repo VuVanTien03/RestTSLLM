@@ -1,0 +1,29 @@
+```csharp
+using System.Net;
+
+namespace AIChatbotY1.IntegrationTests
+{
+    public sealed class SystemIntegrationTests : IntegrationTestBase, IClassFixture<TestWebApplicationFactory>
+    {
+        public SystemIntegrationTests(TestWebApplicationFactory factory) : base(factory)
+        {
+        }
+
+        [Fact]
+        public async Task TC053_Health_Check_Returns_OK()
+        {
+            var response = await SendAsync(HttpMethod.Get, "/health");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task TC054_Root_Endpoint_Returns_OK()
+        {
+            var response = await SendAsync(HttpMethod.Get, "/");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+    }
+}
+```

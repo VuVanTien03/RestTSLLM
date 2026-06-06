@@ -1,7 +1,7 @@
 import requests
 import json
 
-BASE_URL = "http://192.168.1.49:8003"
+BASE_URL = "http://localhost:8005"
 OPENAPI_URL = f"{BASE_URL}/openapi.json"
 
 def download_swagger():

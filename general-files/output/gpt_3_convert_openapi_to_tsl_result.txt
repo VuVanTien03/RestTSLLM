@@ -1,0 +1,859 @@
+test_cases:
+  - id: TC001
+    group: AI
+    name: Create MCP Query When Valid Conversation Returns OK
+    description: Create an MCP query with a single valid conversation item and default max_iterations.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - role: "user"
+          content: "Hello, chatbot."
+    expected_response:
+      status_code: 200
+      body:
+        response: is string not empty
+
+  - id: TC002
+    group: AI
+    name: Create MCP Query When Multiple Conversation Items Returns OK
+    description: Create an MCP query with multiple conversation items and explicit max_iterations.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - role: "user"
+          content: "What is the weather?"
+        - role: "assistant"
+          content: "I can help with that."
+      IdDonVi: "DV001"
+      max_iterations: 1
+    expected_response:
+      status_code: 200
+      body:
+        response: is string not empty
+
+  - id: TC003
+    group: AI
+    name: Create MCP Query When IdDonVi Is Null Returns OK
+    description: Create an MCP query with IdDonVi explicitly set to null.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - role: "user"
+          content: "Please summarize this."
+      IdDonVi: null
+    expected_response:
+      status_code: 200
+      body:
+        response: is string not empty
+
+  - id: TC004
+    group: AI
+    name: Create MCP Query When Conversation Is Missing Returns BadRequest
+    description: Attempt to create an MCP query without the required conversation field.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      IdDonVi: "DV001"
+      max_iterations: 3
+    expected_response:
+      status_code: 422
+
+  - id: TC005
+    group: AI
+    name: Create MCP Query When Conversation Item Missing Role Returns BadRequest
+    description: Attempt to create an MCP query with a conversation item missing the role field.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - content: "Hello"
+    expected_response:
+      status_code: 422
+
+  - id: TC006
+    group: AI
+    name: Create MCP Query When Conversation Item Missing Content Returns BadRequest
+    description: Attempt to create an MCP query with a conversation item missing the content field.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - role: "user"
+    expected_response:
+      status_code: 422
+
+  - id: TC007
+    group: AI
+    name: Create MCP Query When Conversation Role Is Null Returns BadRequest
+    description: Attempt to create an MCP query with a null role inside conversation.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - role: null
+          content: "Hello"
+    expected_response:
+      status_code: 422
+
+  - id: TC008
+    group: AI
+    name: Create MCP Query When Conversation Content Is Null Returns BadRequest
+    description: Attempt to create an MCP query with null content inside conversation.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - role: "user"
+          content: null
+    expected_response:
+      status_code: 422
+
+  - id: TC009
+    group: AI
+    name: Create MCP Query When Token Is Invalid Returns Unauthorized
+    description: Attempt to create an MCP query with an invalid bearer token.
+    endpoint: /mcp/queries
+    method: POST
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      conversation:
+        - role: "user"
+          content: "Hello"
+    expected_response:
+      status_code: 401
+
+  - id: TC010
+    group: AI
+    name: Create MCP Query When Without Token Returns Unauthorized
+    description: Attempt to create an MCP query without providing an authentication token.
+    endpoint: /mcp/queries
+    method: POST
+    request_body:
+      conversation:
+        - role: "user"
+          content: "Hello"
+    expected_response:
+      status_code: 401
+
+  - id: TC011
+    group: AI
+    name: Stream MCP Query When Valid Conversation Returns OK
+    description: Stream an MCP query response with valid conversation data.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries/stream
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - role: "user"
+          content: "Tell me a joke."
+    expected_response:
+      status_code: 200
+
+  - id: TC012
+    group: AI
+    name: Stream MCP Query When Multiple Conversation Items Returns OK
+    description: Stream an MCP query response with multiple conversation items and explicit max_iterations.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries/stream
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      conversation:
+        - role: "user"
+          content: "Summarize the topic."
+        - role: "assistant"
+          content: "Sure, here is a summary."
+      IdDonVi: "DV001"
+      max_iterations: 5
+    expected_response:
+      status_code: 200
+
+  - id: TC013
+    group: AI
+    name: Stream MCP Query When Conversation Is Missing Returns BadRequest
+    description: Attempt to stream an MCP query without the required conversation field.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/queries/stream
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      IdDonVi: "DV001"
+    expected_response:
+      status_code: 422
+
+  - id: TC014
+    group: AI
+    name: Stream MCP Query When Token Is Invalid Returns Unauthorized
+    description: Attempt to stream an MCP query with an invalid bearer token.
+    endpoint: /mcp/queries/stream
+    method: POST
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      conversation:
+        - role: "user"
+          content: "Hello"
+    expected_response:
+      status_code: 401
+
+  - id: TC015
+    group: AI
+    name: Stream MCP Query When Without Token Returns Unauthorized
+    description: Attempt to stream an MCP query without providing an authentication token.
+    endpoint: /mcp/queries/stream
+    method: POST
+    request_body:
+      conversation:
+        - role: "user"
+          content: "Hello"
+    expected_response:
+      status_code: 401
+
+  - id: TC016
+    group: AI
+    name: MCP Status When Token Is Valid Returns OK
+    description: Check MCP status with a valid bearer token.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /mcp/status
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 200
+
+  - id: TC017
+    group: AI
+    name: MCP Status When Token Is Invalid Returns Unauthorized
+    description: Check MCP status with an invalid bearer token.
+    endpoint: /mcp/status
+    method: GET
+    headers:
+      Authorization: "Bearer invalidtoken"
+    expected_response:
+      status_code: 401
+
+  - id: TC018
+    group: AI
+    name: MCP Status When Without Token Returns Unauthorized
+    description: Check MCP status without providing an authentication token.
+    endpoint: /mcp/status
+    method: GET
+    expected_response:
+      status_code: 401
+
+  - id: TC019
+    group: Chat
+    name: Create Chat When UserId Is Valid And Name Is Omitted Returns OK
+    description: Create a chat using the required userId and relying on the default name.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "An authenticated user with userId 'user123' exists."
+    endpoint: /chats
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 200
+      body:
+        success: true
+        message: is string not empty
+        chatId: is string not empty
+
+  - id: TC020
+    group: Chat
+    name: Create Chat When UserId And Custom Name Are Valid Returns OK
+    description: Create a chat with a custom name for the authenticated user.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "An authenticated user with userId 'user123' exists."
+    endpoint: /chats
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      name: "Project Alpha"
+    expected_response:
+      status_code: 200
+      body:
+        success: true
+        message: is string not empty
+        chatId: is string not empty
+
+  - id: TC021
+    group: Chat
+    name: Create Chat When UserId Is Missing Returns BadRequest
+    description: Attempt to create a chat without the required userId field.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /chats
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Project Alpha"
+    expected_response:
+      status_code: 422
+
+  - id: TC022
+    group: Chat
+    name: Create Chat When UserId Is Null Returns BadRequest
+    description: Attempt to create a chat with a null userId.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /chats
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: null
+      name: "Project Alpha"
+    expected_response:
+      status_code: 422
+
+  - id: TC023
+    group: Chat
+    name: Create Chat When Name Is Null Returns BadRequest
+    description: Attempt to create a chat with a null name.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "An authenticated user with userId 'user123' exists."
+    endpoint: /chats
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      name: null
+    expected_response:
+      status_code: 422
+
+  - id: TC024
+    group: Chat
+    name: Create Chat When Token Is Invalid Returns Unauthorized
+    description: Attempt to create a chat with an invalid bearer token.
+    endpoint: /chats
+    method: POST
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      userId: "user123"
+      name: "Project Alpha"
+    expected_response:
+      status_code: 401
+
+  - id: TC025
+    group: Chat
+    name: Create Chat When Without Token Returns Unauthorized
+    description: Attempt to create a chat without providing an authentication token.
+    endpoint: /chats
+    method: POST
+    request_body:
+      userId: "user123"
+      name: "Project Alpha"
+    expected_response:
+      status_code: 401
+
+  - id: TC026
+    group: Chat
+    name: Get Chats When User Has Chats Returns OK
+    description: Retrieve all chats for an authenticated user that already has at least one chat.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "An authenticated user with userId 'user123' exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 200
+      body:
+        success: true
+        data: is array containing chat with id {chat_id}
+
+  - id: TC027
+    group: Chat
+    name: Get Chats When UserId Is Missing Returns BadRequest
+    description: Attempt to retrieve chats without the required userId query parameter.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+    endpoint: /chats
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 422
+
+  - id: TC028
+    group: Chat
+    name: Get Chats When Token Is Invalid Returns Unauthorized
+    description: Attempt to retrieve chats with an invalid bearer token.
+    endpoint: /chats
+    method: GET
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 401
+
+  - id: TC029
+    group: Chat
+    name: Get Chats When Without Token Returns Unauthorized
+    description: Attempt to retrieve chats without providing an authentication token.
+    endpoint: /chats
+    method: GET
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 401
+
+  - id: TC030
+    group: Chat
+    name: Get Chat By Id When Valid Data Returns OK
+    description: Retrieve a specific chat by id for the authenticated user.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "An authenticated user with userId 'user123' exists."
+      - "A chat created for userId 'user123' with name 'Project Alpha' exists and its id is stored in {chat_id}."
+    endpoint: /chats/{chat_id}
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 200
+      body:
+        success: true
+        data:
+          _id: {chat_id}
+          name: "Project Alpha"
+          userId: "user123"
+          messages: is array
+          createdAt: is date-time
+          updatedAt: is date-time
+
+  - id: TC031
+    group: Chat
+    name: Get Chat By Id When UserId Is Missing Returns BadRequest
+    description: Attempt to retrieve a chat by id without the required userId query parameter.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}
+    method: GET
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 422
+
+  - id: TC032
+    group: Chat
+    name: Get Chat By Id When Token Is Invalid Returns Unauthorized
+    description: Attempt to retrieve a chat by id with an invalid bearer token.
+    endpoint: /chats/{chat_id}
+    method: GET
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 401
+
+  - id: TC033
+    group: Chat
+    name: Get Chat By Id When Without Token Returns Unauthorized
+    description: Attempt to retrieve a chat by id without providing an authentication token.
+    endpoint: /chats/{chat_id}
+    method: GET
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 401
+
+  - id: TC034
+    group: Chat
+    name: Delete Chat When Valid Data Returns OK
+    description: Delete a specific chat for the authenticated user.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "An authenticated user with userId 'user123' exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}
+    method: DELETE
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 200
+      body:
+        success: true
+        message: is string not empty
+
+  - id: TC035
+    group: Chat
+    name: Delete Chat When UserId Is Missing Returns BadRequest
+    description: Attempt to delete a chat by id without the required userId query parameter.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}
+    method: DELETE
+    headers:
+      Authorization: "Bearer {valid_token}"
+    expected_response:
+      status_code: 422
+
+  - id: TC036
+    group: Chat
+    name: Delete Chat When Token Is Invalid Returns Unauthorized
+    description: Attempt to delete a chat by id with an invalid bearer token.
+    endpoint: /chats/{chat_id}
+    method: DELETE
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 401
+
+  - id: TC037
+    group: Chat
+    name: Delete Chat When Without Token Returns Unauthorized
+    description: Attempt to delete a chat by id without providing an authentication token.
+    endpoint: /chats/{chat_id}
+    method: DELETE
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 401
+
+  - id: TC038
+    group: Chat
+    name: Rename Chat When Valid Data Returns OK
+    description: Rename a specific chat for the authenticated user.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "An authenticated user with userId 'user123' exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}
+    method: PATCH
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      name: "Renamed Chat"
+    expected_response:
+      status_code: 200
+      body:
+        success: true
+        message: is string not empty
+
+  - id: TC039
+    group: Chat
+    name: Rename Chat When UserId Is Missing Returns BadRequest
+    description: Attempt to rename a chat by id without the required userId query parameter.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}
+    method: PATCH
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      name: "Renamed Chat"
+    expected_response:
+      status_code: 422
+
+  - id: TC040
+    group: Chat
+    name: Rename Chat When Name Is Missing Returns BadRequest
+    description: Attempt to rename a chat without the required name field.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}
+    method: PATCH
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 422
+
+  - id: TC041
+    group: Chat
+    name: Rename Chat When Name Is Null Returns BadRequest
+    description: Attempt to rename a chat with a null name.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}
+    method: PATCH
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      name: null
+    expected_response:
+      status_code: 422
+
+  - id: TC042
+    group: Chat
+    name: Rename Chat When Token Is Invalid Returns Unauthorized
+    description: Attempt to rename a chat by id with an invalid bearer token.
+    endpoint: /chats/{chat_id}
+    method: PATCH
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      userId: "user123"
+      name: "Renamed Chat"
+    expected_response:
+      status_code: 401
+
+  - id: TC043
+    group: Chat
+    name: Rename Chat When Without Token Returns Unauthorized
+    description: Attempt to rename a chat by id without providing an authentication token.
+    endpoint: /chats/{chat_id}
+    method: PATCH
+    request_body:
+      userId: "user123"
+      name: "Renamed Chat"
+    expected_response:
+      status_code: 401
+
+  - id: TC044
+    group: Chat
+    name: Add Message When Valid Data Returns OK
+    description: Add a valid message to a specific chat for the authenticated user.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "An authenticated user with userId 'user123' exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      message:
+        role: "user"
+        content: "Hello there"
+        timestamp: 1609459200000
+    expected_response:
+      status_code: 200
+      body:
+        success: true
+        message: is string not empty
+
+  - id: TC045
+    group: Chat
+    name: Add Message When UserId Is Missing Returns BadRequest
+    description: Attempt to add a message to a chat without the required userId query parameter.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      message:
+        role: "user"
+        content: "Hello there"
+        timestamp: 1609459200000
+    expected_response:
+      status_code: 422
+
+  - id: TC046
+    group: Chat
+    name: Add Message When Message Is Missing Returns BadRequest
+    description: Attempt to add a message to a chat without the required message field.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+    expected_response:
+      status_code: 422
+
+  - id: TC047
+    group: Chat
+    name: Add Message When Message Is Null Returns BadRequest
+    description: Attempt to add a message to a chat with a null message object.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      message: null
+    expected_response:
+      status_code: 422
+
+  - id: TC048
+    group: Chat
+    name: Add Message When Nested Role Is Missing Returns BadRequest
+    description: Attempt to add a message whose nested role field is missing.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      message:
+        content: "Hello there"
+        timestamp: 1609459200000
+    expected_response:
+      status_code: 422
+
+  - id: TC049
+    group: Chat
+    name: Add Message When Nested Content Is Missing Returns BadRequest
+    description: Attempt to add a message whose nested content field is missing.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      message:
+        role: "user"
+        timestamp: 1609459200000
+    expected_response:
+      status_code: 422
+
+  - id: TC050
+    group: Chat
+    name: Add Message When Nested Timestamp Is Missing Returns BadRequest
+    description: Attempt to add a message whose nested timestamp field is missing.
+    preconditions:
+      - "A valid HTTP bearer token {valid_token} exists."
+      - "A chat created for userId 'user123' exists with id stored in {chat_id}."
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    headers:
+      Authorization: "Bearer {valid_token}"
+    request_body:
+      userId: "user123"
+      message:
+        role: "user"
+        content: "Hello there"
+    expected_response:
+      status_code: 422
+
+  - id: TC051
+    group: Chat
+    name: Add Message When Token Is Invalid Returns Unauthorized
+    description: Attempt to add a message to a chat with an invalid bearer token.
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    headers:
+      Authorization: "Bearer invalidtoken"
+    request_body:
+      userId: "user123"
+      message:
+        role: "user"
+        content: "Hello there"
+        timestamp: 1609459200000
+    expected_response:
+      status_code: 401
+
+  - id: TC052
+    group: Chat
+    name: Add Message When Without Token Returns Unauthorized
+    description: Attempt to add a message to a chat without providing an authentication token.
+    endpoint: /chats/{chat_id}/messages
+    method: POST
+    request_body:
+      userId: "user123"
+      message:
+        role: "user"
+        content: "Hello there"
+        timestamp: 1609459200000
+    expected_response:
+      status_code: 401
+
+  - id: TC053
+    group: System
+    name: Health Check Returns OK
+    description: Check the health endpoint.
+    endpoint: /health
+    method: GET
+    expected_response:
+      status_code: 200
+
+  - id: TC054
+    group: System
+    name: Root Endpoint Returns OK
+    description: Check the root endpoint for API information.
+    endpoint: /
+    method: GET
+    expected_response:
+      status_code: 200

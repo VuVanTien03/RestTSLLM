@@ -12,3 +12,6 @@
     - `--llms` - Choose models to run. You can use `--llms=all` to run for all available models in `config/llm_configs.json` or the llm config name separeted by comma. 
     - `--temperature` - Set the temperature between 0..1 using arg. e.g. `--temperature=0.7`.
     - `--debug` - Enables debug mode.
+
+
+python main.py --prompts-dir="../general-files/prompt" --output-dir="../general-files/output" --system-command-file=0_system_command.txt --llms=gpt
