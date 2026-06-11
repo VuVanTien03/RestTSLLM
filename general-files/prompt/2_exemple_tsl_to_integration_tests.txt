@@ -6,21 +6,40 @@ Given the TSL provided above and the `<project_name>.IntegrationTests` namespace
 // File: UsersIntegrationTests.cs
 
 using Microsoft.AspNetCore.Mvc.Testing;
-using System.Text.Json.Nodes;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json.Nodes;
 
-namespace PeopleAPI.IntegrationTests
-{
-    public class UsersIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+namespace PeopleAPI.IntegrationTests;
+
+public class RemotePeopleIntegrationTests
     {
-        private readonly WebApplicationFactory<Program> _factory;
         private readonly HttpClient _client;
 
-        public UsersIntegrationTests(WebApplicationFactory<Program> factory)
+        public RemotePeopleIntegrationTests()
         {
-            _factory = factory;
-            _client = _factory.CreateClient();
+            var baseUrl = Environment.GetEnvironmentVariable("TEST_API_BASE_URL")
+                ?? throw new InvalidOperationException("Missing TEST_API_BASE_URL");
+
+            var token = Environment.GetEnvironmentVariable("TEST_API_BEARER_TOKEN")
+                ?? throw new InvalidOperationException("Missing TEST_API_BEARER_TOKEN");
+
+            _client = new HttpClient
+            {
+                BaseAddress = new Uri(baseUrl)
+            };
+
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        [Fact]
+        public async Task Get_Person_When_Valid_Token_Returns_OK()
+        {
+            var response = await _client.GetAsync("/people/1");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         private async Task<HttpResponseMessage> CreateUserAsync(string nickname, string password)
